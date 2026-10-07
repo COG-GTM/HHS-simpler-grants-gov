@@ -11,11 +11,13 @@ fi
 
 passed=()
 failed=()
+failed_count=0
 for package in "${PACKAGES[@]}"; do
   package_dir="$IOS_DIR/Packages/$package"
   if [[ ! -d "$package_dir" ]]; then
     printf 'Package directory not found: %s\n' "$package_dir" >&2
     failed+=("$package")
+    failed_count=$((failed_count + 1))
     continue
   fi
 
@@ -25,6 +27,7 @@ for package in "${PACKAGES[@]}"; do
       passed+=("$package (tested)")
     else
       failed+=("$package")
+      failed_count=$((failed_count + 1))
     fi
   else
     if (cd "$package_dir" && swift build); then
@@ -32,6 +35,7 @@ for package in "${PACKAGES[@]}"; do
       passed+=("$package (build only)")
     else
       failed+=("$package")
+      failed_count=$((failed_count + 1))
     fi
   fi
 done
@@ -43,6 +47,6 @@ done
 for package in "${failed[@]}"; do
   printf '  FAIL %s\n' "$package"
 done
-if (("${#failed[@]}" > 0)); then
+if ((failed_count > 0)); then
   exit 1
 fi

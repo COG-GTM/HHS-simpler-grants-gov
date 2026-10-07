@@ -72,6 +72,7 @@ jobs:
       - name: Check simulator runtime
         run: xcrun simctl list devices available | grep "iPhone 17"
       - run: bundle exec fastlane test
+      - run: bundle exec fastlane ui_test
       - run: bundle exec fastlane build_sim
       - run: bundle exec fastlane archive_unsigned
       - name: Upload test results

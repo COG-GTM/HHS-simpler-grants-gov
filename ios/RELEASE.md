@@ -89,7 +89,8 @@ Nutrition Labels. Section 508 release checklist:
   `$(CURRENT_PROJECT_VERSION)` and `$(MARKETING_VERSION)`. The project uses
   `GENERATE_INFOPLIST_FILE = NO`. Increment the build number for each
   TestFlight upload, for example `latest_testflight_build_number + 1`; every
-  upload needs a unique build number.
+  upload needs a unique build number. The beta lane sets it at upload time;
+  updating the plist remains the long-term fix.
 - Configure the approved production endpoint.
 - Review the real submission flow end to end.
 - Complete the agency security review and Authority to Operate (ATO).

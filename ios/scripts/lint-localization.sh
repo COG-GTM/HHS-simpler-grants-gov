@@ -38,6 +38,64 @@ def files_under(root, suffix):
         yield path
 
 
+def mask_swift_comments(source) -> str:
+    masked = list(source)
+    index = 0
+    block_depth = 0
+    string_delimiter = None
+    escaped = False
+    while index < len(source):
+        if block_depth:
+            if source.startswith("/*", index):
+                masked[index:index + 2] = [" ", " "]
+                block_depth += 1
+                index += 2
+            elif source.startswith("*/", index):
+                masked[index:index + 2] = [" ", " "]
+                block_depth -= 1
+                index += 2
+            else:
+                if source[index] not in "\r\n":
+                    masked[index] = " "
+                index += 1
+            continue
+
+        if string_delimiter is not None:
+            if escaped:
+                escaped = False
+                index += 1
+            elif source[index] == "\\":
+                escaped = True
+                index += 1
+            elif string_delimiter == '"""' and source.startswith('"""', index):
+                string_delimiter = None
+                index += 3
+            elif string_delimiter == '"' and source[index] == '"':
+                string_delimiter = None
+                index += 1
+            else:
+                index += 1
+            continue
+
+        if source.startswith('"""', index):
+            string_delimiter = '"""'
+            index += 3
+        elif source[index] == '"':
+            string_delimiter = '"'
+            index += 1
+        elif source.startswith("//", index):
+            while index < len(source) and source[index] not in "\r\n":
+                masked[index] = " "
+                index += 1
+        elif source.startswith("/*", index):
+            masked[index:index + 2] = [" ", " "]
+            block_depth = 1
+            index += 2
+        else:
+            index += 1
+    return "".join(masked)
+
+
 def strip_comments(text):
     output = []
     in_block = False
@@ -150,6 +208,29 @@ def brace_delta(line):
     return delta
 
 
+def preview_line_numbers(source):
+    preview_lines = set()
+    preview_depth = 0
+    preview_pending = False
+    for line_number, line in enumerate(source.splitlines(), 1):
+        starts_preview = bool(re.search(r"#Preview\b", line))
+        starts_provider = bool(re.search(r":\s*(?:SwiftUI\.)?PreviewProvider\b", line))
+        if preview_depth > 0 or preview_pending:
+            preview_lines.add(line_number)
+            preview_depth += brace_delta(line)
+            if preview_depth > 0:
+                preview_pending = False
+            else:
+                preview_depth = 0
+                preview_pending = False
+            continue
+        if starts_preview or starts_provider:
+            preview_lines.add(line_number)
+            preview_depth = brace_delta(line)
+            preview_pending = preview_depth == 0
+    return preview_lines
+
+
 def is_test_source(path, root):
     parts = path.relative_to(root).parts
     return any(part in TEST_DIRS or part == "Tests" for part in parts[:-1])
@@ -188,10 +269,11 @@ def lint(root):
         if is_test_source(path, root):
             continue
         source = path.read_text(encoding="utf-8")
-        for match in LOCALIZED_PATTERN.finditer(source):
+        masked_source = mask_swift_comments(source)
+        for match in LOCALIZED_PATTERN.finditer(masked_source):
             key = match.group(1)
-            line_number = source.count("\n", 0, match.start()) + 1
-            suffix = source[match.end():]
+            line_number = masked_source.count("\n", 0, match.start()) + 1
+            suffix = masked_source[match.end():]
             use_main = bool(re.match(r"\s*\(\s*bundle\s*:\s*\.main\b", suffix))
             table = swift_table(root, path, use_main)
             if table is None or not table.is_file():
@@ -204,37 +286,22 @@ def lint(root):
             if key not in keys:
                 errors.append(f"{path}: {line_number}: unknown localized key {key!r} in {table}")
 
-        preview_depth = 0
-        preview_pending = False
-        for line_number, line in enumerate(source.splitlines(), 1):
-            starts_preview = bool(re.search(r"#Preview\b", line))
-            starts_provider = bool(re.search(r":\s*(?:SwiftUI\.)?PreviewProvider\b", line))
-            if preview_depth > 0 or preview_pending:
-                delta = brace_delta(line)
-                preview_depth += delta
-                if preview_depth > 0:
-                    preview_pending = False
-                elif preview_depth <= 0:
-                    preview_depth = 0
-                    preview_pending = False
-                continue
-            if starts_preview or starts_provider:
-                preview_depth = brace_delta(line)
-                preview_pending = preview_depth == 0
-                continue
-
-            for pattern in (RAW_TEXT_PATTERN, RAW_TITLE_PATTERN):
-                for match in pattern.finditer(line):
-                    literal = match.group(1)
-                    after_literal = line[match.end():]
-                    if re.match(r"\s*\.localized\b", after_literal):
-                        continue
-                    without_interpolation = re.sub(r"\\\([^)]*\)", "", literal)
-                    if not any(character.isalpha() for character in without_interpolation):
-                        continue
-                    errors.append(
-                        f"{path}: {line_number}: user-facing string literal must be localized"
-                    )
+        preview_lines = preview_line_numbers(masked_source)
+        for pattern in (RAW_TEXT_PATTERN, RAW_TITLE_PATTERN):
+            for match in pattern.finditer(masked_source):
+                line_number = masked_source.count("\n", 0, match.start()) + 1
+                if line_number in preview_lines:
+                    continue
+                literal = match.group(1)
+                after_literal = masked_source[match.end():]
+                if re.match(r"\s*\.localized\b", after_literal):
+                    continue
+                without_interpolation = re.sub(r"\\\([^)]*\)", "", literal)
+                if not any(character.isalpha() for character in without_interpolation):
+                    continue
+                errors.append(
+                    f"{path}: {line_number}: user-facing string literal must be localized"
+                )
 
     info_plist = root / "App/Info.plist"
     info_strings = root / "App/Resources/Localization/en.lproj/InfoPlist.strings"
@@ -312,6 +379,11 @@ def self_test():
         ("missing InfoPlist localization", "missing_info", "missing InfoPlist localization"),
         ("unparseable .strings line", "unparseable", "does not parse"),
         ("raw Button literal", "button", "user-facing string literal"),
+        ("multiline raw literal in view", "multiline_raw", "user-facing string literal"),
+        ("line comment with unknown key", "line_comment", None),
+        ("block comment with unknown key", "block_comment", None),
+        ("URL string and raw view literal", "url_raw", "user-facing string literal"),
+        ("multiline raw literal in preview", "multiline_preview", None),
     ]
     failures = []
     with tempfile.TemporaryDirectory(prefix="ios-l10n-self-test-") as temporary:
@@ -359,6 +431,19 @@ def self_test():
                 )
             elif case == "button":
                 write(root / "App/Example.swift", 'var body: some View { Button("Save") {} }\n')
+            elif case == "multiline_raw":
+                write(root / "App/Example.swift", 'Text(\n    "Save"\n)\n')
+            elif case == "line_comment":
+                write(root / "App/Example.swift", '// "old.key".localized\n')
+            elif case == "block_comment":
+                write(root / "App/Example.swift", '/* "old.key".localized */\n')
+            elif case == "url_raw":
+                write(root / "App/Example.swift", 'let u = "https://x"; Text("Raw")\n')
+            elif case == "multiline_preview":
+                write(
+                    root / "App/Example.swift",
+                    '#Preview {\n    Text(\n        "Save"\n    )\n}\n',
+                )
 
             output = io.StringIO()
             with contextlib.redirect_stdout(output), contextlib.redirect_stderr(output):

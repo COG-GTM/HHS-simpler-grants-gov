@@ -148,19 +148,43 @@ platform :ios do
     end
     api_key = app_store_connect_api_key(**api_key_options)
 
-    generate_project
-    build_app(
-      project: PROJECT_PATH,
-      scheme: SCHEME,
-      export_method: "app-store",
-      output_directory: OUTPUT_DIR,
-      output_name: "SimplerGrants.ipa",
-      xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV.fetch("FASTLANE_TEAM_ID")}"
+    info_plist_path = File.join(IOS_DIR, "App/Info.plist")
+    original_build_number = get_info_plist_value(
+      path: info_plist_path,
+      key: "CFBundleVersion"
     )
-    upload_to_testflight(
+    build_number = latest_testflight_build_number(
       api_key: api_key,
-      skip_waiting_for_build_processing: true
+      app_identifier: "ai.cognition.demo.simplergrants",
+      initial_build_number: 0
+    ) + 1
+    set_info_plist_value(
+      path: info_plist_path,
+      key: "CFBundleVersion",
+      value: build_number.to_s
     )
+
+    begin
+      generate_project
+      build_app(
+        project: PROJECT_PATH,
+        scheme: SCHEME,
+        export_method: "app-store",
+        output_directory: OUTPUT_DIR,
+        output_name: "SimplerGrants.ipa",
+        xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV.fetch("FASTLANE_TEAM_ID")}"
+      )
+      upload_to_testflight(
+        api_key: api_key,
+        skip_waiting_for_build_processing: true
+      )
+    ensure
+      set_info_plist_value(
+        path: info_plist_path,
+        key: "CFBundleVersion",
+        value: original_build_number
+      )
+    end
   end
 
   desc "Generate app icon and launch-screen brand assets"

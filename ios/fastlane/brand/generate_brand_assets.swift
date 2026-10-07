@@ -257,9 +257,9 @@ try writeJSON(
                     "color-space": "srgb",
                     "components": [
                         "alpha": "1.000",
-                        "blue": "0.965",
-                        "green": "0.965",
-                        "red": "0.965",
+                        "blue": "0xF3",
+                        "green": "0xF6",
+                        "red": "0xF6",
                     ],
                 ],
                 "idiom": "universal",
