@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>apply.review.incomplete</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@formCount@</string>
+        <key>formCount</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>%d required form still needs to be completed before you can submit.</string>
+            <key>other</key>
+            <string>%d required forms still need to be completed before you can submit.</string>
+        </dict>
+    </dict>
+</dict>
+</plist>
