@@ -490,6 +490,26 @@ final class SampleDataSourceTests: XCTestCase {
         XCTAssertTrue(savedSite.warnings.isEmpty)
         XCTAssertEqual(savedSite.form.isIncludedInSubmission, true)
         _ = try await source.submit(applicationId: includedApplicationID)
+
+        let clearedApplicationID = try await source.startApplication(
+            competitionId: "usda-rd-27-05-open",
+            name: "Application With Cleared Optional Site",
+            organizationId: organization.organizationId
+        )
+        let includedClearedSite = try await source.saveForm(
+            applicationId: clearedApplicationID,
+            formId: siteFormID,
+            response: .object(["primary_site": .object([:])])
+        )
+        XCTAssertEqual(includedClearedSite.form.isIncludedInSubmission, true)
+        let clearedSite = try await source.saveForm(
+            applicationId: clearedApplicationID,
+            formId: siteFormID,
+            response: .object([:])
+        )
+        XCTAssertEqual(clearedSite.form.isIncludedInSubmission, false)
+        try await completeRequiredForms(source, applicationID: clearedApplicationID)
+        _ = try await source.submit(applicationId: clearedApplicationID)
     }
 
     func testMinimumArrayCountsKeepFormsInProgress() async throws {

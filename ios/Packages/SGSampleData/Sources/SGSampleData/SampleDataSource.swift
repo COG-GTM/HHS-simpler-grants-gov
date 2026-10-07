@@ -556,7 +556,7 @@ private actor SampleStore {
             applicationResponse: response,
             applicationFormStatus: warnings.isEmpty ? "complete" : "in_progress",
             isRequired: existing.isRequired,
-            isIncludedInSubmission: existing.isRequired || existing.isIncludedInSubmission == true || includeResponse,
+            isIncludedInSubmission: existing.isRequired || includeResponse,
             applicationId: existing.applicationId,
             applicationName: existing.applicationName
         )
