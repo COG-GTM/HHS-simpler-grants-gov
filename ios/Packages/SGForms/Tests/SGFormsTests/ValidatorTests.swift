@@ -168,4 +168,22 @@ final class ValidatorTests: XCTestCase {
         XCTAssertEqual(partial.requiredAnswered, 1)
         XCTAssertGreaterThan(partial.fraction, 0)
     }
+
+    func testFinishOnWebStepsNeverCountAsComplete() throws {
+        let sf424A = try Fixtures.model("SF424A")
+        let empty = sf424A.progress(values: .object([:]))
+        XCTAssertTrue(sf424A.sections.contains { !$0.isFullySupported })
+        XCTAssertEqual(empty.completedSteps, 0)
+        XCTAssertFalse(empty.isComplete)
+    }
+
+    func testRequiredFieldListCountsTowardProgress() throws {
+        let keyContacts = try Fixtures.model("Key_Contacts")
+        let empty = keyContacts.progress(values: .object([:]))
+        let filled = keyContacts.progress(values: ["key_contacts": [["title": "Project Director"]]])
+        XCTAssertEqual(filled.requiredTotal, empty.requiredTotal)
+        XCTAssertEqual(filled.requiredAnswered, empty.requiredAnswered + 1)
+        let blankEntry = keyContacts.progress(values: ["key_contacts": [[:]]])
+        XCTAssertEqual(blankEntry.requiredAnswered, empty.requiredAnswered)
+    }
 }

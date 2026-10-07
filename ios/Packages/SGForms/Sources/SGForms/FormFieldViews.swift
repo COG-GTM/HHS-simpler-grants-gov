@@ -72,8 +72,8 @@ struct FormFieldView: View {
         case .multiSelect:
             MultiSelectControl(field: field, selection: arrayBinding, hasError: error != nil)
         case .attachment, .attachmentArray:
-            AttachmentControl(field: field, path: path, value: values.value(at: path), context: context, hasError: error != nil) {
-                values.setValue(nil, at: path)
+            AttachmentControl(field: field, path: path, value: values.value(at: path), context: context, hasError: error != nil) { id in
+                removeAttachment(id)
             }
         default:
             FinishOnWebRow(field: field)
@@ -171,6 +171,15 @@ struct FormFieldView: View {
         )
     }
 
+    private func removeAttachment(_ id: String) {
+        guard case let .array(items)? = values.value(at: path) else {
+            values.setValue(nil, at: path)
+            return
+        }
+        let remaining = items.filter { $0.formString != id }
+        values.setValue(remaining.isEmpty ? nil : .array(remaining), at: path)
+    }
+
     private var boolBinding: Binding<Bool> {
         Binding(
             get: { values.value(at: path)?.formBool ?? false },
@@ -233,19 +242,29 @@ struct TextControl: View {
     var focusedPath: FocusState<String?>.Binding
     let multiline: Bool
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    /// What the user typed while focused, so a numeric field showing `1.`
+    /// isn't redrawn as `1` from the stored number.
+    @State private var draft: String?
+
+    private var editText: Binding<String> {
+        Binding(
+            get: { draft ?? text },
+            set: { draft = $0; text = $0 }
+        )
+    }
 
     var body: some View {
         Group {
             if multiline {
-                TextField("", text: $text, axis: .vertical)
+                TextField("", text: editText, axis: .vertical)
                     .lineLimit(4...10)
                     .padding(.vertical, FormTheme.S.m)
             } else if dynamicTypeSize.isAccessibilitySize {
-                TextField("", text: $text, axis: .vertical)
+                TextField("", text: editText, axis: .vertical)
                     .lineLimit(1...6)
                     .padding(.vertical, FormTheme.S.s)
             } else {
-                TextField("", text: $text)
+                TextField("", text: editText)
             }
         }
         .font(FormTheme.F.bodyText)
@@ -254,6 +273,9 @@ struct TextControl: View {
         .focused(focusedPath, equals: focusKey)
         .formTextInput(field.textFormat)
         .formInputChrome(hasError: hasError, isFocused: focusedPath.wrappedValue == focusKey, minHeight: multiline ? 112 : FormTheme.controlHeight)
+        .onChange(of: focusedPath.wrappedValue) { _, newValue in
+            if newValue != focusKey { draft = nil }
+        }
     }
 }
 
@@ -598,9 +620,14 @@ struct AttachmentControl: View {
     let value: JSONValue?
     let context: FormRenderContext
     let hasError: Bool
-    let onRemove: () -> Void
+    let onRemove: (String) -> Void
 
     @State private var isImporting = false
+
+    private var remainingSlots: Int? {
+        guard field.kind == .attachmentArray, let maxItems = field.maxItems else { return nil }
+        return max(maxItems - ids.count, 0)
+    }
 
     private var ids: [String] {
         switch value {
@@ -622,12 +649,13 @@ struct AttachmentControl: View {
                         .foregroundStyle(FormTheme.C.ink)
                         .lineLimit(1)
                     Spacer()
-                    if field.kind == .attachment {
-                        Button("forms.attachment.remove".localized(bundle: .module), role: .destructive, action: onRemove)
-                            .font(FormTheme.F.sans(14, .semibold))
-                            .frame(minHeight: 44)
-                            .accessibilityLabel(Text(String(format: "forms.attachment.remove_label".localized(bundle: .module), field.title)))
-                    }
+                    Button("forms.attachment.remove".localized(bundle: .module), role: .destructive) { onRemove(id) }
+                        .font(FormTheme.F.sans(14, .semibold))
+                        .frame(minHeight: 44)
+                        .accessibilityLabel(Text(String(
+                            format: "forms.attachment.remove_label".localized(bundle: .module),
+                            context.attachmentNames[id] ?? field.title
+                        )))
                 }
                 .formInputChrome(hasError: false)
             }
@@ -651,6 +679,7 @@ struct AttachmentControl: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .disabled(remainingSlots == 0)
             .accessibilityLabel(Text("\(buttonTitle), \(field.title)"))
             .accessibilityIdentifier("forms.attachment.choose.\(path.jsonPath)")
         }
@@ -659,7 +688,9 @@ struct AttachmentControl: View {
             allowedContentTypes: [.item],
             allowsMultipleSelection: field.kind == .attachmentArray
         ) { result in
-            guard case let .success(urls) = result, !urls.isEmpty else { return }
+            guard case let .success(picked) = result else { return }
+            let urls = remainingSlots.map { Array(picked.prefix($0)) } ?? picked
+            guard !urls.isEmpty else { return }
             context.onAttach?(FormAttachmentRequest(field: field, path: path, urls: urls))
         }
     }
@@ -683,7 +714,9 @@ struct FieldListView: View {
     private var storedCount: Int { values.value(at: path)?.formArray?.count ?? 0 }
     private var entryCount: Int { max(storedCount, field.minItems ?? 0, 1) }
     private var canAdd: Bool { field.maxItems.map { entryCount < $0 } ?? true }
-    private var canRemove: Bool { entryCount > max(field.minItems ?? 0, 1) }
+    /// Stored entries can be removed down to `minItems` (zero by default); the
+    /// blank placeholder row shown for an empty list has nothing to remove.
+    private func canRemove(_ index: Int) -> Bool { index < storedCount && storedCount > (field.minItems ?? 0) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: FormTheme.S.l) {
@@ -734,11 +767,9 @@ struct FieldListView: View {
                     .foregroundStyle(FormTheme.C.ink)
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
-                if canRemove {
+                if canRemove(index) {
                     Button(role: .destructive) {
-                        if index < storedCount {
-                            values.removeElement(at: path.appending(index: index))
-                        }
+                        values.removeElement(at: path.appending(index: index))
                     } label: {
                         Image(systemName: "minus.circle.fill")
                             .font(.system(size: 22))

@@ -47,10 +47,16 @@ public enum FormValidator {
     static func requiredStatus(_ values: JSONValue, model: FormModel) -> (answered: Int, total: Int) {
         var answered = 0
         var total = 0
-        for field in model.allFields where field.isEditable && field.kind != .fieldList {
+        for field in model.allFields where field.isEditable {
             guard isRequired(field, in: values, model: model) else { continue }
             total += 1
-            if !(values.value(at: field.dataPath)?.isFormBlank ?? true) { answered += 1 }
+            let value = values.value(at: field.dataPath)
+            if field.kind == .fieldList {
+                let entries = value?.formArray ?? []
+                if !entries.isEmpty, entries.contains(where: { !$0.isFormBlank }) { answered += 1 }
+            } else if !(value?.isFormBlank ?? true) {
+                answered += 1
+            }
         }
         return (answered, total)
     }

@@ -66,10 +66,13 @@ public struct FormModel: Sendable {
         )
     }
 
-    /// Progress against the validator: a step is complete when it has no errors.
+    /// Progress against the validator: a step is complete when it has no errors
+    /// and none of its fields have to be finished on the web.
     public func progress(values: JSONValue) -> FormProgress {
         let completed = steps.map { step in
-            step.sections.allSatisfy { FormValidator.validate(values, section: $0, model: self).isEmpty }
+            step.sections.allSatisfy {
+                $0.isFullySupported && FormValidator.validate(values, section: $0, model: self).isEmpty
+            }
         }
         let required = FormValidator.requiredStatus(values, model: self)
         return FormProgress(
@@ -127,7 +130,8 @@ public struct FormStep: Sendable, Identifiable, Hashable {
 }
 
 public struct FormProgress: Sendable, Hashable {
-    /// One entry per `FormModel.steps`: `true` when that step validates.
+    /// One entry per `FormModel.steps`: `true` when that step validates and has
+    /// no finish-on-web fields.
     public let stepCompletion: [Bool]
     public let requiredAnswered: Int
     public let requiredTotal: Int
