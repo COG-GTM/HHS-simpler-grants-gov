@@ -10,7 +10,12 @@ let package = Package(
         .package(path: "../SGCore")
     ],
     targets: [
-        .target(name: "SGNetworking", dependencies: ["SGModels", "SGCore"])
+        .target(name: "SGNetworking", dependencies: ["SGModels", "SGCore"]),
+        .testTarget(
+            name: "SGNetworkingTests",
+            dependencies: ["SGNetworking", "SGModels", "SGCore"],
+            resources: [.copy("Fixtures")]
+        )
     ],
     swiftLanguageVersions: [.v5]
 )

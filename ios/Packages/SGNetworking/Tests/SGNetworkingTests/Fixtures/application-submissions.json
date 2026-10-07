@@ -1,0 +1,18 @@
+{
+  "data": [],
+  "message": "Success",
+  "pagination_info": {
+    "page_offset": 1,
+    "page_size": 1,
+    "sort_order": [
+      {
+        "order_by": "created_at",
+        "sort_direction": "descending"
+      }
+    ],
+    "total_pages": 0,
+    "total_records": 0
+  },
+  "status_code": 200,
+  "_captured_http_status": 200
+}
