@@ -2,3 +2,4 @@
 "tabs.apply" = "Apply";
 "tabs.profile" = "Profile";
 "tabs.search" = "Search";
+"shell.offline.message" = "You're offline. Changes are saved on this device and will sync when you reconnect.";

@@ -1,0 +1,7 @@
+{
+  "data": {},
+  "errors": [],
+  "internal_request_id": "f4b5ca73-4925-49fe-876b-0fd1f5338667",
+  "message": "Could not find Opportunity with ID 00000000-0000-4000-8000-000000000000",
+  "status_code": 404
+}

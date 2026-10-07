@@ -22,36 +22,65 @@ public enum AppRoute: Hashable, Sendable {
     case roadmap
 }
 
+public enum DeepLink {
+    public static func parse(_ url: URL) -> AppRoute? {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        guard let components else { return nil }
+
+        if components.scheme?.lowercased() == "simplergrants" {
+            guard components.host?.lowercased() == "opportunity" else { return nil }
+            let path = components.path.split(separator: "/")
+            guard path.count == 1, let identifier = path.first else { return nil }
+            return .opportunity(id: String(identifier))
+        }
+
+        guard
+            components.scheme?.lowercased() == "https",
+            components.host?.lowercased() == "simpler.grants.gov"
+        else {
+            return nil
+        }
+        let path = components.path.split(separator: "/").map(String.init)
+        guard path.count == 2, path[0] == "opportunity", !path[1].isEmpty else {
+            return nil
+        }
+        return .opportunity(id: path[1])
+    }
+}
+
 @Observable
 @MainActor
 public final class AppRouter {
     public var tab: AppTab
-    private var paths: [AppTab: NavigationPath]
+    private var paths: [AppTab: [AppRoute]]
 
     public init(tab: AppTab = .ask) {
         self.tab = tab
-        paths = Dictionary(
-            uniqueKeysWithValues: AppTab.allCases.map { ($0, NavigationPath()) }
-        )
+        paths = Dictionary(uniqueKeysWithValues: AppTab.allCases.map { ($0, []) })
     }
 
     public func push(_ route: AppRoute, in tab: AppTab? = nil) {
         let tab = tab ?? self.tab
-        var path = paths[tab] ?? NavigationPath()
+        var path = paths[tab] ?? []
+        guard path.last != route else { return }
         path.append(route)
         paths[tab] = path
     }
 
     public func popToRoot(_ tab: AppTab) {
-        paths[tab] = NavigationPath()
+        paths[tab] = []
     }
 
     public func navigationPath(for tab: AppTab) -> NavigationPath {
-        paths[tab] ?? NavigationPath()
+        NavigationPath(routes(for: tab))
     }
 
+    /// Use `routesBinding(for:)` or `push(_:in:)` for forward navigation.
     public func setNavigationPath(_ path: NavigationPath, for tab: AppTab) {
-        paths[tab] = path
+        let current = routes(for: tab)
+        if path.count < current.count {
+            paths[tab] = Array(current.prefix(path.count))
+        }
     }
 
     public func binding(for tab: AppTab) -> Binding<NavigationPath> {
@@ -59,5 +88,42 @@ public final class AppRouter {
             get: { self.navigationPath(for: tab) },
             set: { self.setNavigationPath($0, for: tab) }
         )
+    }
+
+    public func routes(for tab: AppTab) -> [AppRoute] {
+        paths[tab] ?? []
+    }
+
+    public func routesBinding(for tab: AppTab) -> Binding<[AppRoute]> {
+        Binding(
+            get: { self.routes(for: tab) },
+            set: { routes in
+                self.paths[tab] = routes
+            }
+        )
+    }
+
+    public func select(_ tab: AppTab) {
+        if self.tab == tab {
+            popToRoot(tab)
+        } else {
+            self.tab = tab
+        }
+    }
+
+    public func reset() {
+        for tab in AppTab.allCases {
+            popToRoot(tab)
+        }
+        tab = .ask
+    }
+
+    @discardableResult
+    public func open(_ url: URL) -> Bool {
+        guard let route = DeepLink.parse(url) else { return false }
+        tab = .search
+        popToRoot(.search)
+        push(route, in: .search)
+        return true
     }
 }
