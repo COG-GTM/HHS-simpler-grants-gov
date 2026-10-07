@@ -16,6 +16,7 @@ public struct SubmittedView: View {
     @State private var viewModel: SubmittedViewModel?
     @State private var copied = false
     @ScaledMetric(relativeTo: .body) private var trackingFontSize: CGFloat = 17
+    @ScaledMetric(relativeTo: .body) private var timelineDotDiameter: CGFloat = 14
     @ScaledMetric(relativeTo: .largeTitle) private var titleFontSize: CGFloat = 32
 
     public init(applicationId: String, trackingNumber: String?) {
@@ -215,14 +216,15 @@ public struct SubmittedView: View {
     }
 
     private func timelineDot(_ status: TimelineStatus) -> some View {
-        Circle()
+        let diameter = min(timelineDotDiameter, 28)
+        return Circle()
             .fill(status == .complete ? ApplyTheme.C.green : .white)
-            .frame(width: 14, height: 14)
+            .frame(width: diameter, height: diameter)
             .overlay {
                 Circle().stroke(
                     status == .complete ? ApplyTheme.C.green
                         : (status == .current ? ApplyTheme.C.navy : ApplyTheme.C.control),
-                    lineWidth: 2
+                    lineWidth: min(2 * timelineDotDiameter / 14, 4)
                 )
             }
             .accessibilityHidden(true)

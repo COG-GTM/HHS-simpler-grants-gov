@@ -63,6 +63,7 @@ final class ApplyFeatureTests: XCTestCase {
                 serverStatus: "COMPLETE",
                 response: .object([:]),
                 hasDraft: false,
+                hasUnsyncedDraft: false,
                 completedSectionIds: [],
                 sectionIds: sections,
                 locallyComplete: false
@@ -74,6 +75,7 @@ final class ApplyFeatureTests: XCTestCase {
                 serverStatus: "in_progress",
                 response: .object([:]),
                 hasDraft: false,
+                hasUnsyncedDraft: false,
                 completedSectionIds: ["two", "unknown"],
                 sectionIds: sections,
                 locallyComplete: false
@@ -85,6 +87,7 @@ final class ApplyFeatureTests: XCTestCase {
                 serverStatus: "not_started",
                 response: .object(["email": .string("person@example.org")]),
                 hasDraft: false,
+                hasUnsyncedDraft: false,
                 completedSectionIds: [],
                 sectionIds: sections,
                 locallyComplete: false
@@ -96,6 +99,7 @@ final class ApplyFeatureTests: XCTestCase {
                 serverStatus: "not_started",
                 response: .object([:]),
                 hasDraft: true,
+                hasUnsyncedDraft: false,
                 completedSectionIds: [],
                 sectionIds: [],
                 locallyComplete: false
@@ -107,11 +111,36 @@ final class ApplyFeatureTests: XCTestCase {
                 serverStatus: "not_started",
                 response: .object([:]),
                 hasDraft: false,
+                hasUnsyncedDraft: false,
                 completedSectionIds: [],
                 sectionIds: [],
                 locallyComplete: false
             ),
             .notStarted
+        )
+        XCTAssertEqual(
+            ApplyFormStateLogic.state(
+                serverStatus: "complete",
+                response: .object(["email": .string("server@example.org")]),
+                hasDraft: true,
+                hasUnsyncedDraft: true,
+                completedSectionIds: [],
+                sectionIds: ["applicant"],
+                locallyComplete: false
+            ),
+            .inProgress(completedSections: 0, totalSections: 1)
+        )
+        XCTAssertEqual(
+            ApplyFormStateLogic.state(
+                serverStatus: "complete",
+                response: .object(["email": .string("same@example.org")]),
+                hasDraft: true,
+                hasUnsyncedDraft: false,
+                completedSectionIds: [],
+                sectionIds: ["applicant"],
+                locallyComplete: false
+            ),
+            .complete
         )
         XCTAssertEqual(
             ApplyFormStateLogic.displayName(
@@ -198,6 +227,34 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     @MainActor
+    func testWorkspaceDeadlineUsesConfiguredCalendarAcrossDSTBoundary() async throws {
+        let base = ApplyReferenceDataSource(scenario: .inProgress)
+        let original = try await base.application(id: "apply-demo")
+        let application = applicationWithoutOpportunityId(original, closingDate: "2026-03-08")
+        let source = OpportunityResolutionTestDataSource(
+            base: base,
+            application: application,
+            summaries: try await base.applications()
+        )
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let now = calendar.date(
+            from: DateComponents(year: 2026, month: 3, day: 7, hour: 12)
+        )!
+        let viewModel = WorkspaceViewModel(
+            applicationId: "apply-demo",
+            dataSource: source,
+            progressStore: ApplyReferenceDataSource.progressStore(for: .inProgress),
+            now: { now },
+            timeZone: timeZone
+        )
+
+        await viewModel.load()
+
+        XCTAssertEqual(viewModel.daysRemaining, 1)
+    }
+
+    @MainActor
     func testContinueValidationGatesAndAdvances() async throws {
         let source = ApplyReferenceDataSource(scenario: .inProgress)
         let store = SpyDraftStore()
@@ -264,6 +321,31 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     @MainActor
+    func testEditingCompletedFormClearsLocalCompletion() async {
+        let sectionIds: Set<String> = ["applicant", "project", "contacts", "locations", "certifications"]
+        let progress = InMemoryFormProgressStore(
+            completedSections: ["apply-demo/sf424": sectionIds],
+            completeForms: ["apply-demo/sf424"]
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(scenario: .allComplete),
+            draftStore: SpyDraftStore(),
+            progressStore: progress
+        )
+
+        await viewModel.load()
+        viewModel.values = .object(["email": .string("edited@example.org")])
+        _ = await viewModel.flushDraft()
+
+        let isComplete = await progress.isFormComplete(applicationId: "apply-demo", formId: "sf424")
+        let completedSections = await progress.completedSections(applicationId: "apply-demo", formId: "sf424")
+        XCTAssertFalse(isComplete)
+        XCTAssertFalse(completedSections.contains("applicant"))
+    }
+
+    @MainActor
     func testAutosaveDebouncesRapidEdits() async throws {
         let source = ApplyReferenceDataSource(scenario: .inProgress)
         let store = SpyDraftStore()
@@ -289,6 +371,40 @@ final class ApplyFeatureTests: XCTestCase {
             savedValues.last,
             .object(["email": .string("final@example.org")])
         )
+    }
+
+    @MainActor
+    func testOverlappingServerSavesAreSerializedAndUseCurrentValues() async throws {
+        let source = SuspendingSaveDataSource(base: ApplyReferenceDataSource(scenario: .inProgress))
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: source,
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            validator: { _, _, _ in [] }
+        )
+        await viewModel.load()
+
+        let valueA = JSONValue.object(["email": .string("a@example.org")])
+        let valueB = JSONValue.object(["email": .string("b@example.org")])
+        viewModel.values = valueA
+        let firstSave = Task { @MainActor in await viewModel.syncToServer() }
+        await source.waitForFirstSave()
+
+        viewModel.values = valueB
+        let secondSave = Task { @MainActor in await viewModel.syncToServer() }
+        try await Task.sleep(for: .milliseconds(50))
+        let responsesBeforeFirstSaveCompletes = await source.receivedResponses
+        XCTAssertEqual(responsesBeforeFirstSaveCompletes, [valueA])
+
+        await source.releaseFirstSave()
+        let firstSaveResult = await firstSave.value
+        let secondSaveResult = await secondSave.value
+        XCTAssertTrue(firstSaveResult)
+        XCTAssertTrue(secondSaveResult)
+        let receivedResponses = await source.receivedResponses
+        XCTAssertEqual(receivedResponses, [valueA, valueB])
     }
 
     @MainActor
@@ -417,6 +533,62 @@ final class ApplyFeatureTests: XCTestCase {
         XCTAssertTrue(failing.certified)
     }
 
+    @MainActor
+    func testSubmittedTimestampIsCapturedOnce() {
+        let clock = IncrementingClock(start: 1_791_300_000)
+        let viewModel = SubmittedViewModel(
+            applicationId: "apply-demo",
+            trackingNumber: nil,
+            dataSource: ApplyReferenceDataSource(scenario: .inProgress),
+            now: { clock.now() }
+        )
+        let firstRead = viewModel.submittedAt
+        let secondRead = viewModel.submittedAt
+
+        XCTAssertEqual(firstRead, secondRead)
+        XCTAssertEqual(clock.callCount, 1)
+    }
+
+    @MainActor
+    func testEmptySchemaSampleFormHasFallbackSectionAndCanComplete() async {
+        let source = PreviewDataSource()
+        let formId = "08e6603f-d197-4a60-98cd-d49acb1fc1fd"
+        let progress = InMemoryFormProgressStore(
+            completedSections: ["sample-application-in-progress/\(formId)": ["application"]]
+        )
+        let workspace = WorkspaceViewModel(
+            applicationId: "sample-application-in-progress",
+            dataSource: source,
+            progressStore: progress
+        )
+
+        await workspace.load()
+
+        XCTAssertEqual(
+            workspace.requiredRows.first(where: { $0.id == formId })?.state,
+            .inProgress(completedSections: 1, totalSections: 1)
+        )
+
+        let viewModel = FormScreenViewModel(
+            applicationId: "sample-application-in-progress",
+            formId: formId,
+            dataSource: source,
+            draftStore: SpyDraftStore(),
+            progressStore: progress
+        )
+        await viewModel.load()
+
+        XCTAssertEqual(viewModel.phase, .loaded)
+        XCTAssertEqual(viewModel.currentSection?.id, "application")
+        let outcome = await viewModel.continueTapped()
+        XCTAssertEqual(outcome, .finished)
+        let isComplete = await progress.isFormComplete(
+            applicationId: "sample-application-in-progress",
+            formId: formId
+        )
+        XCTAssertTrue(isComplete)
+    }
+
     private var timeZone: TimeZone {
         TimeZone(identifier: "America/New_York")!
     }
@@ -445,6 +617,119 @@ private actor SpyDraftStore: DraftStore {
     func removeDraft(applicationId: String, formId: String) async throws {}
 }
 
+private final class IncrementingClock: @unchecked Sendable {
+    private let lock = NSLock()
+    private var timestamp: TimeInterval
+    private var calls = 0
+
+    init(start: TimeInterval) {
+        timestamp = start
+    }
+
+    var callCount: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return calls
+    }
+
+    func now() -> Date {
+        lock.lock()
+        defer { lock.unlock() }
+        calls += 1
+        defer { timestamp += 1 }
+        return Date(timeIntervalSince1970: timestamp)
+    }
+}
+
+private actor SuspendingSaveDataSource: GrantsDataSource {
+    private let base: ApplyReferenceDataSource
+    private var firstSaveStarted = false
+    private var firstSaveStartContinuation: CheckedContinuation<Void, Never>?
+    private var firstSaveReleaseContinuation: CheckedContinuation<Void, Never>?
+    private(set) var receivedResponses: [JSONValue] = []
+
+    init(base: ApplyReferenceDataSource) {
+        self.base = base
+    }
+
+    func waitForFirstSave() async {
+        guard !firstSaveStarted else { return }
+        await withCheckedContinuation { firstSaveStartContinuation = $0 }
+    }
+
+    func releaseFirstSave() {
+        firstSaveReleaseContinuation?.resume()
+        firstSaveReleaseContinuation = nil
+    }
+
+    func searchOpportunities(_ request: SearchRequest) async throws -> SearchResponse {
+        try await base.searchOpportunities(request)
+    }
+
+    func opportunity(id: String) async throws -> OpportunityDetail {
+        try await base.opportunity(id: id)
+    }
+
+    func currentUser() async throws -> UserProfile {
+        try await base.currentUser()
+    }
+
+    func organizations() async throws -> [Organization] {
+        try await base.organizations()
+    }
+
+    func applications() async throws -> [ApplicationSummary] {
+        try await base.applications()
+    }
+
+    func startApplication(
+        competitionId: String,
+        name: String,
+        organizationId: String?
+    ) async throws -> String {
+        try await base.startApplication(
+            competitionId: competitionId,
+            name: name,
+            organizationId: organizationId
+        )
+    }
+
+    func application(id: String) async throws -> Application {
+        try await base.application(id: id)
+    }
+
+    func form(id: String) async throws -> FormDefinition {
+        try await base.form(id: id)
+    }
+
+    func saveForm(
+        applicationId: String,
+        formId: String,
+        response: JSONValue
+    ) async throws -> FormSaveResult {
+        receivedResponses.append(response)
+        if receivedResponses.count == 1 {
+            firstSaveStarted = true
+            firstSaveStartContinuation?.resume()
+            firstSaveStartContinuation = nil
+            await withCheckedContinuation { firstSaveReleaseContinuation = $0 }
+        }
+        return try await base.saveForm(applicationId: applicationId, formId: formId, response: response)
+    }
+
+    func submit(applicationId: String) async throws -> SubmissionResult {
+        try await base.submit(applicationId: applicationId)
+    }
+
+    func savedOpportunityIds() async throws -> Set<String> {
+        try await base.savedOpportunityIds()
+    }
+
+    func setSaved(_ saved: Bool, opportunityId: String) async throws {
+        try await base.setSaved(saved, opportunityId: opportunityId)
+    }
+}
+
 private struct StubAuthorizer: SubmissionAuthorizing {
     let result: SubmissionAuthorization
 
@@ -453,13 +738,16 @@ private struct StubAuthorizer: SubmissionAuthorizing {
     }
 }
 
-private func applicationWithoutOpportunityId(_ application: Application) -> Application {
+private func applicationWithoutOpportunityId(
+    _ application: Application,
+    closingDate: String? = nil
+) -> Application {
     let original = application.competition
     let competition = Competition(
         competitionId: original.competitionId,
         competitionTitle: original.competitionTitle,
         openingDate: original.openingDate,
-        closingDate: original.closingDate,
+        closingDate: closingDate ?? original.closingDate,
         isOpen: original.isOpen,
         isSimplerGrantsEnabled: original.isSimplerGrantsEnabled,
         openToApplicants: original.openToApplicants,

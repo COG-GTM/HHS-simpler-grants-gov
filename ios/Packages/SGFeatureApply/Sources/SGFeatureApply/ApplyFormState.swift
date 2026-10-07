@@ -40,11 +40,13 @@ public enum ApplyFormStateLogic {
         serverStatus: String,
         response: JSONValue,
         hasDraft: Bool,
+        hasUnsyncedDraft: Bool,
         completedSectionIds: Set<String>,
         sectionIds: [String],
         locallyComplete: Bool
     ) -> ApplyFormState {
-        if serverStatus.caseInsensitiveCompare("complete") == .orderedSame || locallyComplete {
+        let serverComplete = serverStatus.caseInsensitiveCompare("complete") == .orderedSame
+        if locallyComplete || (serverComplete && !hasUnsyncedDraft) {
             return .complete
         }
         let total = max(sectionIds.count, 1)

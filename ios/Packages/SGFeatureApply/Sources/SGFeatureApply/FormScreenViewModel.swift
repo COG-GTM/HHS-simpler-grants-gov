@@ -33,6 +33,7 @@ public final class FormScreenViewModel {
         didSet {
             if !suppressAutosave, phase == .loaded {
                 scheduleAutosave()
+                invalidateProgressForFirstEdit()
             }
         }
     }
@@ -51,7 +52,10 @@ public final class FormScreenViewModel {
     private let validator: @Sendable (JSONValue, FormSection, FormModel) -> [FieldError]
     private let autosaveDelay: Duration
     private var autosaveTask: Task<Void, Never>?
+    private var syncTail: Task<Bool, Never>?
+    private var progressInvalidationTask: Task<Void, Never>?
     private var suppressAutosave = false
+    private var didInvalidateProgressForEdit = false
 
     public init(
         applicationId: String,
@@ -104,6 +108,10 @@ public final class FormScreenViewModel {
     }
 
     public func load() async {
+        if phase == .loaded {
+            autosaveTask?.cancel()
+            _ = await flushDraft()
+        }
         if phase != .loaded { phase = .loading }
         do {
             let application = try await dataSource.application(id: applicationId)
@@ -117,6 +125,14 @@ public final class FormScreenViewModel {
                 definition = try await dataSource.form(id: formId)
             }
             let formModel = try FormModel(definition: definition)
+            let loadedDisplayName = ApplyFormStateLogic.displayName(
+                formName: definition.formName,
+                shortName: definition.shortFormName,
+                formId: definition.formId
+            )
+            let loadedSections = formModel.sections.isEmpty
+                ? [FormSection(id: "application", title: loadedDisplayName, fields: [])]
+                : formModel.sections
             let draft = try? await draftStore.loadDraft(
                 applicationId: applicationId,
                 formId: definition.formId
@@ -152,14 +168,10 @@ public final class FormScreenViewModel {
             }
 
             suppressAutosave = true
-            formDisplayName = ApplyFormStateLogic.displayName(
-                formName: definition.formName,
-                shortName: definition.shortFormName,
-                formId: definition.formId
-            )
+            formDisplayName = loadedDisplayName
             shortName = definition.shortFormName ?? definition.formId
             model = formModel
-            sections = formModel.sections
+            sections = loadedSections
             values = loadedValues
             prefill = loadedPrefill
             prefilledPaths = loadedPrefilledPaths
@@ -167,9 +179,10 @@ public final class FormScreenViewModel {
                 applicationId: applicationId,
                 formId: definition.formId
             )
-            currentStep = formModel.sections.firstIndex { !completed.contains($0.id) } ?? 0
+            currentStep = loadedSections.firstIndex { !completed.contains($0.id) } ?? 0
             errors = []
             saveStatus = .idle
+            didInvalidateProgressForEdit = false
             suppressAutosave = false
             phase = .loaded
         } catch {
@@ -195,6 +208,10 @@ public final class FormScreenViewModel {
     }
 
     public func flushDraft() async -> Bool {
+        if let progressInvalidationTask {
+            await progressInvalidationTask.value
+            self.progressInvalidationTask = nil
+        }
         autosaveTask?.cancel()
         autosaveTask = nil
         saveStatus = .saving
@@ -210,6 +227,19 @@ public final class FormScreenViewModel {
 
     @discardableResult
     public func syncToServer() async -> Bool {
+        let previous = syncTail
+        let task = Task { @MainActor [weak self] in
+            if let previous {
+                _ = await previous.value
+            }
+            guard let self else { return false }
+            return await self.performSyncToServer()
+        }
+        syncTail = task
+        return await task.value
+    }
+
+    private func performSyncToServer() async -> Bool {
         guard await flushDraft() else { return false }
         isSyncing = true
         defer { isSyncing = false }
@@ -308,6 +338,29 @@ public final class FormScreenViewModel {
             saveStatus = .saved
         } catch {
             await setSaveFailure(error)
+        }
+    }
+
+    private func invalidateProgressForFirstEdit() {
+        guard !didInvalidateProgressForEdit else { return }
+        didInvalidateProgressForEdit = true
+        let sectionId = currentSection?.id
+        let progressStore = self.progressStore
+        let applicationId = self.applicationId
+        let formId = self.formId
+        progressInvalidationTask = Task {
+            await progressStore.setFormComplete(false, applicationId: applicationId, formId: formId)
+            guard let sectionId else { return }
+            var completed = await progressStore.completedSections(
+                applicationId: applicationId,
+                formId: formId
+            )
+            completed.remove(sectionId)
+            await progressStore.setCompletedSections(
+                completed,
+                applicationId: applicationId,
+                formId: formId
+            )
         }
     }
 

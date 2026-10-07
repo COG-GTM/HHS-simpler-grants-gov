@@ -13,7 +13,6 @@ public struct FormScreenView: View {
     @Environment(\.applyProgressStore) private var progressStore
     @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: FormScreenViewModel?
-    @State private var hasAppeared = false
     @AccessibilityFocusState private var errorSummaryFocused: Bool
     @ScaledMetric(relativeTo: .body) private var monoFontSize: CGFloat = 16
 
@@ -107,12 +106,6 @@ public struct FormScreenView: View {
             if case .loading = viewModel.phase {
                 await viewModel.load()
             }
-        }
-        .onAppear {
-            if hasAppeared {
-                Task { await viewModel?.load() }
-            }
-            hasAppeared = true
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background {

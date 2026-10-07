@@ -195,18 +195,35 @@ struct WorkspaceContent: View {
 
     @ViewBuilder
     private func sectionHeading(_ titleKey: String, trailing: String? = nil) -> some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text(titleKey.localized(bundle: .module))
-                .font(ApplyTheme.F.sans(20, .semibold))
-                .foregroundStyle(ApplyTheme.C.ink)
-                .accessibilityAddTraits(.isHeader)
-            Spacer(minLength: 8)
-            if let trailing {
-                Text(trailing.localized(bundle: .module))
-                    .font(ApplyTheme.F.sans(13))
-                    .foregroundStyle(ApplyTheme.C.muted)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(titleKey.localized(bundle: .module))
+                    .font(ApplyTheme.F.sans(20, .semibold))
+                    .foregroundStyle(ApplyTheme.C.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
+                if let trailing {
+                    Text(trailing.localized(bundle: .module))
+                        .font(ApplyTheme.F.sans(13))
+                        .foregroundStyle(ApplyTheme.C.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            HStack(alignment: .firstTextBaseline) {
+                Text(titleKey.localized(bundle: .module))
+                    .font(ApplyTheme.F.sans(20, .semibold))
+                    .foregroundStyle(ApplyTheme.C.ink)
+                    .accessibilityAddTraits(.isHeader)
+                Spacer(minLength: 8)
+                if let trailing {
+                    Text(trailing.localized(bundle: .module))
+                        .font(ApplyTheme.F.sans(13))
+                        .foregroundStyle(ApplyTheme.C.muted)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
             }
         }
     }
@@ -333,6 +350,15 @@ struct WorkspaceFormRow: View {
 struct ApplyStatusMark: View {
     let state: ApplyFormState
     var size: CGFloat
+    @ScaledMetric(relativeTo: .body) private var scaledMarkSize: CGFloat = 24
+
+    private var renderedSize: CGFloat {
+        min(size * scaledMarkSize / 24, size * 2)
+    }
+
+    private var renderedStrokeWidth: CGFloat {
+        min(2 * scaledMarkSize / 24, 4)
+    }
 
     var body: some View {
         Group {
@@ -342,18 +368,16 @@ struct ApplyStatusMark: View {
                     .fill(ApplyTheme.C.green)
                     .overlay {
                         Image(systemName: "checkmark")
-                            .font(.system(size: size * 0.48, weight: .bold))
+                            .font(.system(size: renderedSize * 0.48, weight: .bold))
                             .foregroundStyle(.white)
                     }
             case .inProgress:
-                Circle()
-                    .stroke(ApplyTheme.C.navy, lineWidth: 2)
+                Circle().stroke(ApplyTheme.C.navy, lineWidth: renderedStrokeWidth)
             case .notStarted:
-                Circle()
-                    .stroke(ApplyTheme.C.control, lineWidth: 2)
+                Circle().stroke(ApplyTheme.C.control, lineWidth: renderedStrokeWidth)
             }
         }
-        .frame(width: size, height: size)
+        .frame(width: renderedSize, height: renderedSize)
         .accessibilityHidden(true)
     }
 }

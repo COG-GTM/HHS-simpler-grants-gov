@@ -7,10 +7,10 @@ import SGModels
 public final class SubmittedViewModel {
     public let applicationId: String
     public let trackingNumber: String?
+    public let submittedAt: Date
     public private(set) var closingDate: String?
 
     private let dataSource: any GrantsDataSource
-    private let now: @Sendable () -> Date
 
     public init(
         applicationId: String,
@@ -20,11 +20,9 @@ public final class SubmittedViewModel {
     ) {
         self.applicationId = applicationId
         self.trackingNumber = trackingNumber
+        submittedAt = now()
         self.dataSource = dataSource
-        self.now = now
     }
-
-    public var submittedAt: Date { now() }
 
     public func load() async {
         guard let application = try? await dataSource.application(id: applicationId) else { return }

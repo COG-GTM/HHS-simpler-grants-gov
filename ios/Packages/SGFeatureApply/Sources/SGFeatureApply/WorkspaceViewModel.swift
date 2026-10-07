@@ -123,12 +123,14 @@ public final class WorkspaceViewModel {
             organizationName = loaded.organizationName
             requiredRows = loaded.requiredRows
             optionalRows = loaded.optionalRows
-            dueDate = Self.parseDate(loaded.application.competition.closingDate, timeZone: timeZone)
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = timeZone
+            dueDate = Self.parseDate(loaded.application.competition.closingDate, calendar: calendar)
             daysRemaining = dueDate.map {
-                Calendar.current.dateComponents(
+                calendar.dateComponents(
                     [.day],
-                    from: Self.startOfDay(now(), timeZone: timeZone),
-                    to: Self.startOfDay($0, timeZone: timeZone)
+                    from: calendar.startOfDay(for: now()),
+                    to: calendar.startOfDay(for: $0)
                 ).day ?? 0
             }
             phase = .loaded
@@ -149,19 +151,13 @@ public final class WorkspaceViewModel {
         loadedApplicationId = nil
     }
 
-    private static func parseDate(_ value: String?, timeZone: TimeZone) -> Date? {
+    private static func parseDate(_ value: String?, calendar: Calendar) -> Date? {
         guard let value else { return nil }
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.timeZone = timeZone
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.date(from: value)
-    }
-
-    private static func startOfDay(_ date: Date, timeZone: TimeZone) -> Date {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = timeZone
-        return calendar.startOfDay(for: date)
     }
 }

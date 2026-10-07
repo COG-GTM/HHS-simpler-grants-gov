@@ -33,13 +33,15 @@ public struct LocalAuthenticationAuthorizer: SubmissionAuthorizing {
             )
             return success ? .authorized : .denied
         } catch {
-            guard let authenticationError = error as? LAError else { return .unavailable }
-            switch authenticationError.code {
-            case .userCancel, .userFallback, .authenticationFailed:
-                return .denied
-            default:
-                return .unavailable
+            if let authenticationError = error as? LAError {
+                switch authenticationError.code {
+                case .biometryNotAvailable, .biometryNotEnrolled:
+                    return .unavailable
+                default:
+                    break
+                }
             }
+            return .denied
         }
         #else
         return .unavailable
