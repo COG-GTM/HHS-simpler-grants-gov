@@ -1,0 +1,150 @@
+name: SimplerGrants
+
+options:
+  bundleIdPrefix: ai.cognition.demo
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: false
+
+configs:
+  Debug: debug
+  Release: release
+
+packages:
+  SGModels:
+    path: Packages/SGModels
+  SGDesign:
+    path: Packages/SGDesign
+  SGCore:
+    path: Packages/SGCore
+  SGNetworking:
+    path: Packages/SGNetworking
+  SGSampleData:
+    path: Packages/SGSampleData
+  SGAsk:
+    path: Packages/SGAsk
+  SGForms:
+    path: Packages/SGForms
+  SGFeatureOnboarding:
+    path: Packages/SGFeatureOnboarding
+  SGFeatureAsk:
+    path: Packages/SGFeatureAsk
+  SGFeatureSearch:
+    path: Packages/SGFeatureSearch
+  SGFeatureApply:
+    path: Packages/SGFeatureApply
+  SGFeatureProfile:
+    path: Packages/SGFeatureProfile
+  SwiftSnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing
+    exactVersion: 1.17.6
+
+targets:
+  SimplerGrants:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: App
+        excludes:
+          - Info.plist
+          - PrivacyInfo.xcprivacy
+    resources:
+      - path: App/PrivacyInfo.xcprivacy
+    dependencies:
+      - package: SGModels
+      - package: SGDesign
+      - package: SGCore
+      - package: SGNetworking
+      - package: SGSampleData
+      - package: SGAsk
+      - package: SGForms
+      - package: SGFeatureOnboarding
+      - package: SGFeatureAsk
+      - package: SGFeatureSearch
+      - package: SGFeatureApply
+      - package: SGFeatureProfile
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.cognition.demo.simplergrants
+        PRODUCT_NAME: SimplerGrants
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: App/Info.plist
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: NO
+
+  SimplerGrantsTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: AppTests
+    dependencies:
+      - target: SimplerGrants
+      - package: SGCore
+      - package: SGModels
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.cognition.demo.simplergrants.tests
+        GENERATE_INFOPLIST_FILE: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+
+  SimplerGrantsSnapshotTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: SnapshotTests
+    dependencies:
+      - target: SimplerGrants
+      - package: SGDesign
+      - package: SwiftSnapshotTesting
+        product: SnapshotTesting
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.cognition.demo.simplergrants.snapshottests
+        GENERATE_INFOPLIST_FILE: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+
+  SimplerGrantsUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: AppUITests
+    dependencies:
+      - target: SimplerGrants
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.cognition.demo.simplergrants.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        TEST_TARGET_NAME: SimplerGrants
+
+schemes:
+  SimplerGrants:
+    build:
+      targets:
+        SimplerGrants: all
+        SimplerGrantsTests: [test]
+        SimplerGrantsSnapshotTests: [test]
+        SimplerGrantsUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - SimplerGrantsTests
+        - SimplerGrantsSnapshotTests
+        - SimplerGrantsUITests
+    run:
+      config: Debug
+    archive:
+      config: Release

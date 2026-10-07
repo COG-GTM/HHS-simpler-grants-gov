@@ -60,7 +60,7 @@ fi
 
 psql -d postgres -v ON_ERROR_STOP=1 -c \
   "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app') THEN CREATE ROLE app LOGIN PASSWORD 'secret123'; ELSE ALTER ROLE app WITH LOGIN PASSWORD 'secret123'; END IF; END \$\$;"
-if ! psql -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = 'app'" | rg -q '^1$'; then
+if ! psql -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = 'app'" | grep -qE '^1$'; then
   createdb -O app app
 fi
 
@@ -94,14 +94,14 @@ PY
 
 if ! curl -fsS http://127.0.0.1:9200/_cluster/health >/dev/null 2>&1; then
   if lsof -nP -iTCP:9200 -sTCP:LISTEN >/dev/null 2>&1; then
-    if brew services list | rg -q '^opensearch[[:space:]]+started'; then
+    if brew services list | grep -qE '^opensearch[[:space:]]+started'; then
       brew services restart opensearch
     else
       printf 'Port 9200 is already in use by a non-Homebrew OpenSearch service\n' >&2
       exit 1
     fi
   else
-    if brew services list | rg -q '^opensearch[[:space:]]+error'; then
+    if brew services list | grep -qE '^opensearch[[:space:]]+error'; then
       brew services stop opensearch || true
     fi
     brew services start opensearch
