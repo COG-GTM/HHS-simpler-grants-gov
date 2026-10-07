@@ -49,6 +49,9 @@ public final class ProfileModel {
         let loadID = UUID()
         activeLoadID = loadID
         loadingUserId = userId
+        organization = nil
+        savedOpportunityIds = []
+        savedOpportunities = []
         isLoading = true
         isLoaded = false
         loadedUserId = nil
@@ -61,10 +64,22 @@ public final class ProfileModel {
             }
         }
 
+        var organizationLoaded = false
         do {
             let organizations = try await dataSource.organizations()
             guard activeLoadID == loadID else { return }
+            organization = organizations.first
+            organizationLoaded = true
+        } catch {
+            guard activeLoadID == loadID else { return }
+            organization = nil
+            if loadError == nil {
+                loadError = Self.grantsError(from: error)
+            }
+        }
 
+        var savedOpportunitiesLoaded = false
+        do {
             let opportunityIds = try await dataSource.savedOpportunityIds()
             guard activeLoadID == loadID else { return }
 
@@ -90,17 +105,22 @@ public final class ProfileModel {
             }
 
             guard activeLoadID == loadID else { return }
-            organization = organizations.first
             savedOpportunityIds = opportunityIds
             savedOpportunities = opportunities
-            loadedUserId = userId
-            isLoaded = true
+            savedOpportunitiesLoaded = true
         } catch {
             guard activeLoadID == loadID else { return }
-            organization = nil
             savedOpportunityIds = []
             savedOpportunities = []
-            loadError = Self.grantsError(from: error)
+            if loadError == nil {
+                loadError = Self.grantsError(from: error)
+            }
+        }
+
+        guard activeLoadID == loadID else { return }
+        if organizationLoaded && savedOpportunitiesLoaded {
+            loadedUserId = userId
+            isLoaded = true
         }
     }
 

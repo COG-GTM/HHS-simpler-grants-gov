@@ -26,6 +26,9 @@ final class ProfileModelTests: XCTestCase {
         XCTAssertFalse(model.isLoading)
 
         await model.load(from: ProfileModelTestDataSource(failOrganizations: true), userId: "user-B")
+        XCTAssertNil(model.organization)
+        XCTAssertFalse(model.savedOpportunityIds.isEmpty)
+        XCTAssertFalse(model.savedOpportunities.isEmpty)
         XCTAssertNotNil(model.loadError)
         XCTAssertNil(model.loadedUserId)
         XCTAssertFalse(model.isLoaded)
@@ -35,14 +38,29 @@ final class ProfileModelTests: XCTestCase {
         XCTAssertEqual(model.loadedUserId, "user-B")
         XCTAssertTrue(model.isLoaded)
     }
+
+    func testSavedOpportunityFailureRetainsOrganizationAndLeavesSavedDataEmpty() async {
+        let model = ProfileModel()
+        let dataSource = ProfileModelTestDataSource(failSavedOpportunityIds: true)
+
+        await model.load(from: dataSource, userId: "user-A")
+        XCTAssertNotNil(model.organization)
+        XCTAssertTrue(model.savedOpportunityIds.isEmpty)
+        XCTAssertTrue(model.savedOpportunities.isEmpty)
+        XCTAssertNotNil(model.loadError)
+        XCTAssertNil(model.loadedUserId)
+        XCTAssertFalse(model.isLoaded)
+    }
 }
 
 private struct ProfileModelTestDataSource: GrantsDataSource {
     private let base = PreviewDataSource()
     private let failOrganizations: Bool
+    private let failSavedOpportunityIds: Bool
 
-    init(failOrganizations: Bool = false) {
+    init(failOrganizations: Bool = false, failSavedOpportunityIds: Bool = false) {
         self.failOrganizations = failOrganizations
+        self.failSavedOpportunityIds = failSavedOpportunityIds
     }
 
     func searchOpportunities(_ request: SearchRequest) async throws -> SearchResponse {
@@ -105,7 +123,10 @@ private struct ProfileModelTestDataSource: GrantsDataSource {
     }
 
     func savedOpportunityIds() async throws -> Set<String> {
-        try await base.savedOpportunityIds()
+        if failSavedOpportunityIds {
+            throw GrantsError.offline
+        }
+        return try await base.savedOpportunityIds()
     }
 
     func setSaved(_ saved: Bool, opportunityId: String) async throws {
