@@ -29,6 +29,8 @@ env:
   XCODE_PATH: /Applications/Xcode_26.6.app
   SG_SIM_DEVICE: iPhone 17
   SG_SIM_OS: "26.5"
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
 
 jobs:
   l10n-lint:

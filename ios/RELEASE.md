@@ -34,6 +34,9 @@ review as required.
 
 Verify each item against the current App Review Guidelines before submission:
 
+- **2.2 Beta Testing:** demos, betas, and trial versions do not belong on the
+  App Store. This build can only go to TestFlight until it is a real product
+  with sample data and `DemoBanner` removed.
 - **4.2 Minimum Functionality:** the app has native SwiftUI search, filters,
   ask, and apply flows; document that it is not a web wrapper.
 - **4.8 Login Services:** Login.gov is a government citizen identity system.
@@ -65,8 +68,8 @@ Nutrition Labels. Section 508 release checklist:
 - [ ] Dynamic Type through AX5 / XXXL
 - [ ] Interactive targets at least 44 pt
 - [ ] Text contrast at least 4.5:1
-- [ ] Status communicated by more than colour alone
-- [ ] Reduce Motion behaviour
+- [ ] Status communicated by more than color alone
+- [ ] Reduce Motion behavior
 - [ ] Keyboard and Switch Control operation
 - [ ] Captions (not applicable to the current app)
 - [ ] Accessibility audit in UI tests
@@ -81,6 +84,12 @@ Nutrition Labels. Section 508 release checklist:
   `X-SGG-Token` or `X-API-Key`. Never embed an API key in the app. Provide a
   rate-limited backend proxy/BFF or an anonymous token strategy.
 - Remove sample data, `DemoBanner` and the `(Demo)` display name.
+- Replace the hard-coded `CFBundleVersion` (`1`) and
+  `CFBundleShortVersionString` (`1.0`) in `ios/App/Info.plist` with
+  `$(CURRENT_PROJECT_VERSION)` and `$(MARKETING_VERSION)`. The project uses
+  `GENERATE_INFOPLIST_FILE = NO`. Increment the build number for each
+  TestFlight upload, for example `latest_testflight_build_number + 1`; every
+  upload needs a unique build number.
 - Configure the approved production endpoint.
 - Review the real submission flow end to end.
 - Complete the agency security review and Authority to Operate (ATO).
@@ -90,16 +99,23 @@ Nutrition Labels. Section 508 release checklist:
 
 From the repository root:
 
+Setup: install XcodeGen with `brew install xcodegen`, use Ruby 3.4, and run
+`bundle install` from `ios/`.
+
 ```bash
 cd ios
 xcodegen generate
+bundle install
 bundle exec fastlane brand_assets
 bundle exec fastlane test
 bundle exec fastlane ui_test
 bundle exec fastlane build_sim
 bundle exec fastlane archive_unsigned
 bundle exec fastlane beta
+./scripts/ci-local.sh
+./scripts/lint-localization.sh --self-test
+./scripts/lint-localization.sh
 ```
 
-Use Ruby 3.4 for Bundler and Fastlane. The `beta` lane needs the App Store
-Connect variables above and does not run without an Apple team.
+The `beta` lane needs the App Store Connect variables above and does not run
+without an Apple team.

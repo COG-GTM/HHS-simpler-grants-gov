@@ -1,7 +1,9 @@
 import AppKit
 import CoreText
 import Foundation
+import ImageIO
 
+let srgb = CGColorSpace(name: CGColorSpace.sRGB)!
 let repositoryRoot = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 let iosDirectory = repositoryRoot.appendingPathComponent("ios")
 let assetsDirectory = iosDirectory.appendingPathComponent("App/Assets.xcassets")
@@ -41,7 +43,7 @@ struct Canvas {
             height: height,
             bitsPerComponent: 8,
             bytesPerRow: width * 4,
-            space: CGColorSpaceCreateDeviceRGB(),
+            space: srgb,
             bitmapInfo: alphaInfo.rawValue
         )!
     }
@@ -100,9 +102,76 @@ func writeJSON(_ object: Any, to url: URL) throws {
     try data.write(to: url)
 }
 
-let navy = CGColor(red: 31 / 255, green: 61 / 255, blue: 110 / 255, alpha: 1)
-let sparkColor = CGColor(red: 232 / 255, green: 237 / 255, blue: 245 / 255, alpha: 1)
-let secondary = CGColor(red: 90 / 255, green: 96 / 255, blue: 112 / 255, alpha: 1)
+func validateAppIcon(at url: URL) throws {
+    guard
+        let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+        let image = CGImageSourceCreateImageAtIndex(source, 0, nil)
+    else {
+        throw NSError(
+            domain: "BrandAssets",
+            code: 3,
+            userInfo: [NSLocalizedDescriptionKey: "Could not read generated AppIcon.png"]
+        )
+    }
+    let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any]
+    let hasAlphaChannel: Bool
+    switch image.alphaInfo {
+    case .premultipliedLast, .premultipliedFirst, .last, .first, .alphaOnly:
+        hasAlphaChannel = true
+    case .none, .noneSkipFirst, .noneSkipLast:
+        hasAlphaChannel = false
+    @unknown default:
+        hasAlphaChannel = true
+    }
+    guard
+        properties?[kCGImagePropertyHasAlpha] as? Bool != true,
+        !hasAlphaChannel
+    else {
+        throw NSError(
+            domain: "BrandAssets",
+            code: 4,
+            userInfo: [NSLocalizedDescriptionKey: "Generated AppIcon.png must not have an alpha channel"]
+        )
+    }
+    guard
+        let context = CGContext(
+            data: nil,
+            width: image.width,
+            height: image.height,
+            bitsPerComponent: 8,
+            bytesPerRow: image.width * 4,
+            space: srgb,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ),
+        let data = context.data
+    else {
+        throw NSError(
+            domain: "BrandAssets",
+            code: 5,
+            userInfo: [NSLocalizedDescriptionKey: "Could not create sRGB AppIcon.png validation bitmap"]
+        )
+    }
+    context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+    let pixels = data.assumingMemoryBound(to: UInt8.self)
+    let offset = (16 * image.width + 16) * 4
+    let actual = (0..<3).map { Int(pixels[offset + $0]) }
+    let expected = [31, 61, 110]
+    guard zip(actual, expected).allSatisfy({ abs($0.0 - $0.1) <= 1 }) else {
+        throw NSError(
+            domain: "BrandAssets",
+            code: 6,
+            userInfo: [
+                NSLocalizedDescriptionKey:
+                    "Generated AppIcon.png pixel (16,16) is \(actual); expected (31,61,110) ±1"
+            ]
+        )
+    }
+    print("AppIcon sRGB self-check passed: pixel (16,16) = \(actual), no alpha.")
+}
+
+let navy = CGColor(colorSpace: srgb, components: [31 / 255, 61 / 255, 110 / 255, 1])!
+let sparkColor = CGColor(colorSpace: srgb, components: [232 / 255, 237 / 255, 245 / 255, 1])!
+let secondary = CGColor(colorSpace: srgb, components: [90 / 255, 96 / 255, 112 / 255, 1])!
 let serif = try font(named: "SourceSerif4-Semibold.ttf", size: 1000)
 let publicSansSemibold = try font(named: "PublicSans-SemiBold.ttf", size: 15)
 let publicSansRegular = try font(named: "PublicSans-Regular.ttf", size: 13)
@@ -123,7 +192,7 @@ let iconFont = CTFontCreateCopyWithAttributes(
 let wordBounds = drawLine(
     "SG",
     font: iconFont,
-    color: CGColor(gray: 1, alpha: 1),
+    color: CGColor(colorSpace: srgb, components: [1, 1, 1, 1])!,
     center: CGPoint(x: CGFloat(iconSize) / 2, y: CGFloat(iconSize) / 2),
     context: iconContext
 )
@@ -163,7 +232,7 @@ try writeJSON(
 
 let preview = Canvas(width: iconSize, height: iconSize)
 let previewContext = preview.context
-previewContext.setFillColor(CGColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1))
+previewContext.setFillColor(CGColor(colorSpace: srgb, components: [0.9, 0.9, 0.9, 1])!)
 previewContext.fill(CGRect(x: 0, y: 0, width: iconSize, height: iconSize))
 let roundedRect = CGPath(
     roundedRect: CGRect(x: 0, y: 0, width: iconSize, height: iconSize),
@@ -252,3 +321,4 @@ try writeJSON(
     ],
     to: wordmarkSet.appendingPathComponent("Contents.json")
 )
+try validateAppIcon(at: iconSet.appendingPathComponent("AppIcon.png"))

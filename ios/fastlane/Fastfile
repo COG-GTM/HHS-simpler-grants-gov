@@ -150,6 +150,7 @@ platform :ios do
 
     generate_project
     build_app(
+      project: PROJECT_PATH,
       scheme: SCHEME,
       export_method: "app-store",
       output_directory: OUTPUT_DIR,

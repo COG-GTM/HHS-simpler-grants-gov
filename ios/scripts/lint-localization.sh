@@ -31,9 +31,6 @@ def is_skipped_directory(path):
 
 
 def files_under(root, suffix):
-    for directory in sorted(path for path in root.rglob("*") if path.is_dir()):
-        if is_skipped_directory(directory.relative_to(root)):
-            continue
     for path in sorted(root.rglob(f"*{suffix}")):
         relative = path.relative_to(root)
         if any(is_skipped_directory(Path(*relative.parts[:index])) for index in range(1, len(relative.parts))):
@@ -312,6 +309,9 @@ def self_test():
         ("raw literal in preview", "preview", None),
         ("interpolation-only text", "interpolation", None),
         ("bundle main resolves to App table", "main", None),
+        ("missing InfoPlist localization", "missing_info", "missing InfoPlist localization"),
+        ("unparseable .strings line", "unparseable", "does not parse"),
+        ("raw Button literal", "button", "user-facing string literal"),
     ]
     failures = []
     with tempfile.TemporaryDirectory(prefix="ios-l10n-self-test-") as temporary:
@@ -347,6 +347,18 @@ def self_test():
                     root / "Packages/Pkg/Sources/Pkg/Example.swift",
                     '"main.known".localized(bundle: .main)\n',
                 )
+            elif case == "missing_info":
+                write(
+                    root / "App/Resources/Localization/en.lproj/InfoPlist.strings",
+                    '"OtherKey" = "Other";\n',
+                )
+            elif case == "unparseable":
+                write(
+                    root / "App/Resources/Localization/en.lproj/Localizable.strings",
+                    '"hello" = "Hello";\nnot a valid entry\n"main.known" = "Known";\n',
+                )
+            elif case == "button":
+                write(root / "App/Example.swift", 'var body: some View { Button("Save") {} }\n')
 
             output = io.StringIO()
             with contextlib.redirect_stdout(output), contextlib.redirect_stderr(output):
