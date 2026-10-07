@@ -1,6 +1,7 @@
 "apply.error.load" = "We couldn't load this application. Please try again.";
 "apply.form.back" = "Forms";
 "apply.form.continue" = "Save and continue";
+"apply.form.attachment_failed" = "We couldn't attach that file. Try again.";
 "apply.form.offline" = "You're offline. Your answers are saved on this iPhone.";
 "apply.form.prefill_helper" = "Pre-filled from your organization's SAM.gov registration. Check each field.";
 "apply.form.progress" = "Form progress";

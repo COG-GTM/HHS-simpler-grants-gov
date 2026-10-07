@@ -1,3 +1,4 @@
+import Foundation
 import SGForms
 import SGModels
 
@@ -78,6 +79,22 @@ public enum ApplyFormStateLogic {
         let suffix = "(\(shortName))"
         guard formName.hasSuffix(suffix) else { return formName }
         return "\(shortName) \(formName.dropLast(suffix.count).trimmingCharacters(in: .whitespacesAndNewlines))"
+    }
+
+    public static func navTitle(
+        formName: String?,
+        shortName: String?,
+        formId: String
+    ) -> String {
+        let firstToken = formName?
+            .split(whereSeparator: \.isWhitespace)
+            .first
+            .map { String($0) }
+        if let firstToken,
+           firstToken.range(of: #"^[A-Z]{2,}-[A-Z0-9]+$"#, options: .regularExpression) != nil {
+            return firstToken
+        }
+        return shortName ?? formId
     }
 
     private static func isNonEmptyObject(_ value: JSONValue) -> Bool {

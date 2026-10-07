@@ -155,6 +155,38 @@ final class ApplyFeatureTests: XCTestCase {
         )
         XCTAssertEqual(ApplyFormStateLogic.displayName(formName: nil, shortName: nil), "")
         XCTAssertEqual(
+            ApplyFormStateLogic.navTitle(
+                formName: "SF-424 Application for Federal Assistance",
+                shortName: "SF424_4_0",
+                formId: "sf424"
+            ),
+            "SF-424"
+        )
+        XCTAssertEqual(
+            ApplyFormStateLogic.navTitle(
+                formName: "SF-LLL Disclosure of Lobbying Activities",
+                shortName: "SFLLL_2_0",
+                formId: "sf-lll"
+            ),
+            "SF-LLL"
+        )
+        XCTAssertEqual(
+            ApplyFormStateLogic.navTitle(
+                formName: "Project Narrative",
+                shortName: "ProjectNarrative_1_0",
+                formId: "project-narrative"
+            ),
+            "ProjectNarrative_1_0"
+        )
+        XCTAssertEqual(
+            ApplyFormStateLogic.navTitle(
+                formName: nil,
+                shortName: "SF424_4_0",
+                formId: "sf424"
+            ),
+            "SF424_4_0"
+        )
+        XCTAssertEqual(
             workspaceStateDescription(.inProgress(completedSteps: 0, totalSteps: 1)),
             "In progress"
         )
@@ -500,6 +532,7 @@ final class ApplyFeatureTests: XCTestCase {
     @MainActor
     func testAttachSingleRequiredAttachmentAndValidate() async throws {
         let definition = attachmentFormDefinition(array: false)
+        let attachmentStore = InMemoryApplyAttachmentStore()
         let viewModel = FormScreenViewModel(
             applicationId: "apply-demo",
             formId: "sf424",
@@ -509,6 +542,7 @@ final class ApplyFeatureTests: XCTestCase {
             ),
             draftStore: SpyDraftStore(),
             progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
             autosaveDelay: .seconds(30)
         )
         await viewModel.load()
@@ -518,7 +552,7 @@ final class ApplyFeatureTests: XCTestCase {
         XCTAssertEqual(field.kind, .attachment)
         XCTAssertEqual(FormValidator.validate(viewModel.values, section: section, model: model).count, 1)
 
-        viewModel.attach(FormAttachmentRequest(
+        await viewModel.attachFiles(FormAttachmentRequest(
             field: field,
             path: field.dataPath,
             urls: [URL(fileURLWithPath: "/fictional/required-support.pdf")]
@@ -535,6 +569,7 @@ final class ApplyFeatureTests: XCTestCase {
     @MainActor
     func testAttachMultipleFilesAppendsToAttachmentArray() async throws {
         let definition = attachmentFormDefinition(array: true)
+        let attachmentStore = InMemoryApplyAttachmentStore()
         let viewModel = FormScreenViewModel(
             applicationId: "apply-demo",
             formId: "sf424",
@@ -544,6 +579,7 @@ final class ApplyFeatureTests: XCTestCase {
             ),
             draftStore: SpyDraftStore(),
             progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
             autosaveDelay: .seconds(30)
         )
         await viewModel.load()
@@ -553,7 +589,7 @@ final class ApplyFeatureTests: XCTestCase {
         XCTAssertEqual(field.kind, .attachmentArray)
         viewModel.values.setValue(.array([.string("existing-attachment")]), at: field.dataPath)
 
-        viewModel.attach(FormAttachmentRequest(
+        await viewModel.attachFiles(FormAttachmentRequest(
             field: field,
             path: field.dataPath,
             urls: [
@@ -575,6 +611,104 @@ final class ApplyFeatureTests: XCTestCase {
         XCTAssertEqual(viewModel.attachmentNames[newIds[0]], "first-support.pdf")
         XCTAssertEqual(viewModel.attachmentNames[newIds[1]], "second-support.pdf")
         XCTAssertTrue(FormValidator.validate(viewModel.values, section: section, model: model).isEmpty)
+    }
+
+    @MainActor
+    func testFailedAttachmentStoreLeavesValuesUnchangedAndShowsBanner() async throws {
+        let definition = attachmentFormDefinition(array: false)
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            attachmentStore: InMemoryApplyAttachmentStore(shouldFail: true),
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let model = try XCTUnwrap(viewModel.model)
+        let field = try XCTUnwrap(model.sections.first?.fields.first)
+        let originalValues = viewModel.values
+
+        await viewModel.attachFiles(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/failed-support.pdf")]
+        ))
+
+        XCTAssertEqual(viewModel.values, originalValues)
+        XCTAssertTrue(viewModel.attachmentNames.isEmpty)
+        XCTAssertEqual(
+            viewModel.bannerMessage,
+            "We couldn't attach that file. Try again."
+        )
+    }
+
+    @MainActor
+    func testLoadRestoresAttachmentNamesFromStore() async throws {
+        let attachmentStore = InMemoryApplyAttachmentStore()
+        let stored = try await attachmentStore.store(
+            URL(fileURLWithPath: "/fictional/restored-support.pdf"),
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(scenario: .inProgress),
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
+            autosaveDelay: .seconds(30)
+        )
+
+        await viewModel.load()
+
+        XCTAssertEqual(viewModel.attachmentNames[stored.id], stored.name)
+    }
+
+    func testFileAttachmentStoreCopiesFileAndPersistsNames() async throws {
+        let temporaryDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("apply-attachment-\(UUID().uuidString)", isDirectory: true)
+        let applicationSupportURL = temporaryDirectory.appendingPathComponent(
+            "application-support",
+            isDirectory: true
+        )
+        let sourceDirectory = temporaryDirectory.appendingPathComponent("source", isDirectory: true)
+        try FileManager.default.createDirectory(
+            at: sourceDirectory,
+            withIntermediateDirectories: true
+        )
+        defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
+        let sourceURL = sourceDirectory.appendingPathComponent("support.pdf")
+        let sourceContents = Data("sample attachment".utf8)
+        try sourceContents.write(to: sourceURL)
+        let store = FileApplyAttachmentStore(applicationSupportURL: applicationSupportURL)
+
+        let stored = try await store.store(
+            sourceURL,
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+
+        let formDirectory = applicationSupportURL
+            .appendingPathComponent("SGApply", isDirectory: true)
+            .appendingPathComponent("attachments", isDirectory: true)
+            .appendingPathComponent("apply-demo", isDirectory: true)
+            .appendingPathComponent("sf424", isDirectory: true)
+        let copiedURL = formDirectory
+            .appendingPathComponent(stored.id, isDirectory: true)
+            .appendingPathComponent("support.pdf")
+        XCTAssertEqual(try Data(contentsOf: copiedURL), sourceContents)
+        XCTAssertTrue(stored.id.hasPrefix("demo-attachment-"))
+        let attachmentNames = await store.names(applicationId: "apply-demo", formId: "sf424")
+        XCTAssertEqual(attachmentNames[stored.id], "support.pdf")
+        let namesData = try Data(contentsOf: formDirectory.appendingPathComponent("names.json"))
+        let persistedNames = try JSONDecoder().decode([String: String].self, from: namesData)
+        XCTAssertEqual(persistedNames[stored.id], "support.pdf")
     }
 
     @MainActor
@@ -1202,6 +1336,38 @@ private actor SpyDraftStore: DraftStore {
     }
 
     func removeDraft(applicationId: String, formId: String) async throws {}
+}
+
+private actor InMemoryApplyAttachmentStore: ApplyAttachmentStore {
+    private var namesByForm: [String: [String: String]] = [:]
+    private let shouldFail: Bool
+
+    init(shouldFail: Bool = false) {
+        self.shouldFail = shouldFail
+    }
+
+    func store(
+        _ url: URL,
+        applicationId: String,
+        formId: String
+    ) async throws -> (id: String, name: String) {
+        guard !shouldFail else { throw AttachmentStoreTestError.failed }
+        let id = "demo-attachment-\(UUID().uuidString)"
+        let name = url.lastPathComponent
+        let key = "\(applicationId)/\(formId)"
+        var names = namesByForm[key] ?? [:]
+        names[id] = name
+        namesByForm[key] = names
+        return (id, name)
+    }
+
+    func names(applicationId: String, formId: String) async -> [String: String] {
+        namesByForm["\(applicationId)/\(formId)"] ?? [:]
+    }
+}
+
+private enum AttachmentStoreTestError: Error {
+    case failed
 }
 
 private final class IncrementingClock: @unchecked Sendable {

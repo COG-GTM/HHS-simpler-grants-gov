@@ -11,6 +11,7 @@ public struct FormScreenView: View {
     @Environment(\.grantsDataSource) private var dataSource
     @Environment(\.applyDraftStore) private var draftStore
     @Environment(\.applyProgressStore) private var progressStore
+    @Environment(\.applyAttachmentStore) private var attachmentStore
     @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: FormScreenViewModel?
 
@@ -95,7 +96,8 @@ public struct FormScreenView: View {
                     formId: formId,
                     dataSource: ApplyDebugContext.dataSource(default: dataSource),
                     draftStore: draftStore,
-                    progressStore: ApplyDebugContext.progressStore(default: progressStore)
+                    progressStore: ApplyDebugContext.progressStore(default: progressStore),
+                    attachmentStore: attachmentStore
                 )
                 self.viewModel = vm
                 await vm.load()
@@ -288,11 +290,11 @@ public struct FormScreenView: View {
             Text(validationSummaryMessage(fieldCount: errors.count))
                 .font(ApplyTheme.F.sans(14, .semibold))
                 .foregroundStyle(ApplyTheme.C.soonFg)
-                    ForEach(Array(errors.enumerated()), id: \.offset) { _, error in
-                        Text(error.message)
-                            .font(ApplyTheme.F.sans(13))
-                            .foregroundStyle(ApplyTheme.C.red)
-                    }
+            ForEach(Array(errors.enumerated()), id: \.offset) { _, error in
+                Text(error.message)
+                    .font(ApplyTheme.F.sans(13))
+                    .foregroundStyle(ApplyTheme.C.red)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)

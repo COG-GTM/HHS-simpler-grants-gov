@@ -5,6 +5,10 @@ private struct ApplyProgressStoreKey: EnvironmentKey {
     static let defaultValue: any FormProgressStore = UserDefaultsFormProgressStore()
 }
 
+private struct ApplyAttachmentStoreKey: EnvironmentKey {
+    static let defaultValue: any ApplyAttachmentStore = FileApplyAttachmentStore()
+}
+
 private struct ApplyNowKey: EnvironmentKey {
     static let defaultValue: @Sendable () -> Date = { Date() }
 }
@@ -22,6 +26,11 @@ public extension EnvironmentValues {
     var applyProgressStore: any FormProgressStore {
         get { self[ApplyProgressStoreKey.self] }
         set { self[ApplyProgressStoreKey.self] = newValue }
+    }
+
+    var applyAttachmentStore: any ApplyAttachmentStore {
+        get { self[ApplyAttachmentStoreKey.self] }
+        set { self[ApplyAttachmentStoreKey.self] = newValue }
     }
 
     var applyNow: @Sendable () -> Date {

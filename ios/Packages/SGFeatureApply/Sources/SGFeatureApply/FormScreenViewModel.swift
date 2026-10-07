@@ -52,6 +52,7 @@ public final class FormScreenViewModel {
     private let dataSource: any GrantsDataSource
     private let draftStore: any DraftStore
     private let progressStore: any FormProgressStore
+    private let attachmentStore: any ApplyAttachmentStore
     private let validator: @Sendable (JSONValue, FormSection, FormModel) -> [FieldError]
     private let autosaveDelay: Duration
     private var autosaveTask: Task<Void, Never>?
@@ -67,6 +68,7 @@ public final class FormScreenViewModel {
         dataSource: any GrantsDataSource,
         draftStore: any DraftStore,
         progressStore: any FormProgressStore,
+        attachmentStore: any ApplyAttachmentStore = FileApplyAttachmentStore(),
         validator: @escaping @Sendable (JSONValue, FormSection, FormModel) -> [FieldError] = {
             values, section, model in
             FormValidator.validate(values, section: section, model: model)
@@ -78,6 +80,7 @@ public final class FormScreenViewModel {
         self.dataSource = dataSource
         self.draftStore = draftStore
         self.progressStore = progressStore
+        self.attachmentStore = attachmentStore
         self.validator = validator
         self.autosaveDelay = autosaveDelay
     }
@@ -87,6 +90,7 @@ public final class FormScreenViewModel {
         formId: String,
         dataSource: any GrantsDataSource,
         progressStore: any FormProgressStore,
+        attachmentStore: any ApplyAttachmentStore = FileApplyAttachmentStore(),
         validator: @escaping @Sendable (JSONValue, FormSection, FormModel) -> [FieldError] = {
             values, section, model in
             FormValidator.validate(values, section: section, model: model)
@@ -99,6 +103,7 @@ public final class FormScreenViewModel {
             dataSource: dataSource,
             draftStore: InMemoryApplyDraftStore(),
             progressStore: progressStore,
+            attachmentStore: attachmentStore,
             validator: validator,
             autosaveDelay: autosaveDelay
         )
@@ -134,6 +139,10 @@ public final class FormScreenViewModel {
             } else {
                 definition = try await dataSource.form(id: formId)
             }
+            let restoredAttachmentNames = await attachmentStore.names(
+                applicationId: applicationId,
+                formId: formId
+            )
             let formModel = try FormModel(definition: definition)
             let loadedDisplayName = ApplyFormStateLogic.displayName(
                 formName: definition.formName,
@@ -196,12 +205,17 @@ public final class FormScreenViewModel {
 
             suppressAutosave = true
             formDisplayName = loadedDisplayName
-            shortName = definition.shortFormName ?? definition.formId
+            shortName = ApplyFormStateLogic.navTitle(
+                formName: definition.formName,
+                shortName: definition.shortFormName,
+                formId: definition.formId
+            )
             model = formModel
             steps = loadedSteps
             values = loadedValues
             prefill = loadedPrefill
             prefilledPaths = loadedPrefilledPaths
+            attachmentNames = restoredAttachmentNames
             sectionErrors = [:]
             revealedSectionErrors = [:]
             let storedProgressIds = await progressStore.completedSections(
@@ -386,12 +400,31 @@ public final class FormScreenViewModel {
     }
 
     public func attach(_ request: FormAttachmentRequest) {
+        Task { await attachFiles(request) }
+    }
+
+    func attachFiles(_ request: FormAttachmentRequest) async {
         guard !request.urls.isEmpty else { return }
-        let ids = request.urls.map { url in
-            let id = "demo-attachment-\(UUID().uuidString)"
-            attachmentNames[id] = url.lastPathComponent
-            return id
+        var attachments: [(id: String, name: String)] = []
+        do {
+            for url in request.urls {
+                attachments.append(
+                    try await attachmentStore.store(
+                        url,
+                        applicationId: applicationId,
+                        formId: formId
+                    )
+                )
+            }
+        } catch {
+            bannerMessage = "apply.form.attachment_failed".localized(bundle: .module)
+            return
         }
+
+        for attachment in attachments {
+            attachmentNames[attachment.id] = attachment.name
+        }
+        let ids = attachments.map(\.id)
         if request.field.kind == .attachmentArray {
             let existing: [JSONValue]
             if case let .array(values)? = values.value(at: request.path) {

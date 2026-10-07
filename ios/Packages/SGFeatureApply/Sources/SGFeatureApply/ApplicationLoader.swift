@@ -79,7 +79,11 @@ enum ApplicationLoader {
                 id: formId,
                 applicationFormId: form.applicationFormId,
                 displayName: displayName,
-                shortName: form.form.shortFormName ?? formId,
+                shortName: ApplyFormStateLogic.navTitle(
+                    formName: form.form.formName,
+                    shortName: form.form.shortFormName,
+                    formId: formId
+                ),
                 isRequired: form.isRequired,
                 state: ApplyFormStateLogic.state(
                     serverStatus: form.applicationFormStatus,

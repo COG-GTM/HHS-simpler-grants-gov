@@ -87,19 +87,21 @@ public struct SubmittedView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 32)
             }
-            Button {
-                router.popToRoot(router.tab)
-                router.popToRoot(.apply)
-                router.tab = .apply
-            } label: {
-                Text("apply.submitted.done".localized(bundle: .module))
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                Button {
+                    router.popToRoot(router.tab)
+                    router.popToRoot(.apply)
+                    router.tab = .apply
+                } label: {
+                    Text("apply.submitted.done".localized(bundle: .module))
+                }
+                .buttonStyle(ApplyPrimaryButtonStyle())
+                .accessibilityIdentifier("apply.submitted.done")
+                .padding(.horizontal, 24)
+                .padding(.top, 12)
+                .padding(.bottom, 28)
+                .background(ApplyTheme.C.canvas)
             }
-            .buttonStyle(ApplyPrimaryButtonStyle())
-            .accessibilityIdentifier("apply.submitted.done")
-            .padding(.horizontal, 24)
-            .padding(.top, 12)
-            .padding(.bottom, 28)
-            .background(ApplyTheme.C.canvas)
         }
         .background(ApplyTheme.C.canvas)
         .applyDataSourceEnvironment(dataSource)
