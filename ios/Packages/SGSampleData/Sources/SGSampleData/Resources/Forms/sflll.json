@@ -1,0 +1,1487 @@
+{
+  "agency_code": "SGG",
+  "form_id": "778a1485-082a-463e-a61b-6615ccebe027",
+  "form_json_schema": {
+    "$defs": {
+      "reporting_entity_awardee": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "congressional_district": {
+            "description": "Enter the Congressional District in the format: 2 character state Abbreviation - 3 character District Number. Examples: CA-005 for California's 5th district, CA-012 for California's 12th district.",
+            "maxLength": 6,
+            "minLength": 1,
+            "title": "Congressional District",
+            "type": "string"
+          },
+          "entity_type": {
+            "description": "Entity type classification (Prime or SubAwardee). Copied from parent for XSD compliance.",
+            "enum": [
+              "Prime",
+              "SubAwardee"
+            ],
+            "title": "Entity Type",
+            "type": "string"
+          },
+          "organization_name": {
+            "allOf": [
+              {
+                "maxLength": 60,
+                "minLength": 1,
+                "title": "Organization Name",
+                "type": "string"
+              }
+            ],
+            "title": "Organization Name"
+          }
+        },
+        "required": [
+          "organization_name",
+          "address"
+        ],
+        "type": "object"
+      }
+    },
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "report_type": {
+              "const": "MaterialChange"
+            }
+          },
+          "required": [
+            "report_type"
+          ]
+        },
+        "then": {
+          "required": [
+            "material_change_year",
+            "material_change_quarter",
+            "last_report_date"
+          ]
+        }
+      }
+    ],
+    "properties": {
+      "assistance_listing_number": {
+        "description": "If known, the full Assistance Listing Number for grants, cooperative agreements, loans and loan commitments.",
+        "maxLength": 120,
+        "minLength": 1,
+        "title": "Assistance Listing Number",
+        "type": "string"
+      },
+      "award_amount": {
+        "allOf": [
+          {
+            "maxLength": 14,
+            "minLength": 1,
+            "pattern": "^(-)?\\d*([.]\\d{2})?$",
+            "type": "string"
+          }
+        ],
+        "description": "For a covered Federal action where there has been an award or loan commitment by the Federal agency, enter the Federal amount of the award/loan commitment of the prime entity identified in item 4 or 5.",
+        "title": "Award Amount"
+      },
+      "federal_action_number": {
+        "description": "Enter the most appropriate Federal identifying number available for the Federal action, identified in item 1 (e.g., Request for Proposal (RFP) number, invitation for Bid (IFB) number, grant announcement number, the contract, grant, or loan award number, the application/proposal control number assigned by the Federal agency). Include prefixes, e.g., \"RFP-DE-90-001\".",
+        "maxLength": 120,
+        "minLength": 1,
+        "title": "Federal Action Number",
+        "type": "string"
+      },
+      "federal_action_status": {
+        "description": "Identify the status of the covered Federal action.",
+        "enum": [
+          "BidOffer",
+          "InitialAward",
+          "PostAward"
+        ],
+        "title": "Status of Federal Action",
+        "type": "string"
+      },
+      "federal_action_type": {
+        "description": "Identify the type of covered Federal action for which lobbying activity is and/or has been secured to influence the outcome of a covered Federal action.",
+        "enum": [
+          "Contract",
+          "Grant",
+          "CoopAgree",
+          "Loan",
+          "LoanGuarantee",
+          "LoanInsurance"
+        ],
+        "title": "Type of Federal Action",
+        "type": "string"
+      },
+      "federal_agency_department": {
+        "description": "Enter the name of the Federal Department or Agency making the award or loan commitment.",
+        "maxLength": 40,
+        "minLength": 1,
+        "title": "Federal Department/Agency",
+        "type": "string"
+      },
+      "federal_program_name": {
+        "description": "Federal Program Name/Description: Federal program name or description for the covered Federal action.",
+        "maxLength": 120,
+        "minLength": 1,
+        "title": "Federal Program Name/Description",
+        "type": "string"
+      },
+      "individual_performing_service": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "individual": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ]
+          }
+        },
+        "required": [
+          "individual"
+        ],
+        "type": "object"
+      },
+      "last_report_date": {
+        "description": "Enter the date of the previously submitted report by this reporting entity for this covered Federal action.",
+        "format": "date",
+        "title": "Material Change Date of Last Report",
+        "type": "string"
+      },
+      "lobbying_registrant": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "individual": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ]
+          }
+        },
+        "required": [
+          "individual"
+        ],
+        "type": "object"
+      },
+      "material_change_quarter": {
+        "description": "If this is a follow up report caused by a material change to the information previously reported, enter the quarter in which the change occurred.",
+        "maximum": 4,
+        "minimum": 1,
+        "title": "Material Change Quarter",
+        "type": "integer"
+      },
+      "material_change_year": {
+        "description": "If this is a follow up report caused by a material change to the information previously reported, enter the year in which the change occurred.",
+        "pattern": "^[1-9][0-9]{3}$",
+        "title": "Material Change Year",
+        "type": "string"
+      },
+      "report_type": {
+        "description": "Identify the appropriate classification of this report.  If this is a follow up report caused by a material change to the information previously reported, enter the year and quarter in which the change occurred.  Enter the date of the previously submitted report by this reporting entity for this covered Federal action.",
+        "enum": [
+          "MaterialChange",
+          "InitialFiling"
+        ],
+        "title": "Report Type",
+        "type": "string"
+      },
+      "reporting_entity": {
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "entity_type": {
+                  "const": "SubAwardee"
+                }
+              },
+              "required": [
+                "entity_type"
+              ]
+            },
+            "then": {
+              "required": [
+                "prime_reporting_entity"
+              ]
+            }
+          }
+        ],
+        "properties": {
+          "applicant_reporting_entity": {
+            "allOf": [
+              {
+                "properties": {
+                  "address": {
+                    "allOf": [
+                      {
+                        "description": "Enter an address.",
+                        "properties": {
+                          "city": {
+                            "description": "Enter the city.",
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "title": "City",
+                            "type": "string"
+                          },
+                          "state": {
+                            "allOf": [
+                              {
+                                "description": "US State or Territory Code",
+                                "enum": [
+                                  "AL: Alabama",
+                                  "AK: Alaska",
+                                  "AZ: Arizona",
+                                  "AR: Arkansas",
+                                  "CA: California",
+                                  "CO: Colorado",
+                                  "CT: Connecticut",
+                                  "DE: Delaware",
+                                  "DC: District of Columbia",
+                                  "FL: Florida",
+                                  "GA: Georgia",
+                                  "HI: Hawaii",
+                                  "ID: Idaho",
+                                  "IL: Illinois",
+                                  "IN: Indiana",
+                                  "IA: Iowa",
+                                  "KS: Kansas",
+                                  "KY: Kentucky",
+                                  "LA: Louisiana",
+                                  "ME: Maine",
+                                  "MD: Maryland",
+                                  "MA: Massachusetts",
+                                  "MI: Michigan",
+                                  "MN: Minnesota",
+                                  "MS: Mississippi",
+                                  "MO: Missouri",
+                                  "MT: Montana",
+                                  "NE: Nebraska",
+                                  "NV: Nevada",
+                                  "NH: New Hampshire",
+                                  "NJ: New Jersey",
+                                  "NM: New Mexico",
+                                  "NY: New York",
+                                  "NC: North Carolina",
+                                  "ND: North Dakota",
+                                  "OH: Ohio",
+                                  "OK: Oklahoma",
+                                  "OR: Oregon",
+                                  "PA: Pennsylvania",
+                                  "RI: Rhode Island",
+                                  "SC: South Carolina",
+                                  "SD: South Dakota",
+                                  "TN: Tennessee",
+                                  "TX: Texas",
+                                  "UT: Utah",
+                                  "VT: Vermont",
+                                  "VA: Virginia",
+                                  "WA: Washington",
+                                  "WV: West Virginia",
+                                  "WI: Wisconsin",
+                                  "WY: Wyoming",
+                                  "AS: American Samoa",
+                                  "FM: Federated States of Micronesia",
+                                  "GU: Guam",
+                                  "MH: Marshall Islands",
+                                  "MP: Northern Mariana Islands",
+                                  "PW: Palau",
+                                  "PR: Puerto Rico",
+                                  "VI: Virgin Islands",
+                                  "FQ: Baker Island",
+                                  "HQ: Howland Island",
+                                  "DQ: Jarvis Island",
+                                  "JQ: Johnston Atoll",
+                                  "KQ: Kingman Reef",
+                                  "MQ: Midway Islands",
+                                  "BQ: Navassa Island",
+                                  "LQ: Palmyra Atoll",
+                                  "WQ: Wake Island",
+                                  "AA: Armed Forces Americas (except Canada)",
+                                  "AE: Armed Forces Europe, the Middle East, and Canada",
+                                  "AP: Armed Forces Pacific"
+                                ],
+                                "title": "State",
+                                "type": "string"
+                              }
+                            ],
+                            "description": "Enter the state.",
+                            "title": "State"
+                          },
+                          "street1": {
+                            "description": "Enter the first line of the Street Address.",
+                            "maxLength": 55,
+                            "minLength": 1,
+                            "title": "Street 1",
+                            "type": "string"
+                          },
+                          "street2": {
+                            "description": "Enter the second line of the Street Address.",
+                            "maxLength": 55,
+                            "minLength": 1,
+                            "title": "Street 2",
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                            "maxLength": 30,
+                            "minLength": 1,
+                            "title": "Zip / Postal Code",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "street1",
+                          "city"
+                        ],
+                        "title": "Address",
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "congressional_district": {
+                    "description": "Enter the Congressional District in the format: 2 character state Abbreviation - 3 character District Number. Examples: CA-005 for California's 5th district, CA-012 for California's 12th district.",
+                    "maxLength": 6,
+                    "minLength": 1,
+                    "title": "Congressional District",
+                    "type": "string"
+                  },
+                  "entity_type": {
+                    "description": "Entity type classification (Prime or SubAwardee). Copied from parent for XSD compliance.",
+                    "enum": [
+                      "Prime",
+                      "SubAwardee"
+                    ],
+                    "title": "Entity Type",
+                    "type": "string"
+                  },
+                  "organization_name": {
+                    "allOf": [
+                      {
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "title": "Organization Name",
+                        "type": "string"
+                      }
+                    ],
+                    "title": "Organization Name"
+                  }
+                },
+                "required": [
+                  "organization_name",
+                  "address"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "entity_type": {
+            "description": "Check the appropriate classification of the reporting entity that designates if it is, or expects to be, a prime subaward recipient.",
+            "enum": [
+              "Prime",
+              "SubAwardee"
+            ],
+            "title": "Entity Type",
+            "type": "string"
+          },
+          "prime_reporting_entity": {
+            "allOf": [
+              {
+                "properties": {
+                  "address": {
+                    "allOf": [
+                      {
+                        "description": "Enter an address.",
+                        "properties": {
+                          "city": {
+                            "description": "Enter the city.",
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "title": "City",
+                            "type": "string"
+                          },
+                          "state": {
+                            "allOf": [
+                              {
+                                "description": "US State or Territory Code",
+                                "enum": [
+                                  "AL: Alabama",
+                                  "AK: Alaska",
+                                  "AZ: Arizona",
+                                  "AR: Arkansas",
+                                  "CA: California",
+                                  "CO: Colorado",
+                                  "CT: Connecticut",
+                                  "DE: Delaware",
+                                  "DC: District of Columbia",
+                                  "FL: Florida",
+                                  "GA: Georgia",
+                                  "HI: Hawaii",
+                                  "ID: Idaho",
+                                  "IL: Illinois",
+                                  "IN: Indiana",
+                                  "IA: Iowa",
+                                  "KS: Kansas",
+                                  "KY: Kentucky",
+                                  "LA: Louisiana",
+                                  "ME: Maine",
+                                  "MD: Maryland",
+                                  "MA: Massachusetts",
+                                  "MI: Michigan",
+                                  "MN: Minnesota",
+                                  "MS: Mississippi",
+                                  "MO: Missouri",
+                                  "MT: Montana",
+                                  "NE: Nebraska",
+                                  "NV: Nevada",
+                                  "NH: New Hampshire",
+                                  "NJ: New Jersey",
+                                  "NM: New Mexico",
+                                  "NY: New York",
+                                  "NC: North Carolina",
+                                  "ND: North Dakota",
+                                  "OH: Ohio",
+                                  "OK: Oklahoma",
+                                  "OR: Oregon",
+                                  "PA: Pennsylvania",
+                                  "RI: Rhode Island",
+                                  "SC: South Carolina",
+                                  "SD: South Dakota",
+                                  "TN: Tennessee",
+                                  "TX: Texas",
+                                  "UT: Utah",
+                                  "VT: Vermont",
+                                  "VA: Virginia",
+                                  "WA: Washington",
+                                  "WV: West Virginia",
+                                  "WI: Wisconsin",
+                                  "WY: Wyoming",
+                                  "AS: American Samoa",
+                                  "FM: Federated States of Micronesia",
+                                  "GU: Guam",
+                                  "MH: Marshall Islands",
+                                  "MP: Northern Mariana Islands",
+                                  "PW: Palau",
+                                  "PR: Puerto Rico",
+                                  "VI: Virgin Islands",
+                                  "FQ: Baker Island",
+                                  "HQ: Howland Island",
+                                  "DQ: Jarvis Island",
+                                  "JQ: Johnston Atoll",
+                                  "KQ: Kingman Reef",
+                                  "MQ: Midway Islands",
+                                  "BQ: Navassa Island",
+                                  "LQ: Palmyra Atoll",
+                                  "WQ: Wake Island",
+                                  "AA: Armed Forces Americas (except Canada)",
+                                  "AE: Armed Forces Europe, the Middle East, and Canada",
+                                  "AP: Armed Forces Pacific"
+                                ],
+                                "title": "State",
+                                "type": "string"
+                              }
+                            ],
+                            "description": "Enter the state.",
+                            "title": "State"
+                          },
+                          "street1": {
+                            "description": "Enter the first line of the Street Address.",
+                            "maxLength": 55,
+                            "minLength": 1,
+                            "title": "Street 1",
+                            "type": "string"
+                          },
+                          "street2": {
+                            "description": "Enter the second line of the Street Address.",
+                            "maxLength": 55,
+                            "minLength": 1,
+                            "title": "Street 2",
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                            "maxLength": 30,
+                            "minLength": 1,
+                            "title": "Zip / Postal Code",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "street1",
+                          "city"
+                        ],
+                        "title": "Address",
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "congressional_district": {
+                    "description": "Enter the Congressional District in the format: 2 character state Abbreviation - 3 character District Number. Examples: CA-005 for California's 5th district, CA-012 for California's 12th district.",
+                    "maxLength": 6,
+                    "minLength": 1,
+                    "title": "Congressional District",
+                    "type": "string"
+                  },
+                  "entity_type": {
+                    "description": "Entity type classification (Prime or SubAwardee). Copied from parent for XSD compliance.",
+                    "enum": [
+                      "Prime",
+                      "SubAwardee"
+                    ],
+                    "title": "Entity Type",
+                    "type": "string"
+                  },
+                  "organization_name": {
+                    "allOf": [
+                      {
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "title": "Organization Name",
+                        "type": "string"
+                      }
+                    ],
+                    "title": "Organization Name"
+                  }
+                },
+                "required": [
+                  "organization_name",
+                  "address"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "tier": {
+            "description": "Identify the tier of the subawardee, e.g., the first subawardee of the prime is the 1st tier.",
+            "maximum": 99,
+            "minimum": 1,
+            "title": "Reporting Entity Tier",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "entity_type",
+          "applicant_reporting_entity"
+        ],
+        "type": "object"
+      },
+      "signature_block": {
+        "properties": {
+          "name": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ]
+          },
+          "signature": {
+            "allOf": [
+              {
+                "description": "Completed by Grants.gov upon submission.",
+                "maxLength": 144,
+                "minLength": 1,
+                "title": "Signature",
+                "type": "string"
+              }
+            ]
+          },
+          "signed_date": {
+            "allOf": [
+              {
+                "description": "Completed by Grants.gov upon submission.",
+                "format": "date",
+                "title": "Submitted Date",
+                "type": "string"
+              }
+            ],
+            "title": "Signature Date"
+          },
+          "telephone": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "description": "Enter the telephone number of the certifying official.",
+            "title": "Telephone No."
+          },
+          "title": {
+            "allOf": [
+              {
+                "description": "Enter the position title.",
+                "maxLength": 45,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            ],
+            "description": "Enter the title of the Certifying Official."
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      }
+    },
+    "required": [
+      "federal_action_type",
+      "federal_action_status",
+      "report_type",
+      "reporting_entity",
+      "federal_agency_department",
+      "lobbying_registrant",
+      "individual_performing_service",
+      "signature_block"
+    ],
+    "type": "object"
+  },
+  "form_name": "Disclosure of Lobbying Activities (SF-LLL)",
+  "form_rule_schema": {
+    "assistance_listing_number": {
+      "gg_pre_population": {
+        "rule": "assistance_listing_number"
+      }
+    },
+    "federal_program_name": {
+      "gg_pre_population": {
+        "rule": "assistance_listing_program_title"
+      }
+    },
+    "signature_block": {
+      "signature": {
+        "gg_post_population": {
+          "rule": "signature"
+        }
+      },
+      "signed_date": {
+        "gg_post_population": {
+          "rule": "current_date"
+        }
+      }
+    }
+  },
+  "form_type": "SFLLL",
+  "form_ui_schema": [
+    {
+      "children": [
+        {
+          "definition": "/properties/federal_action_type",
+          "type": "field"
+        }
+      ],
+      "label": "1. Type of Federal Action",
+      "name": "Type of Federal Action",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/federal_action_status",
+          "type": "field"
+        }
+      ],
+      "label": "2. Status of Federal Action",
+      "name": "Status of Federal Action",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/report_type",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/material_change_year",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/material_change_quarter",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/last_report_date",
+          "type": "field"
+        }
+      ],
+      "label": "3. Report Type",
+      "name": "Report Type",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/reporting_entity/properties/entity_type",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/tier",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/applicant_reporting_entity/properties/organization_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/applicant_reporting_entity/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/applicant_reporting_entity/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/applicant_reporting_entity/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/applicant_reporting_entity/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/applicant_reporting_entity/properties/address/properties/zip_code",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/applicant_reporting_entity/properties/congressional_district",
+          "type": "field"
+        }
+      ],
+      "label": "4. Name and Address of Reporting Entity",
+      "name": "Name and Address of Reporting Entity",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/reporting_entity/properties/prime_reporting_entity/properties/organization_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/prime_reporting_entity/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/prime_reporting_entity/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/prime_reporting_entity/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/prime_reporting_entity/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/prime_reporting_entity/properties/address/properties/zip_code",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/reporting_entity/properties/prime_reporting_entity/properties/congressional_district",
+          "type": "field"
+        }
+      ],
+      "label": "5. If Reporting Entity in No. 4 is Subawardee, Enter Name and Address of Prime",
+      "name": "If Reporting Entity in No. 4 is Subawardee, Enter Name and Address of Prime",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/federal_agency_department",
+          "type": "field"
+        }
+      ],
+      "label": "6. Federal Department/Agency",
+      "name": "Federal Department/Agency",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/federal_program_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/assistance_listing_number",
+          "type": "field"
+        }
+      ],
+      "label": "7. Federal Program Name/Description",
+      "name": "Federal Program Name/Description",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/federal_action_number",
+          "type": "field"
+        }
+      ],
+      "label": "8. Federal Action Number",
+      "name": "Federal Action Number",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/award_amount",
+          "type": "field"
+        }
+      ],
+      "label": "9. Award Amount",
+      "name": "Award Amount",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/lobbying_registrant/properties/individual/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/individual/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/individual/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/individual/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/individual/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/lobbying_registrant/properties/address/properties/zip_code",
+          "type": "field"
+        }
+      ],
+      "label": "10a. Name and Address of Lobbying Registrant",
+      "name": "Name and Address of Lobbying Registrant",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/individual_performing_service/properties/individual/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/individual/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/individual/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/individual/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/individual/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/individual_performing_service/properties/address/properties/zip_code",
+          "type": "field"
+        }
+      ],
+      "label": "10b. Individual Performing Services",
+      "name": "Individual Performing Services",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/signature_block/properties/signature",
+          "type": "null"
+        },
+        {
+          "definition": "/properties/signature_block/properties/name/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/signature_block/properties/name/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/signature_block/properties/name/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/signature_block/properties/name/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/signature_block/properties/name/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/signature_block/properties/title",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/signature_block/properties/telephone",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/signature_block/properties/signed_date",
+          "type": "null"
+        }
+      ],
+      "description": "Information requested through this form is authorized by title 31 U.S.C. section 1352. This disclosure of lobbying activities is a material representation of fact upon which reliance was placed by the tier above when the transaction was made or entered into. This disclosure is required pursuant to 31 U.S.C. 1352. This information will be reported to the Congress semi- annually and will be available for public inspection. Any person who fails to file the required disclosure shall be subject to a civil penalty of not less than $10,000 and not more than $100,000 for each such failure.",
+      "label": "11. Signature",
+      "name": "Signature",
+      "type": "section"
+    }
+  ],
+  "form_version": "2.0",
+  "omb_number": "4040-0013",
+  "short_form_name": "SFLLL_2_0"
+}

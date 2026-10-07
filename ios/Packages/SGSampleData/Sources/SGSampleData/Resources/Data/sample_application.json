@@ -1,0 +1,37 @@
+{
+  "forms": {
+    "08e6603f-d197-4a60-98cd-d49acb1fc1fd": {
+      "activity_line_items": [
+        {
+          "activity_title": "Rural recovery services",
+          "assistance_listing_number": "93.912",
+          "budget_categories": {
+            "personnel_amount": "420000.00",
+            "fringe_benefits_amount": "84000.00",
+            "travel_amount": "12000.00",
+            "supplies_amount": "24000.00",
+            "total_amount": "540000.00"
+          }
+        }
+      ],
+      "confirmation": true
+    },
+    "32165da2-354d-42c0-a986-cf4f2f350039": {
+      "attachments": ["aa000000-0000-4000-8000-000000000001"]
+    },
+    "6ebd786f-cccf-4ee1-a100-61436975025b": {
+      "primary_site": {
+        "address": {
+          "street1": "100 Sample Health Way",
+          "city": "Bluefield",
+          "country": "USA: UNITED STATES",
+          "state": "WV: West Virginia",
+          "zip_code": "24701"
+        },
+        "congressional_district": "WV-001",
+        "organization_name": "Bluefield Community Health Center",
+        "uei": "K7LMN2QX4R91"
+      }
+    }
+  }
+}
