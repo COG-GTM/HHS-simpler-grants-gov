@@ -467,6 +467,55 @@ final class SyncQueueTests: XCTestCase {
         XCTAssertTrue(pending.isEmpty)
         XCTAssertEqual(savedResponse, .object(["answer": .string("second")]))
     }
+
+    func testOwnerlessFlushResetsExhaustedRetryBudgetForNextSignedInFlush() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let drafts = FileDraftStore(directoryURL: directory)
+        let dataSource = FakeDataSource()
+        await dataSource.setSaveError(.server(status: 503, message: "unavailable"))
+        let owner = FakeCurrentOwner("user-a")
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true),
+            currentOwnerId: { await owner.value() },
+            requiresOwner: true,
+            retryDelays: [.milliseconds(100), .milliseconds(100)]
+        )
+        let response: JSONValue = .object(["answer": .string("saved")])
+
+        let outcome = await queue.save(applicationId: "app", formId: "form", response: response)
+        XCTAssertEqual(outcome, .queued)
+        for _ in 0..<100 {
+            if await dataSource.saveCount == 3 { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        try await Task.sleep(for: .milliseconds(120))
+        let exhaustedSaveCount = await dataSource.saveCount
+        XCTAssertEqual(exhaustedSaveCount, 3)
+
+        await owner.set(nil)
+        await queue.flush()
+        let signedOutSaveCount = await dataSource.saveCount
+        let signedOutPending = try await drafts.pendingDrafts()
+        XCTAssertEqual(signedOutSaveCount, 3)
+        XCTAssertEqual(signedOutPending.count, 1)
+
+        await owner.set("user-a")
+        await queue.flush()
+        await dataSource.setSaveError(nil)
+
+        for _ in 0..<100 {
+            if await queue.pendingCount == 0 { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        let finalSaveCount = await dataSource.saveCount
+        let pending = try await drafts.pendingDrafts()
+        XCTAssertEqual(finalSaveCount, 5)
+        XCTAssertTrue(pending.isEmpty)
+    }
 }
 
 @MainActor

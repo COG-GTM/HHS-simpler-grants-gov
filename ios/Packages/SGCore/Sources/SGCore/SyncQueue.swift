@@ -188,6 +188,7 @@ public actor SyncQueue {
         }
         let ownerId = await currentOwnerId()
         guard !requiresOwner || ownerId != nil else {
+            retryAttempt = 0
             await updatePendingCount()
             return
         }
