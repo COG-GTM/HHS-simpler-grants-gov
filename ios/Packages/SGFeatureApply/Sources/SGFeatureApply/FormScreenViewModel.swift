@@ -33,7 +33,7 @@ public final class FormScreenViewModel {
         didSet {
             if !suppressAutosave, phase == .loaded {
                 scheduleAutosave()
-                invalidateProgressForFirstEdit()
+                invalidateProgressForEdit()
             }
         }
     }
@@ -55,7 +55,8 @@ public final class FormScreenViewModel {
     private var syncTail: Task<Bool, Never>?
     private var progressInvalidationTask: Task<Void, Never>?
     private var suppressAutosave = false
-    private var didInvalidateProgressForEdit = false
+    private var formCompleteInvalidated = false
+    private var invalidatedSectionIds: Set<String> = []
 
     public init(
         applicationId: String,
@@ -182,7 +183,8 @@ public final class FormScreenViewModel {
             currentStep = loadedSections.firstIndex { !completed.contains($0.id) } ?? 0
             errors = []
             saveStatus = .idle
-            didInvalidateProgressForEdit = false
+            formCompleteInvalidated = false
+            invalidatedSectionIds = []
             suppressAutosave = false
             phase = .loaded
         } catch {
@@ -244,10 +246,16 @@ public final class FormScreenViewModel {
         isSyncing = true
         defer { isSyncing = false }
         do {
+            let response = values
             let result = try await dataSource.saveForm(
                 applicationId: applicationId,
                 formId: formId,
-                response: values
+                response: response
+            )
+            try? await draftStore.markSynced(
+                applicationId: applicationId,
+                formId: formId,
+                syncedResponse: response
             )
             lastWarnings = result.warnings
             await ApplyWarningsCache.shared.set(
@@ -293,6 +301,7 @@ public final class FormScreenViewModel {
             applicationId: applicationId,
             formId: formId
         )
+        invalidatedSectionIds.remove(section.id)
 
         if currentStep >= sections.count - 1 {
             let invalidSections = sections.enumerated().compactMap { index, section in
@@ -341,16 +350,29 @@ public final class FormScreenViewModel {
         }
     }
 
-    private func invalidateProgressForFirstEdit() {
-        guard !didInvalidateProgressForEdit else { return }
-        didInvalidateProgressForEdit = true
+    private func invalidateProgressForEdit() {
         let sectionId = currentSection?.id
+        let shouldInvalidateForm = !formCompleteInvalidated
+        let shouldInvalidateSection = sectionId.map { !invalidatedSectionIds.contains($0) } ?? false
+        guard shouldInvalidateForm || shouldInvalidateSection else { return }
+
+        if shouldInvalidateForm {
+            formCompleteInvalidated = true
+        }
+        if let sectionId, shouldInvalidateSection {
+            invalidatedSectionIds.insert(sectionId)
+        }
+
+        let previousTask = progressInvalidationTask
         let progressStore = self.progressStore
         let applicationId = self.applicationId
         let formId = self.formId
         progressInvalidationTask = Task {
-            await progressStore.setFormComplete(false, applicationId: applicationId, formId: formId)
-            guard let sectionId else { return }
+            await previousTask?.value
+            if shouldInvalidateForm {
+                await progressStore.setFormComplete(false, applicationId: applicationId, formId: formId)
+            }
+            guard shouldInvalidateSection, let sectionId else { return }
             var completed = await progressStore.completedSections(
                 applicationId: applicationId,
                 formId: formId

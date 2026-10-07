@@ -346,6 +346,121 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     @MainActor
+    func testEditingNextCompletedSectionClearsOnlyThatSectionProgress() async throws {
+        let base = ApplyReferenceDataSource(scenario: .inProgress)
+        let originalApplication = try await base.application(id: "apply-demo")
+        let originalForm = try XCTUnwrap(
+            originalApplication.applicationForms.first { $0.formId == "sf424" }
+        )
+        let twoSectionForm = FormDefinition(
+            formId: originalForm.formId,
+            formName: originalForm.form.formName,
+            shortFormName: originalForm.form.shortFormName,
+            formJsonSchema: .object([
+                "type": .string("object"),
+                "properties": .object([:])
+            ]),
+            formUiSchema: .array([
+                .object([
+                    "type": .string("section"),
+                    "name": .string("section-one"),
+                    "label": .string("Section one"),
+                    "children": .array([])
+                ]),
+                .object([
+                    "type": .string("section"),
+                    "name": .string("section-two"),
+                    "label": .string("Section two"),
+                    "children": .array([])
+                ])
+            ])
+        )
+        let forms = originalApplication.applicationForms.map { form in
+            guard form.formId == originalForm.formId else { return form }
+            return ApplicationForm(
+                applicationFormId: form.applicationFormId,
+                formId: form.formId,
+                form: twoSectionForm,
+                applicationResponse: form.applicationResponse,
+                applicationFormStatus: form.applicationFormStatus,
+                isRequired: form.isRequired,
+                isIncludedInSubmission: form.isIncludedInSubmission,
+                applicationId: form.applicationId,
+                applicationName: form.applicationName
+            )
+        }
+        let application = Application(
+            applicationId: originalApplication.applicationId,
+            applicationName: originalApplication.applicationName,
+            applicationStatus: originalApplication.applicationStatus,
+            competition: originalApplication.competition,
+            organization: originalApplication.organization,
+            applicationForms: forms,
+            formValidationWarnings: originalApplication.formValidationWarnings,
+            intendsToAddOrganization: originalApplication.intendsToAddOrganization
+        )
+        let dataSource = OpportunityResolutionTestDataSource(
+            base: base,
+            application: application,
+            summaries: []
+        )
+        let progress = InMemoryFormProgressStore(
+            completedSections: ["apply-demo/sf424": ["section-one", "section-two"]],
+            completeForms: ["apply-demo/sf424"]
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: dataSource,
+            draftStore: SpyDraftStore(),
+            progressStore: progress,
+            validator: { _, _, _ in [] }
+        )
+
+        await viewModel.load()
+        XCTAssertEqual(viewModel.currentStep, 0)
+        XCTAssertEqual(viewModel.currentSection?.id, "section-one")
+
+        viewModel.values = .object(["first": .string("edited")])
+        let firstOutcome = await viewModel.continueTapped()
+        XCTAssertEqual(firstOutcome, .advanced)
+        XCTAssertEqual(viewModel.currentStep, 1)
+
+        viewModel.values = .object(["second": .string("edited")])
+        _ = await viewModel.flushDraft()
+
+        let completedSections = await progress.completedSections(
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertTrue(completedSections.contains("section-one"))
+        XCTAssertFalse(completedSections.contains("section-two"))
+    }
+
+    @MainActor
+    func testSuccessfulServerSaveMarksDraftSynced() async throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let draftStore = FileDraftStore(directoryURL: directory)
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(scenario: .inProgress),
+            draftStore: draftStore,
+            progressStore: InMemoryFormProgressStore()
+        )
+
+        await viewModel.load()
+        viewModel.values = .object(["email": .string("saved@example.org")])
+
+        let didSync = await viewModel.syncToServer()
+        let pendingDrafts = try await draftStore.pendingDrafts()
+        XCTAssertTrue(didSync)
+        XCTAssertTrue(pendingDrafts.isEmpty)
+    }
+
+    @MainActor
     func testAutosaveDebouncesRapidEdits() async throws {
         let source = ApplyReferenceDataSource(scenario: .inProgress)
         let store = SpyDraftStore()

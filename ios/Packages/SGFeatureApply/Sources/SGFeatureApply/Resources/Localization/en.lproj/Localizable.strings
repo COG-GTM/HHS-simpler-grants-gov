@@ -81,3 +81,8 @@
 "apply.workspace.state_complete" = "Complete";
 "apply.workspace.state_in_progress" = "In progress · %d of %d sections";
 "apply.workspace.state_not_started" = "Not started";
+
+/* Plural fallbacks; Localizable.stringsdict provides the plural forms. */
+"apply.form.validation_summary" = "Fix %d fields before you continue.";
+"apply.workspace.forms_complete" = "%1$d of %2$d forms complete";
+"apply.workspace.due_days" = "Due %1$@ · %2$d days";

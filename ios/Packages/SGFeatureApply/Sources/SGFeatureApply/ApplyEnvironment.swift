@@ -1,10 +1,6 @@
 import SGCore
 import SwiftUI
 
-private struct ApplyDraftStoreKey: EnvironmentKey {
-    static let defaultValue: any DraftStore = FileDraftStore()
-}
-
 private struct ApplyProgressStoreKey: EnvironmentKey {
     static let defaultValue: any FormProgressStore = UserDefaultsFormProgressStore()
 }
@@ -19,8 +15,8 @@ private struct ApplySubmissionAuthorizerKey: EnvironmentKey {
 
 public extension EnvironmentValues {
     var applyDraftStore: any DraftStore {
-        get { self[ApplyDraftStoreKey.self] }
-        set { self[ApplyDraftStoreKey.self] = newValue }
+        get { self.draftStore }
+        set { self.draftStore = newValue }
     }
 
     var applyProgressStore: any FormProgressStore {
