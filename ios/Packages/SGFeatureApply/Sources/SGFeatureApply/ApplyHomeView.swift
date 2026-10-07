@@ -30,6 +30,7 @@ public struct ApplyHomeView: View {
                             .foregroundStyle(ApplyTheme.C.ink)
                             .accessibilityAddTraits(.isHeader)
                             .padding(.horizontal, ApplyTheme.S.margin)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 8)
                             .padding(.bottom, 10)
                         WorkspaceContent(
