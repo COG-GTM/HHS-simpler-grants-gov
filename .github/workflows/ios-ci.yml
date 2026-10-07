@@ -1,0 +1,88 @@
+name: iOS Checks
+
+on:
+  pull_request:
+    paths:
+      - ios/**
+      - .github/workflows/ios-ci.yml
+  push:
+    branches:
+      - main
+      - devin/1791348307-simpler-grants-ios
+    paths:
+      - ios/**
+      - .github/workflows/ios-ci.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: ./ios
+
+env:
+  XCODE_PATH: /Applications/Xcode_26.6.app
+  SG_SIM_DEVICE: iPhone 17
+  SG_SIM_OS: "26.5"
+
+jobs:
+  l10n-lint:
+    name: iOS Localization Lint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/lint-localization.sh --self-test
+      - run: ./scripts/lint-localization.sh
+
+  swift-packages:
+    name: iOS Swift Package Tests
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: sudo xcode-select -s "$XCODE_PATH"
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - run: ./scripts/ci-swift-packages.sh
+
+  app:
+    name: iOS App Build, Unit & Snapshot Tests
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: sudo xcode-select -s "$XCODE_PATH"
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+          working-directory: ios
+      - name: Check simulator runtime
+        run: xcrun simctl list devices available | grep "iPhone 17"
+      - run: bundle exec fastlane test
+      - run: bundle exec fastlane build_sim
+      - run: bundle exec fastlane archive_unsigned
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: ios/fastlane/output/test/*.xcresult
+          if-no-files-found: warn
+      - name: Upload simulator app
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: ios/fastlane/output/SimplerGrants-simulator.app.zip
+          if-no-files-found: warn
