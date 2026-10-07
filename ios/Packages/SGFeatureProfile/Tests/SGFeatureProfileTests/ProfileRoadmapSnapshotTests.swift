@@ -23,7 +23,7 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
     func testProfileSignedIn() async {
         let dataSource = ProfileSnapshotDataSource()
         let model = ProfileModel()
-        await model.load(from: dataSource)
+        await model.load(from: dataSource, userId: "sample-dana-reyes")
         let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
         await session.signIn(pivRequired: false)
 
@@ -33,10 +33,9 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
         )
     }
 
-    func testProfileGuest() async {
+    func testProfileGuest() {
         let dataSource = ProfileSnapshotDataSource()
         let model = ProfileModel()
-        await model.load(from: dataSource)
         let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
         session.continueAsGuest()
 
@@ -49,7 +48,7 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
     func testProfileExpiringSAM() async {
         let dataSource = ProfileSnapshotDataSource(expirationDate: "2026-11-06")
         let model = ProfileModel()
-        await model.load(from: dataSource)
+        await model.load(from: dataSource, userId: "sample-dana-reyes")
         let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
         await session.signIn(pivRequired: false)
 
@@ -74,7 +73,7 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
     func testProfileSignedInAtXXXL() async {
         let dataSource = ProfileSnapshotDataSource()
         let model = ProfileModel()
-        await model.load(from: dataSource)
+        await model.load(from: dataSource, userId: "sample-dana-reyes")
         let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
         await session.signIn(pivRequired: false)
         let traits = UITraitCollection(

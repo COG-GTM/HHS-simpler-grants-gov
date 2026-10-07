@@ -12,6 +12,7 @@
 "profile.footer" = "Demo app · not affiliated with or endorsed by Grants.gov";
 "profile.home.title" = "Profile";
 "profile.identity.login_gov" = "Signed in with Login.gov (demo)";
+"profile.load_error" = "We couldn't load your organization and saved opportunities.";
 "profile.notifications.deadlines" = "Deadline reminders";
 "profile.notifications.heading" = "Notifications";
 "profile.notifications.note" = "Demo only: stored on this device; no notifications are sent.";

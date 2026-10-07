@@ -13,7 +13,7 @@ public struct ProfileView: View {
     @AppStorage("sg.profile.notifications.saved_searches") private var savedSearchesEnabled = true
     @State private var isSignInRunning = false
     @State private var isSavedSheetPresented = false
-    @State private var referenceDate: Date
+    private let referenceDateOverride: Date?
 
     public init() {
         self.init(model: ProfileModel())
@@ -21,7 +21,12 @@ public struct ProfileView: View {
 
     public init(model: ProfileModel, referenceDate: Date? = nil) {
         _model = State(initialValue: model)
-        _referenceDate = State(initialValue: referenceDate ?? Date())
+        referenceDateOverride = referenceDate
+    }
+
+    private var signedInUserId: String? {
+        guard case let .signedIn(user) = session.state else { return nil }
+        return user.userId
     }
 
     public var body: some View {
@@ -55,9 +60,16 @@ public struct ProfileView: View {
         }
         .background(SG.C.canvas.ignoresSafeArea())
         .sgHideNavigationBar()
-        .task {
-            if !model.isLoaded {
-                await model.load(from: dataSource)
+        .task(id: signedInUserId) {
+            guard let userId = signedInUserId else {
+                model.reset()
+                return
+            }
+            if model.loadedUserId != userId || model.loadError != nil {
+                if model.loadedUserId != userId {
+                    model.reset()
+                }
+                await model.load(from: dataSource, userId: userId)
             }
         }
         .sheet(isPresented: $isSavedSheetPresented) {
@@ -68,6 +80,18 @@ public struct ProfileView: View {
     private func signedInContent(_ user: UserProfile) -> some View {
         VStack(alignment: .leading, spacing: SG.S.xl) {
             identity(user)
+
+            if model.loadError != nil {
+                InlineErrorBanner(
+                    message: "profile.load_error".localized(bundle: .module),
+                    retry: {
+                        Task {
+                            await model.load(from: dataSource, userId: user.userId)
+                        }
+                    }
+                )
+                .accessibilityIdentifier("profile.load_error")
+            }
 
             VStack(alignment: .leading, spacing: SG.S.s) {
                 sectionHeading("profile.organization.heading")
@@ -164,27 +188,29 @@ public struct ProfileView: View {
     }
 
     private var samStatus: some View {
-        let status = SamRegistrationStatus.evaluate(
-            expirationDate: model.organization?.samGovEntity?.expirationDate,
-            today: referenceDate
-        )
-        return VStack(alignment: .leading, spacing: 2) {
-            Text("profile.organization.sam_gov".localized(bundle: .module))
-                .font(SG.F.sans(13))
-                .foregroundStyle(SG.C.subtle)
-            HStack(spacing: SG.S.xs) {
-                Image(systemName: status.iconName)
-                    .font(SG.F.sans(12, .semibold))
-                    .foregroundStyle(status.tintColor)
-                    .accessibilityHidden(true)
-                Text(status.localizedText)
-                    .font(SG.F.sans(13, .semibold))
-                    .foregroundStyle(status.tintColor)
-                    .fixedSize(horizontal: false, vertical: true)
+        TimelineView(.periodic(from: .now, by: 60)) { context in
+            let status = SamRegistrationStatus.evaluate(
+                expirationDate: model.organization?.samGovEntity?.expirationDate,
+                today: referenceDateOverride ?? context.date
+            )
+            VStack(alignment: .leading, spacing: 2) {
+                Text("profile.organization.sam_gov".localized(bundle: .module))
+                    .font(SG.F.sans(13))
+                    .foregroundStyle(SG.C.subtle)
+                HStack(spacing: SG.S.xs) {
+                    Image(systemName: status.iconName)
+                        .font(SG.F.sans(12, .semibold))
+                        .foregroundStyle(status.tintColor)
+                        .accessibilityHidden(true)
+                    Text(status.localizedText)
+                        .font(SG.F.sans(13, .semibold))
+                        .foregroundStyle(status.tintColor)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
     }
 
     private func fact(title: String, value: String, monospaced: Bool = false) -> some View {

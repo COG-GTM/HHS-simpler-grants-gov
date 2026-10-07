@@ -21,24 +21,55 @@ public final class ProfileModel {
     public private(set) var isLoading = false
     public private(set) var isLoaded = false
     public private(set) var loadError: GrantsError?
+    public private(set) var loadedUserId: String?
+
+    private var loadingUserId: String?
+    private var activeLoadID: UUID?
 
     public init() {}
 
-    public func load(from dataSource: any GrantsDataSource) async {
-        guard !isLoading else { return }
-        isLoading = true
+    public func reset() {
+        activeLoadID = nil
+        loadingUserId = nil
+        organization = nil
+        savedOpportunityIds = []
+        savedOpportunities = []
+        isLoading = false
+        isLoaded = false
         loadError = nil
+        loadedUserId = nil
+    }
 
-        do {
-            organization = try await dataSource.organizations().first
-        } catch {
-            loadError = Self.grantsError(from: error)
+    public func load(from dataSource: any GrantsDataSource, userId: String) async {
+        guard !(isLoading && loadingUserId == userId) else { return }
+        if loadedUserId != userId || loadingUserId != nil {
+            reset()
+        }
+
+        let loadID = UUID()
+        activeLoadID = loadID
+        loadingUserId = userId
+        isLoading = true
+        isLoaded = false
+        loadedUserId = nil
+        loadError = nil
+        defer {
+            if activeLoadID == loadID {
+                isLoading = false
+                loadingUserId = nil
+                activeLoadID = nil
+            }
         }
 
         do {
-            savedOpportunityIds = try await dataSource.savedOpportunityIds()
-            savedOpportunities = await withTaskGroup(of: SavedOpportunity?.self) { group in
-                for id in savedOpportunityIds.sorted() {
+            let organizations = try await dataSource.organizations()
+            guard activeLoadID == loadID else { return }
+
+            let opportunityIds = try await dataSource.savedOpportunityIds()
+            guard activeLoadID == loadID else { return }
+
+            let opportunities = await withTaskGroup(of: SavedOpportunity?.self) { group in
+                for id in opportunityIds.sorted() {
                     group.addTask {
                         guard
                             let detail = try? await dataSource.opportunity(id: id),
@@ -57,14 +88,20 @@ public final class ProfileModel {
                 }
                 return opportunities.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
             }
+
+            guard activeLoadID == loadID else { return }
+            organization = organizations.first
+            savedOpportunityIds = opportunityIds
+            savedOpportunities = opportunities
+            loadedUserId = userId
+            isLoaded = true
         } catch {
-            loadError = loadError ?? Self.grantsError(from: error)
+            guard activeLoadID == loadID else { return }
+            organization = nil
             savedOpportunityIds = []
             savedOpportunities = []
+            loadError = Self.grantsError(from: error)
         }
-
-        isLoaded = true
-        isLoading = false
     }
 
     private static func grantsError(from error: Error) -> GrantsError {
