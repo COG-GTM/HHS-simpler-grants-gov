@@ -603,6 +603,44 @@ final class LiveDataSourceTests: XCTestCase {
         ])
     }
 
+    func testStale401DoesNotExpireReplacementToken() async {
+        let session = makeSession()
+        let issuedAt = Int(Date().timeIntervalSince1970)
+        let firstToken = makeToken(userId: "user-1", issuedAt: issuedAt, duration: 30)
+        let replacementToken = makeToken(userId: "user-2", issuedAt: issuedAt, duration: 30)
+        let store = InMemoryTokenStore(token: firstToken)
+        StubURLProtocol.install { request in
+            if request.url?.path == "/resource" {
+                try? store.save(replacementToken)
+            }
+            return (401, fixture("error-401.json"))
+        }
+        let client = APIClient(
+            baseURL: URL(string: "http://127.0.0.1:8080")!,
+            apiKey: nil,
+            tokenStore: store,
+            session: session
+        )
+        let expired = expectation(forNotification: .sgSessionExpired, object: nil)
+        expired.isInverted = true
+
+        do {
+            _ = try await client.data(path: "/resource")
+            XCTFail("Expected unauthorized error")
+        } catch {
+            XCTAssertEqual(error as? GrantsError, .unauthorized)
+        }
+        await fulfillment(of: [expired], timeout: 0.05)
+
+        XCTAssertEqual(store.load(), replacementToken)
+        XCTAssertEqual(StubURLProtocol.requests.map { $0.url?.path }, [
+            "/resource",
+            "/v1/users/token/refresh"
+        ])
+        XCTAssertEqual(StubURLProtocol.requests[0].value(forHTTPHeaderField: "X-SGG-Token"), firstToken)
+        XCTAssertEqual(StubURLProtocol.requests[1].value(forHTTPHeaderField: "X-SGG-Token"), replacementToken)
+    }
+
     func testErrorMappingAndMissingUserToken() async throws {
         let session = makeSession()
         StubURLProtocol.install { request in
@@ -745,6 +783,47 @@ final class LiveDataSourceTests: XCTestCase {
             "/alpha/applications/app-1/submit"
         ])
     }
+
+    func testApplicationsConcatenatesPages() async throws {
+        let session = makeSession()
+        let token = makeToken(
+            userId: "user-1",
+            issuedAt: Int(Date().timeIntervalSince1970),
+            duration: 30
+        )
+        StubURLProtocol.install { request in
+            let body = requestBody(request)
+            let object = (try? body.flatMap { try JSONSerialization.jsonObject(with: $0) }) as? [String: Any]
+            let pagination = object?["pagination"] as? [String: Any]
+            let offset = pagination?["page_offset"] as? Int
+            let applicationId = offset == 1 ? "app-1" : "app-2"
+            return (200, """
+            {"data":[{"application_id":"\(applicationId)","application_status":"in_progress","competition":{"competition_id":"comp-1","is_open":true,"opportunity":{"opportunity_id":"opp-1"}}}],"pagination_info":{"total_pages":2}}
+            """)
+        }
+        let dataSource = LiveDataSource(
+            baseURL: URL(string: "http://127.0.0.1:8080")!,
+            apiKey: "local-dev-api-key",
+            tokenStore: InMemoryTokenStore(token: token),
+            session: session
+        )
+
+        let applications = try await dataSource.applications()
+
+        XCTAssertEqual(applications.map(\.applicationId), ["app-1", "app-2"])
+        let requests = StubURLProtocol.requests
+        XCTAssertEqual(requests.count, 2)
+        for (index, request) in requests.enumerated() {
+            XCTAssertEqual(request.url?.path, "/v1/users/user-1/applications")
+            XCTAssertEqual(request.value(forHTTPHeaderField: "X-SGG-Token"), token)
+            XCTAssertNil(request.value(forHTTPHeaderField: "X-API-Key"))
+            let body = try XCTUnwrap(requestBody(request))
+            let object = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+            let pagination = try XCTUnwrap(object["pagination"] as? [String: Any])
+            XCTAssertEqual(pagination["page_offset"] as? Int, index + 1)
+            XCTAssertEqual(pagination["page_size"] as? Int, 100)
+        }
+    }
 }
 
 final class LoginGovAuthenticatorTests: XCTestCase {
@@ -831,15 +910,19 @@ final class LoginGovAuthenticatorTests: XCTestCase {
         defer { UserDefaults.standard.removeObject(forKey: cacheKey) }
 
         let profile = UserProfile(userId: "user-1", email: "demo@example.org")
-        let tokenStore = InMemoryTokenStore()
-        let callback = try XCTUnwrap(URL(string: "simplergrants://auth/callback?message=success&token=fake"))
+        let token = makeToken(
+            userId: "user-1",
+            issuedAt: Int(Date().timeIntervalSince1970),
+            duration: 30
+        )
+        let tokenStore = InMemoryTokenStore(token: token)
         let signer = LoginGovAuthenticator(
             baseURL: URL(string: "http://127.0.0.1:8080")!,
             dataSource: FakeAuthDataSource(profile: profile),
-            tokenStore: tokenStore,
-            webAuthenticator: FakeWebAuthenticator(result: .url(callback))
+            tokenStore: tokenStore
         )
-        _ = try await signer.signIn(pivRequired: false)
+        let initialProfile = await signer.restore()
+        XCTAssertEqual(initialProfile, profile)
 
         let offlineAuthenticator = LoginGovAuthenticator(
             baseURL: URL(string: "http://127.0.0.1:8080")!,
@@ -848,6 +931,37 @@ final class LoginGovAuthenticatorTests: XCTestCase {
         )
         let restoredProfile = await offlineAuthenticator.restore()
         XCTAssertEqual(restoredProfile, profile)
+    }
+
+    func testOfflineRestoreRejectsCachedProfileForDifferentJWTUser() async throws {
+        let cacheKey = "sg.cached_user_profile"
+        UserDefaults.standard.removeObject(forKey: cacheKey)
+        defer { UserDefaults.standard.removeObject(forKey: cacheKey) }
+
+        let issuedAt = Int(Date().timeIntervalSince1970)
+        let tokenStore = InMemoryTokenStore(token: makeToken(
+            userId: "user-a",
+            issuedAt: issuedAt,
+            duration: 30
+        ))
+        let profile = UserProfile(userId: "user-a", email: "demo@example.org")
+        let onlineAuthenticator = LoginGovAuthenticator(
+            baseURL: URL(string: "http://127.0.0.1:8080")!,
+            dataSource: FakeAuthDataSource(profile: profile),
+            tokenStore: tokenStore
+        )
+        let initialProfile = await onlineAuthenticator.restore()
+        XCTAssertEqual(initialProfile, profile)
+        try tokenStore.save(makeToken(userId: "user-b", issuedAt: issuedAt, duration: 30))
+
+        let offlineAuthenticator = LoginGovAuthenticator(
+            baseURL: URL(string: "http://127.0.0.1:8080")!,
+            dataSource: FakeAuthDataSource(profile: profile, currentUserError: .offline),
+            tokenStore: tokenStore
+        )
+
+        let restoredProfile = await offlineAuthenticator.restore()
+        XCTAssertNil(restoredProfile)
     }
 }
 

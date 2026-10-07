@@ -14,6 +14,11 @@ public protocol WebAuthenticating: Sendable {
 public struct LoginGovAuthenticator: Authenticating {
     private static let cachedProfileKey = "sg.cached_user_profile"
 
+    private struct CachedProfile: Codable {
+        let userId: String
+        let profile: UserProfile
+    }
+
     private let dataSource: any GrantsDataSource
     private let testToken: String?
     private let baseURL: URL
@@ -112,18 +117,28 @@ public struct LoginGovAuthenticator: Authenticating {
     }
 
     private func saveCachedProfile(_ profile: UserProfile) {
-        guard let data = try? JSONEncoder.sg.encode(profile) else { return }
+        guard
+            let token = tokenStore.load(),
+            let userId = JWTClaims(token: token)?.userId,
+            let data = try? JSONEncoder.sg.encode(CachedProfile(userId: userId, profile: profile))
+        else {
+            return
+        }
         UserDefaults.standard.set(data, forKey: Self.cachedProfileKey)
     }
 
     private func loadCachedProfile() -> UserProfile? {
         guard
+            let token = tokenStore.load(),
+            let userId = JWTClaims(token: token)?.userId,
             let data = UserDefaults.standard.data(forKey: Self.cachedProfileKey),
-            let profile = try? JSONDecoder.sg.decode(UserProfile.self, from: data)
+            let cached = try? JSONDecoder.sg.decode(CachedProfile.self, from: data),
+            cached.userId == userId,
+            cached.profile.id == cached.userId
         else {
             return nil
         }
-        return profile
+        return cached.profile
     }
 }
 

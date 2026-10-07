@@ -8,6 +8,7 @@ public struct DraftRecord: Codable, Sendable, Hashable {
     public let updatedAt: Date
     public var needsSync: Bool
     public var lastError: String?
+    public let ownerId: String?
 
     public init(
         applicationId: String,
@@ -15,7 +16,8 @@ public struct DraftRecord: Codable, Sendable, Hashable {
         response: JSONValue,
         updatedAt: Date = Date(),
         needsSync: Bool = true,
-        lastError: String? = nil
+        lastError: String? = nil,
+        ownerId: String? = nil
     ) {
         self.applicationId = applicationId
         self.formId = formId
@@ -23,12 +25,19 @@ public struct DraftRecord: Codable, Sendable, Hashable {
         self.updatedAt = updatedAt
         self.needsSync = needsSync
         self.lastError = lastError
+        self.ownerId = ownerId
     }
 }
 
 public protocol DraftStore: Sendable {
     func loadDraft(applicationId: String, formId: String) async throws -> JSONValue?
     func saveDraft(_ value: JSONValue, applicationId: String, formId: String) async throws
+    func saveDraft(
+        _ value: JSONValue,
+        applicationId: String,
+        formId: String,
+        ownerId: String?
+    ) async throws
     func removeDraft(applicationId: String, formId: String) async throws
     func pendingDrafts() async throws -> [DraftRecord]
     func markSynced(applicationId: String, formId: String) async throws
@@ -47,6 +56,15 @@ public protocol DraftStore: Sendable {
 }
 
 public extension DraftStore {
+    func saveDraft(
+        _ value: JSONValue,
+        applicationId: String,
+        formId: String,
+        ownerId: String?
+    ) async throws {
+        try await saveDraft(value, applicationId: applicationId, formId: formId)
+    }
+
     func pendingDrafts() async throws -> [DraftRecord] { [] }
     func markSynced(applicationId: String, formId: String) async throws {}
     func markSynced(
@@ -110,11 +128,21 @@ public actor FileDraftStore: DraftStore {
     }
 
     public func saveDraft(_ value: JSONValue, applicationId: String, formId: String) async throws {
+        try await saveDraft(value, applicationId: applicationId, formId: formId, ownerId: nil)
+    }
+
+    public func saveDraft(
+        _ value: JSONValue,
+        applicationId: String,
+        formId: String,
+        ownerId: String?
+    ) async throws {
         let record = DraftRecord(
             applicationId: applicationId,
             formId: formId,
             response: value,
-            needsSync: true
+            needsSync: true,
+            ownerId: ownerId
         )
         try write(record)
     }
@@ -171,7 +199,8 @@ public actor FileDraftStore: DraftStore {
             response: record.response,
             updatedAt: record.updatedAt,
             needsSync: false,
-            lastError: nil
+            lastError: nil,
+            ownerId: record.ownerId
         ))
     }
 
@@ -192,7 +221,8 @@ public actor FileDraftStore: DraftStore {
             response: record.response,
             updatedAt: record.updatedAt,
             needsSync: false,
-            lastError: nil
+            lastError: nil,
+            ownerId: record.ownerId
         ))
     }
 
@@ -204,7 +234,8 @@ public actor FileDraftStore: DraftStore {
             response: record.response,
             updatedAt: record.updatedAt,
             needsSync: true,
-            lastError: message
+            lastError: message,
+            ownerId: record.ownerId
         ))
     }
 
@@ -226,7 +257,8 @@ public actor FileDraftStore: DraftStore {
             response: record.response,
             updatedAt: record.updatedAt,
             needsSync: true,
-            lastError: message
+            lastError: message,
+            ownerId: record.ownerId
         ))
     }
 

@@ -75,6 +75,7 @@ public final class AppRouter {
         NavigationPath(routes(for: tab))
     }
 
+    /// Use `routesBinding(for:)` or `push(_:in:)` for forward navigation.
     public func setNavigationPath(_ path: NavigationPath, for tab: AppTab) {
         let current = routes(for: tab)
         if path.count < current.count {
@@ -97,10 +98,7 @@ public final class AppRouter {
         Binding(
             get: { self.routes(for: tab) },
             set: { routes in
-                let current = self.routes(for: tab)
-                if routes.count < current.count {
-                    self.paths[tab] = Array(current.prefix(routes.count))
-                }
+                self.paths[tab] = routes
             }
         )
     }

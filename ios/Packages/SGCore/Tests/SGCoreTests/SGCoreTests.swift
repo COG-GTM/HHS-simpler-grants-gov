@@ -49,6 +49,12 @@ final class DraftStoreTests: XCTestCase {
         XCTAssertEqual(pending.first?.formId, formId)
     }
 
+    func testLegacyDraftRecordWithoutOwnerDecodesWithNilOwner() throws {
+        let data = Data(#"{"applicationId":"app","formId":"form","response":{},"updatedAt":1735689600,"needsSync":true}"#.utf8)
+        let record = try JSONDecoder.sg.decode(DraftRecord.self, from: data)
+        XCTAssertNil(record.ownerId)
+    }
+
     private func temporaryDirectory() -> URL {
         FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
     }
@@ -190,6 +196,166 @@ final class SyncQueueTests: XCTestCase {
         XCTAssertTrue(pending.first?.needsSync == true)
         XCTAssertNil(pending.first?.lastError)
     }
+
+    func testFlushOnlyUploadsDraftsOwnedByCurrentAccount() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let drafts = FileDraftStore(directoryURL: directory)
+        let dataSource = FakeDataSource()
+        let monitor = FakeNetworkMonitor(isOnline: true)
+        let owner = FakeCurrentOwner("user-b")
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: monitor,
+            currentOwnerId: { await owner.value() }
+        )
+        let response: JSONValue = .object(["answer": .string("draft")])
+        try await drafts.saveDraft(
+            response,
+            applicationId: "app",
+            formId: "form",
+            ownerId: "user-a"
+        )
+
+        await queue.flush()
+
+        var saveCount = await dataSource.saveCount
+        var pending = try await drafts.pendingDrafts()
+        XCTAssertEqual(saveCount, 0)
+        XCTAssertEqual(pending.count, 1)
+        XCTAssertEqual(pending.first?.ownerId, "user-a")
+        XCTAssertTrue(pending.first?.needsSync == true)
+
+        await owner.set("user-a")
+        await queue.flush()
+
+        saveCount = await dataSource.saveCount
+        pending = try await drafts.pendingDrafts()
+        XCTAssertEqual(saveCount, 1)
+        XCTAssertTrue(pending.isEmpty)
+    }
+
+    func testSuccessfulSaveRemainsSuccessfulWhenAcknowledgementFails() async throws {
+        let drafts = ThrowingAcknowledgementDraftStore()
+        let dataSource = FakeDataSource()
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true)
+        )
+        let response: JSONValue = .object(["answer": .string("saved")])
+
+        let outcome = await queue.save(applicationId: "app", formId: "form", response: response)
+
+        guard case .synced = outcome else {
+            return XCTFail("Expected a successful network save")
+        }
+        var record = await drafts.currentRecord()
+        XCTAssertEqual(record?.response, response)
+        XCTAssertTrue(record?.needsSync == true)
+        XCTAssertNil(record?.lastError)
+        var failureCount = await drafts.failureCount()
+        XCTAssertEqual(failureCount, 0)
+
+        await queue.flush()
+
+        record = await drafts.currentRecord()
+        let saveCount = await dataSource.saveCount
+        XCTAssertEqual(saveCount, 2)
+        XCTAssertTrue(record?.needsSync == true)
+        XCTAssertNil(record?.lastError)
+        failureCount = await drafts.failureCount()
+        XCTAssertEqual(failureCount, 0)
+    }
+
+    func testFlushDoesNotMarkDraftFailedWhenAcknowledgementFails() async throws {
+        let drafts = ThrowingAcknowledgementDraftStore()
+        let dataSource = FakeDataSource()
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true)
+        )
+        let response: JSONValue = .object(["answer": .string("saved")])
+        try await drafts.saveDraft(response, applicationId: "app", formId: "form")
+
+        await queue.flush()
+
+        let record = await drafts.currentRecord()
+        let saveCount = await dataSource.saveCount
+        XCTAssertEqual(saveCount, 1)
+        XCTAssertTrue(record?.needsSync == true)
+        XCTAssertNil(record?.lastError)
+        let failureCount = await drafts.failureCount()
+        XCTAssertEqual(failureCount, 0)
+    }
+
+    func testRetryBackoffFlushesAfterServerFailureWithoutNetworkTransition() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let drafts = FileDraftStore(directoryURL: directory)
+        let dataSource = FakeDataSource()
+        await dataSource.setSaveError(.server(status: 503, message: "unavailable"))
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true),
+            retryDelays: [.milliseconds(40), .milliseconds(40)]
+        )
+
+        let outcome = await queue.save(
+            applicationId: "app",
+            formId: "form",
+            response: .object(["answer": .string("saved")])
+        )
+        XCTAssertEqual(outcome, .queued)
+        await dataSource.setSaveError(nil)
+
+        for _ in 0..<100 {
+            if await queue.pendingCount == 0 { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        let saveCount = await dataSource.saveCount
+        let pending = try await drafts.pendingDrafts()
+        XCTAssertEqual(saveCount, 2)
+        XCTAssertTrue(pending.isEmpty)
+    }
+
+    func testRetryBackoffStopsAfterConfiguredAttempts() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let drafts = FileDraftStore(directoryURL: directory)
+        let dataSource = FakeDataSource()
+        await dataSource.setSaveError(.server(status: 503, message: "unavailable"))
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true),
+            retryDelays: [.milliseconds(10), .milliseconds(10)]
+        )
+
+        let outcome = await queue.save(
+            applicationId: "app",
+            formId: "form",
+            response: .object(["answer": .string("saved")])
+        )
+        XCTAssertEqual(outcome, .queued)
+
+        for _ in 0..<100 {
+            if await dataSource.saveCount == 3 { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        try await Task.sleep(for: .milliseconds(50))
+
+        let saveCount = await dataSource.saveCount
+        let pending = try await drafts.pendingDrafts()
+        XCTAssertEqual(saveCount, 3)
+        XCTAssertEqual(pending.count, 1)
+        XCTAssertTrue(pending.first?.needsSync == true)
+        XCTAssertNil(pending.first?.lastError)
+    }
 }
 
 @MainActor
@@ -232,7 +398,7 @@ final class AppRouterTests: XCTestCase {
         XCTAssertEqual(router.routes(for: .ask), [.answer(question: "q")])
         let routesBinding = router.routesBinding(for: .ask)
         routesBinding.wrappedValue = [.roadmap, .application(id: "app-1")]
-        XCTAssertEqual(router.routes(for: .ask), [.answer(question: "q")])
+        XCTAssertEqual(router.routes(for: .ask), [.roadmap, .application(id: "app-1")])
         routesBinding.wrappedValue = []
         XCTAssertTrue(router.routes(for: .ask).isEmpty)
         router.reset()
@@ -408,6 +574,75 @@ private actor FakeDataSource: GrantsDataSource {
                 isRequired: true
             )
         )
+    }
+}
+
+private actor FakeCurrentOwner {
+    private var current: String?
+
+    init(_ current: String?) {
+        self.current = current
+    }
+
+    func value() -> String? {
+        current
+    }
+
+    func set(_ value: String?) {
+        current = value
+    }
+}
+
+private actor ThrowingAcknowledgementDraftStore: DraftStore {
+    private var record: DraftRecord?
+    private(set) var markFailedCount = 0
+
+    func loadDraft(applicationId: String, formId: String) async throws -> JSONValue? {
+        guard record?.applicationId == applicationId, record?.formId == formId else { return nil }
+        return record?.response
+    }
+
+    func saveDraft(_ value: JSONValue, applicationId: String, formId: String) async throws {
+        record = DraftRecord(
+            applicationId: applicationId,
+            formId: formId,
+            response: value
+        )
+    }
+
+    func removeDraft(applicationId: String, formId: String) async throws {
+        record = nil
+    }
+
+    func pendingDrafts() async throws -> [DraftRecord] {
+        guard let record, record.needsSync else { return [] }
+        return [record]
+    }
+
+    func markSynced(applicationId: String, formId: String) async throws {
+        throw GrantsError.server(status: 500, message: "acknowledgement failed")
+    }
+
+    func markFailed(applicationId: String, formId: String, message: String) async throws {
+        markFailedCount += 1
+        guard let record else { return }
+        self.record = DraftRecord(
+            applicationId: record.applicationId,
+            formId: record.formId,
+            response: record.response,
+            updatedAt: record.updatedAt,
+            needsSync: true,
+            lastError: message,
+            ownerId: record.ownerId
+        )
+    }
+
+    func currentRecord() -> DraftRecord? {
+        record
+    }
+
+    func failureCount() -> Int {
+        markFailedCount
     }
 }
 

@@ -64,7 +64,7 @@ public actor APIClient {
            let token,
            let claims = JWTClaims(token: token),
            effectiveExpiry(for: token, claims: claims).timeIntervalSince(now()) <= 5 * 60 {
-            try await refreshOrExpireSession()
+            try await refreshOrExpireSession(expectedToken: token)
         }
 
         return try await perform(
@@ -115,10 +115,10 @@ public actor APIClient {
         }
         guard (200..<300).contains(http.statusCode) else {
             if http.statusCode == 401,
-               token != nil,
+               let token,
                authRequirement != .apiKey,
                retryAfterRefresh {
-                try await refreshOrExpireSession()
+                try await refreshOrExpireSession(expectedToken: token)
                 return try await perform(
                     path: path,
                     method: method,
@@ -129,8 +129,8 @@ public actor APIClient {
                 )
             }
             if http.statusCode == 401 {
-                if clearSessionOnUnauthorized {
-                    expireSession()
+                if clearSessionOnUnauthorized, let token {
+                    expireSession(ifCurrent: token)
                 }
                 throw GrantsError.unauthorized
             }
@@ -165,12 +165,12 @@ public actor APIClient {
         }
     }
 
-    private func refreshOrExpireSession() async throws {
+    private func refreshOrExpireSession(expectedToken: String) async throws {
         do {
             try await refreshToken()
         } catch let error as GrantsError {
             if error == .unauthorized {
-                expireSession()
+                expireSession(ifCurrent: expectedToken)
             }
             throw error
         }
@@ -216,7 +216,8 @@ public actor APIClient {
         return refreshedAt.addingTimeInterval(claims.sessionDuration)
     }
 
-    private func expireSession() {
+    private func expireSession(ifCurrent token: String) {
+        guard tokenStore.load() == token else { return }
         tokenStore.clear()
         NotificationCenter.default.post(name: .sgSessionExpired, object: nil)
     }

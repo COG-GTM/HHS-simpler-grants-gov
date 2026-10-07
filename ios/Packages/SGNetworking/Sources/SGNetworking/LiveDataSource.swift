@@ -82,15 +82,34 @@ public struct LiveDataSource: GrantsDataSource {
 
     public func applications() async throws -> [ApplicationSummary] {
         let userId = try await client.userId()
-        return try await post(
-            path: "/v1/users/\(userId)/applications",
-            body: PaginationRequest(
-                pageOffset: 1,
-                pageSize: 100,
-                sortOrder: [SortOrder(orderBy: "created_at", sortDirection: "descending")]
-            ),
-            authRequirement: .userJWT
-        )
+        var offset = 1
+        var applications: [ApplicationSummary] = []
+        while true {
+            let data = try await client.data(
+                path: "/v1/users/\(userId)/applications",
+                method: "POST",
+                body: try JSONEncoder.sg.encode(
+                    PaginationRequest(
+                        pageOffset: offset,
+                        pageSize: 100,
+                        sortOrder: [SortOrder(orderBy: "created_at", sortDirection: "descending")]
+                    )
+                ),
+                authRequirement: .userJWT
+            )
+            let response = try decode(Envelope<[ApplicationSummary]>.self, from: data)
+            let page = try response.requiredData()
+            applications.append(contentsOf: page)
+            guard
+                let totalPages = response.paginationInfo?.totalPages,
+                offset < totalPages,
+                !page.isEmpty
+            else {
+                break
+            }
+            offset += 1
+        }
+        return applications
     }
 
     public func startApplication(

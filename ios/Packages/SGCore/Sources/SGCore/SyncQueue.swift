@@ -85,18 +85,27 @@ public actor SyncQueue {
     private let dataSource: any GrantsDataSource
     private let draftStore: any DraftStore
     private let monitor: any NetworkMonitoring
+    private let currentOwnerId: @Sendable () async -> String?
+    private let retryDelays: [Duration]
     private var monitorTask: Task<Void, Never>?
+    private var retryTask: Task<Void, Never>?
+    private var scheduledRetryId: UUID?
+    private var retryAttempt = 0
     private var wasOnline = false
     public private(set) var pendingCount = 0
 
     public init(
         dataSource: any GrantsDataSource,
         draftStore: any DraftStore,
-        monitor: any NetworkMonitoring
+        monitor: any NetworkMonitoring,
+        currentOwnerId: @escaping @Sendable () async -> String? = { nil },
+        retryDelays: [Duration] = [.seconds(5), .seconds(15), .seconds(45)]
     ) {
         self.dataSource = dataSource
         self.draftStore = draftStore
         self.monitor = monitor
+        self.currentOwnerId = currentOwnerId
+        self.retryDelays = retryDelays
     }
 
     public func save(
@@ -105,27 +114,29 @@ public actor SyncQueue {
         response: JSONValue
     ) async -> SaveOutcome {
         do {
-            try await draftStore.saveDraft(response, applicationId: applicationId, formId: formId)
+            try await draftStore.saveDraft(
+                response,
+                applicationId: applicationId,
+                formId: formId,
+                ownerId: await currentOwnerId()
+            )
         } catch {
             return .failed(error as? GrantsError ?? .server(status: 500, message: error.localizedDescription))
         }
         await updatePendingCount()
 
+        let result: FormSaveResult
         do {
-            let result = try await dataSource.saveForm(
+            result = try await dataSource.saveForm(
                 applicationId: applicationId,
                 formId: formId,
                 response: response
             )
-            try await draftStore.markSynced(
-                applicationId: applicationId,
-                formId: formId,
-                syncedResponse: response
-            )
-            await updatePendingCount()
-            return .synced(result)
         } catch let error as GrantsError {
             if isRetryable(error) {
+                if await shouldScheduleRetry(for: error) {
+                    scheduleRetry()
+                }
                 return .queued
             }
             try? await draftStore.markFailed(
@@ -147,9 +158,18 @@ public actor SyncQueue {
             await updatePendingCount()
             return .failed(mapped)
         }
+
+        try? await draftStore.markSynced(
+            applicationId: applicationId,
+            formId: formId,
+            syncedResponse: response
+        )
+        await updatePendingCount()
+        return .synced(result)
     }
 
     public func flush() async {
+        cancelScheduledRetry()
         guard await monitor.isOnline else {
             await updatePendingCount()
             return
@@ -158,21 +178,20 @@ public actor SyncQueue {
             pendingCount = 0
             return
         }
+        let ownerId = await currentOwnerId()
+        var shouldRetry = false
 
-        for draft in drafts where draft.lastError == nil {
+        for draft in drafts where draft.lastError == nil && draft.ownerId == ownerId {
             do {
                 _ = try await dataSource.saveForm(
                     applicationId: draft.applicationId,
                     formId: draft.formId,
                     response: draft.response
                 )
-                try await draftStore.markSynced(
-                    applicationId: draft.applicationId,
-                    formId: draft.formId,
-                    syncedResponse: draft.response
-                )
             } catch let error as GrantsError {
-                if !isRetryable(error) {
+                if await shouldScheduleRetry(for: error) {
+                    shouldRetry = true
+                } else if !isRetryable(error) {
                     try? await draftStore.markFailed(
                         applicationId: draft.applicationId,
                         formId: draft.formId,
@@ -180,6 +199,7 @@ public actor SyncQueue {
                         failedResponse: draft.response
                     )
                 }
+                continue
             } catch {
                 try? await draftStore.markFailed(
                     applicationId: draft.applicationId,
@@ -187,7 +207,18 @@ public actor SyncQueue {
                     message: error.localizedDescription,
                     failedResponse: draft.response
                 )
+                continue
             }
+            try? await draftStore.markSynced(
+                applicationId: draft.applicationId,
+                formId: draft.formId,
+                syncedResponse: draft.response
+            )
+        }
+        if shouldRetry {
+            scheduleRetry()
+        } else {
+            retryAttempt = 0
         }
         await updatePendingCount()
     }
@@ -207,8 +238,51 @@ public actor SyncQueue {
         if transitionedOnline {
             await flush()
         } else {
+            if !online {
+                cancelScheduledRetry()
+            }
             await updatePendingCount()
         }
+    }
+
+    private func shouldScheduleRetry(for error: GrantsError) async -> Bool {
+        switch error {
+        case .offline:
+            return await monitor.isOnline
+        case let .server(status, _) where (500..<600).contains(status):
+            return await monitor.isOnline
+        default:
+            return false
+        }
+    }
+
+    private func scheduleRetry() {
+        guard retryTask == nil, retryDelays.indices.contains(retryAttempt) else { return }
+        let delay = retryDelays[retryAttempt]
+        let identifier = UUID()
+        retryAttempt += 1
+        scheduledRetryId = identifier
+        retryTask = Task { [weak self] in
+            do {
+                try await Task.sleep(for: delay)
+            } catch {
+                return
+            }
+            await self?.runScheduledRetry(identifier: identifier)
+        }
+    }
+
+    private func runScheduledRetry(identifier: UUID) async {
+        guard scheduledRetryId == identifier else { return }
+        retryTask = nil
+        scheduledRetryId = nil
+        await flush()
+    }
+
+    private func cancelScheduledRetry() {
+        retryTask?.cancel()
+        retryTask = nil
+        scheduledRetryId = nil
     }
 
     private func updatePendingCount() async {

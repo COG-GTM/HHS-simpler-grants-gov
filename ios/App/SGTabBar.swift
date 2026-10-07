@@ -61,7 +61,7 @@ struct SGTabBar: View {
         case .apply:
             return ("tabs.apply", "doc.text", "apply")
         case .profile:
-            return ("tabs.profile", "person.circle", "profile")
+            return ("tabs.profile", "person", "profile")
         }
     }
 
