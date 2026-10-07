@@ -76,7 +76,7 @@
       "consumes": true
     },
     {
-      "terms": ["myself", "personal", "me"],
+      "terms": ["for me", "for myself", "myself", "personal"],
       "kind": "applicantType",
       "values": ["individuals"],
       "confidence": 0.5,

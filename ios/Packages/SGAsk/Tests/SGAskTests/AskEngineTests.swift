@@ -47,6 +47,16 @@ final class AskEngineTests: XCTestCase {
         XCTAssertEqual(parser.parse("small business").inferredFilters.map(\.id), ["applicantType:small_businesses"])
         XCTAssertEqual(parser.parse("small business").searchQuery, "")
 
+        let findMeHealth = parser.parse("find me health grants")
+        XCTAssertEqual(findMeHealth.inferredFilters.map(\.id), ["fundingCategory:health"])
+        XCTAssertEqual(findMeHealth.inferredFilters.map(\.label), ["Health"])
+        XCTAssertEqual(findMeHealth.searchQuery, "health")
+
+        let grantsForMe = parser.details(for: "Grants for me")
+        XCTAssertEqual(grantsForMe.intent.inferredFilters.map(\.id), ["applicantType:individuals"])
+        XCTAssertEqual(grantsForMe.confidenceByID["applicantType:individuals"], 0.5)
+        XCTAssertEqual(grantsForMe.intent.searchQuery, "")
+
         let closingSoon = parser.details(for: "closing soon")
         XCTAssertEqual(closingSoon.intent.inferredFilters.map(\.id), ["status:posted"])
         XCTAssertEqual(closingSoon.intent.inferredFilters.first?.label, "Closing soon")
@@ -134,6 +144,21 @@ final class AskEngineTests: XCTestCase {
             "fundingCategory:environment",
             "fundingCategory:disaster_prevention_and_relief"
         ])
+        XCTAssertCitationInvariant(answer)
+    }
+
+    func testR3DropsForMeApplicantBeforeHigherConfidenceFilters() async throws {
+        let source = FakeGrantsDataSource(responses: [
+            .empty,
+            .response([sample(title: "Nonprofit health grant")], total: 1)
+        ])
+        let answer = try await engine(source).answer("grants for me nonprofit")
+        let requests = await source.recordedRequests()
+
+        XCTAssertEqual(requests.count, 2)
+        XCTAssertEqual(requests[1].filters.applicantType, ["nonprofits_non_higher_education_with_501c3"])
+        XCTAssertEqual(answer.droppedFilters.map(\.id), ["applicantType:individuals"])
+        XCTAssertTrue(answer.intent.inferredFilters.contains { $0.id == "applicantType:nonprofits_non_higher_education_with_501c3" })
         XCTAssertCitationInvariant(answer)
     }
 
@@ -329,6 +354,58 @@ final class AskEngineTests: XCTestCase {
         XCTAssertCitationInvariant(answer)
     }
 
+    func testClosingSoonSortsResultsLocallyAndStably() async throws {
+        let later = sample(title: "Later deadline", summary: OpportunitySummary(closeDate: "2027-06-01"))
+        let firstTie = sample(title: "First tied deadline", summary: OpportunitySummary(closeDate: "2026-09-01"))
+        let secondTie = sample(title: "Second tied deadline", summary: OpportunitySummary(closeDate: "2026-09-01"))
+        let earliest = sample(title: "Earliest deadline", summary: OpportunitySummary(closeDate: "2026-01-01"))
+        let noCloseDate = sample(title: "No close date")
+        let source = FakeGrantsDataSource(responses: [
+            .response([later, firstTie, noCloseDate, earliest, secondTie], total: 5)
+        ])
+        let answer = try await engine(source).answer("closing soon")
+
+        XCTAssertEqual(answer.citations.map(\.opportunity.opportunityTitle), [
+            "Earliest deadline",
+            "First tied deadline",
+            "Second tied deadline"
+        ])
+        XCTAssertEqual(answer.citations.map(\.index), [1, 2, 3])
+        XCTAssertCitationInvariant(answer)
+
+        let missingDateSource = FakeGrantsDataSource(responses: [
+            .response([later, noCloseDate, earliest], total: 3)
+        ])
+        let missingDateAnswer = try await engine(missingDateSource).answer("closing soon")
+        XCTAssertEqual(missingDateAnswer.citations.map(\.opportunity.opportunityTitle), [
+            "Earliest deadline",
+            "Later deadline",
+            "No close date"
+        ])
+        XCTAssertCitationInvariant(missingDateAnswer)
+    }
+
+    func testAgencyDisplayRequiresAnAcronymCode() async throws {
+        let acronym = sample(title: "Acronym listing", code: "HHS-HRSA")
+        let opaqueWithName = sample(
+            title: "Opaque code with name",
+            code: "DOC-DOCNOAAERA",
+            agencyName: "National Oceanic and Atmospheric Administration"
+        )
+        let opaqueWithoutName = sample(title: "Opaque code without name", code: "DOC-DOCNOAAERA")
+        let source = FakeGrantsDataSource(responses: [
+            .response([acronym, opaqueWithName, opaqueWithoutName], total: 3)
+        ])
+        let answer = try await engine(source).answer("health")
+        let text = render(answer)
+
+        XCTAssertTrue(text.contains("HRSA's Acronym listing"))
+        XCTAssertTrue(text.contains("National Oceanic and Atmospheric Administration's Opaque code with name"))
+        XCTAssertTrue(text.contains("Opaque code without name"))
+        XCTAssertFalse(text.contains("DOCNOAAERA's"))
+        XCTAssertCitationInvariant(answer)
+    }
+
     func testGoldenTextRuralClinicScenario() async throws {
         let posted = sample(
             title: "Rural Communities Opioid Response Program – Implementation",
@@ -449,6 +526,7 @@ final class AskEngineTests: XCTestCase {
         title: String?,
         number: String? = "DEMO-100",
         code: String? = nil,
+        agencyName: String? = nil,
         status: OpportunityStatus = .posted,
         summary: OpportunitySummary = OpportunitySummary()
     ) -> Opportunity {
@@ -457,6 +535,7 @@ final class AskEngineTests: XCTestCase {
             opportunityNumber: number,
             opportunityTitle: title,
             agencyCode: code,
+            agencyName: agencyName,
             opportunityStatus: status,
             summary: summary
         )

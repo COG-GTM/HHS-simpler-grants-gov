@@ -130,7 +130,18 @@ public struct AskEngine: AskAnswering {
 
         let candidates: [Opportunity]
         if sortByCloseDate {
-            candidates = response.data
+            candidates = response.data.enumerated().sorted { lhs, rhs in
+                switch (lhs.element.summary.closeDateValue, rhs.element.summary.closeDateValue) {
+                case let (lhsDate?, rhsDate?):
+                    return lhsDate == rhsDate ? lhs.offset < rhs.offset : lhsDate < rhsDate
+                case (.some, .none):
+                    return true
+                case (.none, .some):
+                    return false
+                case (.none, .none):
+                    return lhs.offset < rhs.offset
+                }
+            }.map(\.element)
         } else if let reranker {
             candidates = reranker.rerank(question: question, candidates: response.data)
         } else {
@@ -393,9 +404,15 @@ public struct AskEngine: AskAnswering {
     private func agencyDisplay(_ opportunity: Opportunity) -> String? {
         if let code = nonempty(opportunity.agencyCode) {
             let lastComponent = code.split(separator: "-").last.map(String.init)
-            if let lastComponent, !lastComponent.isEmpty { return lastComponent }
+            if let lastComponent, isAcronym(lastComponent) { return lastComponent }
         }
         return nonempty(opportunity.agencyName)
+    }
+
+    private func isAcronym(_ value: String) -> Bool {
+        let scalars = Array(value.unicodeScalars)
+        return (2...5).contains(scalars.count)
+            && scalars.allSatisfy { (65...90).contains($0.value) }
     }
 
     private func localizedLabel(_ key: String, fallback: String) -> String {
