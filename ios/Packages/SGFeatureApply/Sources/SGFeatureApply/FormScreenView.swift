@@ -13,7 +13,6 @@ public struct FormScreenView: View {
     @Environment(\.applyProgressStore) private var progressStore
     @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: FormScreenViewModel?
-    @AccessibilityFocusState private var errorSummaryFocused: Bool
 
     public init(applicationId: String, formId: String) {
         self.applicationId = applicationId
@@ -113,7 +112,6 @@ public struct FormScreenView: View {
         }
         .onChange(of: viewModel?.focusToken) { _, _ in
             guard let viewModel, let firstError = viewModel.errors.first else { return }
-            errorSummaryFocused = true
             withAnimation {
                 errorScrollProxy?.scrollTo(firstError.path, anchor: .top)
             }
@@ -136,60 +134,83 @@ public struct FormScreenView: View {
                             Text(viewModel.formDisplayName)
                                 .font(ApplyTheme.F.sans(13))
                                 .foregroundStyle(ApplyTheme.C.muted)
-                            Text(step.title)
-                                .font(ApplyTheme.F.serif(26))
-                                .foregroundStyle(ApplyTheme.C.ink)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .accessibilityAddTraits(.isHeader)
-                                .padding(.top, 6)
-
-                            if let description = step.sections.first?.description, !description.isEmpty {
-                                Text(description)
-                                    .font(ApplyTheme.F.sans(14))
-                                    .foregroundStyle(ApplyTheme.C.muted)
+                            if step.sections.count == 1 {
+                                Text(step.title)
+                                    .font(ApplyTheme.F.serif(26))
+                                    .foregroundStyle(ApplyTheme.C.ink)
                                     .fixedSize(horizontal: false, vertical: true)
-                                    .padding(.top, 8)
-                            }
+                                    .accessibilityAddTraits(.isHeader)
+                                    .padding(.top, 6)
 
-                            if step.sections.flatMap(\.fields).contains(where: {
-                                viewModel.prefilledPaths.contains($0.path)
-                            }) {
-                                Text("apply.form.prefill_helper".localized(bundle: .module))
-                                    .font(ApplyTheme.F.sans(14))
-                                    .foregroundStyle(ApplyTheme.C.muted)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .padding(.top, 8)
-                            }
-
-                            if !viewModel.errors.isEmpty {
-                                errorSummary(viewModel.errors)
-                                    .id("apply.form.error_summary")
-                                    .accessibilityFocused($errorSummaryFocused)
-                                    .padding(.top, 16)
-                            }
-
-                            if let message = viewModel.bannerMessage {
-                                InlineErrorBanner(message: message) {
-                                    Task { await viewModel.retry() }
+                                if let description = step.sections.first?.description, !description.isEmpty {
+                                    Text(description)
+                                        .font(ApplyTheme.F.sans(14))
+                                        .foregroundStyle(ApplyTheme.C.muted)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .padding(.top, 8)
                                 }
-                                .padding(.top, 16)
-                            }
 
-                            VStack(alignment: .leading, spacing: 24) {
+                                if step.sections.flatMap(\.fields).contains(where: {
+                                    viewModel.prefilledPaths.contains($0.path)
+                                }) {
+                                    prefillHelper()
+                                        .padding(.top, 8)
+                                }
+
+                                if !viewModel.errors.isEmpty {
+                                    errorSummary(viewModel.errors)
+                                        .id("apply.form.error_summary")
+                                        .padding(.top, 16)
+                                }
+
+                                if let message = viewModel.bannerMessage {
+                                    errorBanner(message, viewModel: viewModel)
+                                        .padding(.top, 16)
+                                }
+
                                 ForEach(step.sections) { section in
-                                    let sectionErrors = viewModel.firstErrorSectionID == section.id
-                                        ? viewModel.sectionErrors[section.id] ?? []
-                                        : []
-                                    FormSectionView(
-                                        section: section,
-                                        values: values,
-                                        errors: sectionErrors,
-                                        prefill: viewModel.prefill,
-                                        showsTitle: step.sections.count > 1
-                                    )
+                                    renderedSection(section, values: values, viewModel: viewModel)
+                                        .padding(.top, 12)
+                                }
+                            } else {
+                                ForEach(step.sections) { section in
+                                    Text(section.title)
+                                        .font(ApplyTheme.F.sans(20, .semibold))
+                                        .foregroundStyle(ApplyTheme.C.ink)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .accessibilityAddTraits(.isHeader)
+                                        .padding(.top, section.id == step.sections.first?.id ? 6 : 12)
+
+                                    if let description = section.description, !description.isEmpty {
+                                        Text(description)
+                                            .font(ApplyTheme.F.sans(14))
+                                            .foregroundStyle(ApplyTheme.C.muted)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                            .padding(.top, 6)
+                                    }
+
+                                    if section.fields.contains(where: {
+                                        viewModel.prefilledPaths.contains($0.path)
+                                    }) {
+                                        prefillHelper()
+                                            .padding(.top, 8)
+                                    }
+
+                                    if section.id == step.sections.first?.id, !viewModel.errors.isEmpty {
+                                        errorSummary(viewModel.errors)
+                                            .padding(.top, 16)
+                                    }
+
+                                    if section.id == step.sections.first?.id,
+                                       let message = viewModel.bannerMessage {
+                                        errorBanner(message, viewModel: viewModel)
+                                            .padding(.top, 16)
+                                    }
+
+                                    renderedSection(section, values: values, viewModel: viewModel)
+                                        .padding(.top, 8)
                                 }
                             }
-                            .padding(.top, 12)
                         }
                         .padding(.horizontal, ApplyTheme.S.margin)
                         .padding(.top, 20)
@@ -201,7 +222,6 @@ public struct FormScreenView: View {
                     .onChange(of: viewModel.focusToken) { _, _ in
                         if let path = viewModel.errors.first?.path {
                             proxy.scrollTo(path, anchor: .top)
-                            proxy.scrollTo("apply.form.error_summary", anchor: .top)
                         }
                     }
                 }
@@ -212,6 +232,35 @@ public struct FormScreenView: View {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+
+    private func prefillHelper() -> some View {
+        Text("apply.form.prefill_helper".localized(bundle: .module))
+            .font(ApplyTheme.F.sans(14))
+            .foregroundStyle(ApplyTheme.C.muted)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func errorBanner(_ message: String, viewModel: FormScreenViewModel) -> some View {
+        InlineErrorBanner(message: message) {
+            Task { await viewModel.retry() }
+        }
+    }
+
+    private func renderedSection(
+        _ section: FormSection,
+        values: Binding<JSONValue>,
+        viewModel: FormScreenViewModel
+    ) -> some View {
+        FormSectionView(
+            section: section,
+            values: values,
+            errors: viewModel.revealedSectionErrors[section.id] ?? [],
+            prefill: viewModel.prefill,
+            showsTitle: false,
+            attachmentNames: viewModel.attachmentNames,
+            onAttach: viewModel.attach
+        )
     }
 
     private func stepProgress(_ viewModel: FormScreenViewModel) -> some View {
@@ -239,12 +288,11 @@ public struct FormScreenView: View {
             Text(validationSummaryMessage(fieldCount: errors.count))
                 .font(ApplyTheme.F.sans(14, .semibold))
                 .foregroundStyle(ApplyTheme.C.soonFg)
-            ForEach(Array(errors.enumerated()), id: \.offset) { _, error in
-                Text(error.message)
-                    .font(ApplyTheme.F.sans(13))
-                    .foregroundStyle(ApplyTheme.C.red)
-                    .id(error.path)
-            }
+                    ForEach(Array(errors.enumerated()), id: \.offset) { _, error in
+                        Text(error.message)
+                            .font(ApplyTheme.F.sans(13))
+                            .foregroundStyle(ApplyTheme.C.red)
+                    }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)

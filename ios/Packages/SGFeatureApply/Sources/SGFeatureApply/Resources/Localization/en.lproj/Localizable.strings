@@ -27,6 +27,7 @@
 "apply.review.confirm_title" = "Submit this application?";
 "apply.review.context" = "You're submitting to %@ on behalf of %@.";
 "apply.review.context_no_agency" = "You're submitting this application on behalf of %@.";
+"apply.review.demo_note" = "Demo: this submission stays on this iPhone and is not sent to Grants.gov.";
 "apply.review.edit" = "Edit";
 "apply.review.edit_accessibility" = "Edit %@";
 "apply.review.incomplete" = "%d required forms still need to be completed before you can submit.";
@@ -45,9 +46,10 @@
 "apply.submitted.copied" = "Copied";
 "apply.submitted.copy" = "Copy";
 "apply.submitted.copy_accessibility" = "Copy tracking number";
+"apply.submitted.demo_note" = "Demo submission — nothing was sent to Grants.gov or the agency.";
 "apply.submitted.done" = "Back to Apply";
 "apply.submitted.next_steps" = "The agency validates your application, then reviews it after the deadline. You can check its status any time in the Apply tab.";
-"apply.submitted.status" = "Status";
+"apply.submitted.status" = "Status (sample)";
 "apply.submitted.timeline_agency_review" = "Agency review";
 "apply.submitted.timeline_completed" = "Completed";
 "apply.submitted.timeline_current" = "Current step";
@@ -59,7 +61,7 @@
 "apply.submitted.timeline_validated_when" = "Within 48 hours";
 "apply.submitted.title" = "Application submitted";
 "apply.submitted.today_time" = "Today, %@";
-"apply.submitted.tracking_label" = "Tracking number";
+"apply.submitted.tracking_label" = "Sample tracking number";
 "apply.submitted.tracking_pending" = "Tracking number pending";
 "apply.submitted.what_happens_next" = "What happens next";
 "apply.workspace.applying_as" = "Applying as %@";
@@ -78,7 +80,7 @@
 "apply.workspace.saved_automatically" = "Saved automatically";
 "apply.workspace.short_in_progress" = "In progress";
 "apply.workspace.state_complete" = "Complete";
-"apply.workspace.state_in_progress" = "In progress · %d of %d sections";
+"apply.workspace.state_in_progress" = "In progress · %d of %d steps";
 "apply.workspace.state_not_started" = "Not started";
 
 /* Plural fallbacks; Localizable.stringsdict provides the plural forms. */

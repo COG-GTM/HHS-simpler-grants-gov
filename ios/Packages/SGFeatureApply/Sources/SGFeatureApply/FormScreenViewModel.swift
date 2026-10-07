@@ -39,10 +39,12 @@ public final class FormScreenViewModel {
     }
     public private(set) var errors: [FieldError] = []
     public private(set) var sectionErrors: [String: [FieldError]] = [:]
+    public private(set) var revealedSectionErrors: [String: [FieldError]] = [:]
     public private(set) var saveStatus: FormSaveStatus = .idle
     public private(set) var bannerMessage: String?
     public private(set) var prefill: [String: String] = [:]
     public private(set) var prefilledPaths: Set<String> = []
+    public private(set) var attachmentNames: [String: String] = [:]
     public private(set) var isSyncing = false
     public private(set) var lastWarnings: [ValidationWarning] = []
     public private(set) var focusToken = 0
@@ -201,10 +203,19 @@ public final class FormScreenViewModel {
             prefill = loadedPrefill
             prefilledPaths = loadedPrefilledPaths
             sectionErrors = [:]
-            let completedSteps = await progressStore.completedSections(
+            revealedSectionErrors = [:]
+            let storedProgressIds = await progressStore.completedSections(
                 applicationId: applicationId,
                 formId: definition.formId
             )
+            let completedSteps = completedStepIds(stored: storedProgressIds, steps: loadedSteps)
+            if completedSteps != storedProgressIds {
+                await progressStore.setCompletedSections(
+                    completedSteps,
+                    applicationId: applicationId,
+                    formId: definition.formId
+                )
+            }
             currentStep = loadedSteps.firstIndex { !completedSteps.contains($0.id) } ?? 0
             errors = []
             saveStatus = .idle
@@ -309,25 +320,23 @@ public final class FormScreenViewModel {
 
     public func continueTapped() async -> ContinueOutcome {
         guard let step = currentFormStep, let model else { return .finished }
-        setValidationErrors(validationErrors(in: step, model: model))
-        guard errors.isEmpty else {
-            focusToken += 1
-            return .stayed
-        }
-
         let isLastStep = currentStep >= steps.count - 1
         if isLastStep {
             let allErrors = validationErrors(in: steps, model: model)
-            setValidationErrors(allErrors)
-            if !errors.isEmpty {
-                let invalidStepIndices = steps.indices.filter { index in
-                    steps[index].sections.contains {
-                        !(allErrors[$0.id] ?? []).isEmpty
+            let invalidStepIndices = steps.indices.filter { index in
+                steps[index].sections.contains {
+                    !(allErrors[$0.id] ?? []).isEmpty
+                }
+            }
+            if let firstInvalidIndex = invalidStepIndices.first {
+                currentStep = firstInvalidIndex
+                let firstInvalidStep = steps[firstInvalidIndex]
+                let visibleErrors = Dictionary(
+                    uniqueKeysWithValues: firstInvalidStep.sections.map { section in
+                        (section.id, allErrors[section.id] ?? [])
                     }
-                }
-                if let firstInvalidIndex = invalidStepIndices.first {
-                    currentStep = firstInvalidIndex
-                }
+                )
+                await setValidationErrors(visibleErrors, for: [firstInvalidStep])
                 let invalidStepIds = Set(invalidStepIndices.map { steps[$0].id })
                 var completed = await progressStore.completedSections(
                     applicationId: applicationId,
@@ -339,6 +348,13 @@ public final class FormScreenViewModel {
                     applicationId: applicationId,
                     formId: formId
                 )
+                focusToken += 1
+                return .stayed
+            }
+            await setValidationErrors(validationErrors(in: step, model: model), for: [step])
+        } else {
+            await setValidationErrors(validationErrors(in: step, model: model), for: [step])
+            guard errors.isEmpty else {
                 focusToken += 1
                 return .stayed
             }
@@ -365,7 +381,28 @@ public final class FormScreenViewModel {
         currentStep += 1
         errors = []
         sectionErrors = [:]
+        revealedSectionErrors = [:]
         return .advanced
+    }
+
+    public func attach(_ request: FormAttachmentRequest) {
+        guard !request.urls.isEmpty else { return }
+        let ids = request.urls.map { url in
+            let id = "demo-attachment-\(UUID().uuidString)"
+            attachmentNames[id] = url.lastPathComponent
+            return id
+        }
+        if request.field.kind == .attachmentArray {
+            let existing: [JSONValue]
+            if case let .array(values)? = values.value(at: request.path) {
+                existing = values
+            } else {
+                existing = []
+            }
+            values.setValue(.array(existing + ids.map(JSONValue.string)), at: request.path)
+        } else if let id = ids.first {
+            values.setValue(.string(id), at: request.path)
+        }
     }
 
     private func validationErrors(in step: FormStep, model: FormModel) -> [String: [FieldError]] {
@@ -384,11 +421,31 @@ public final class FormScreenViewModel {
         return result
     }
 
-    private func setValidationErrors(_ sectionErrors: [String: [FieldError]]) {
+    private func setValidationErrors(
+        _ sectionErrors: [String: [FieldError]],
+        for visibleSteps: [FormStep]
+    ) async {
         self.sectionErrors = sectionErrors
-        errors = steps.flatMap { step in
+        errors = visibleSteps.flatMap { step in
             step.sections.flatMap { sectionErrors[$0.id] ?? [] }
         }
+        let visibleSections = visibleSteps.flatMap(\.sections)
+        let firstSectionWithErrors = visibleSections.first {
+            !(sectionErrors[$0.id] ?? []).isEmpty
+        }
+        revealedSectionErrors = Dictionary(
+            uniqueKeysWithValues: visibleSections
+                .filter { $0.id != firstSectionWithErrors?.id }
+                .map { ($0.id, sectionErrors[$0.id] ?? []) }
+        )
+        guard let firstSectionWithErrors,
+              let firstErrors = sectionErrors[firstSectionWithErrors.id],
+              !firstErrors.isEmpty else {
+            return
+        }
+        await Task.yield()
+        revealedSectionErrors[firstSectionWithErrors.id] = firstErrors
+        await Task.yield()
     }
 
     public func saveDraftTapped() async -> Bool {

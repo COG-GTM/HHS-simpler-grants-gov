@@ -54,6 +54,13 @@ public struct SubmittedView: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 12)
 
+                    Text("apply.submitted.demo_note".localized(bundle: .module))
+                        .font(ApplyTheme.F.sans(14))
+                        .foregroundStyle(ApplyTheme.C.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 8)
+                        .accessibilityIdentifier("apply.submitted.demo_note")
+
                     trackingCard
                         .padding(.top, 20)
 
@@ -122,6 +129,7 @@ public struct SubmittedView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
+            .accessibilityElement(children: .combine)
             Spacer(minLength: 8)
             if trackingNumber != nil {
                 Button(action: copyTrackingNumber) {

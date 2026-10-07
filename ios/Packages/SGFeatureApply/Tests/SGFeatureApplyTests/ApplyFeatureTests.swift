@@ -1,7 +1,7 @@
 import Foundation
 import SGCore
 @testable import SGFeatureApply
-import SGForms
+@testable import SGForms
 import SGModels
 import XCTest
 
@@ -26,7 +26,7 @@ final class ApplyFeatureTests: XCTestCase {
         XCTAssertEqual(viewModel.completedRequiredCount, 3)
         XCTAssertEqual(viewModel.requiredCount, 6)
         XCTAssertEqual(viewModel.progressFraction, 0.5)
-        XCTAssertEqual(viewModel.requiredRows.first?.state, .inProgress(completedSections: 2, totalSections: 5))
+        XCTAssertEqual(viewModel.requiredRows.first?.state, .inProgress(completedSteps: 2, totalSteps: 5))
         XCTAssertEqual(viewModel.daysRemaining, 67)
         XCTAssertTrue(viewModel.isDueSoon)
         XCTAssertFalse(viewModel.canReview)
@@ -80,7 +80,7 @@ final class ApplyFeatureTests: XCTestCase {
                 stepIds: steps,
                 locallyComplete: false
             ),
-            .inProgress(completedSections: 1, totalSections: 3)
+            .inProgress(completedSteps: 1, totalSteps: 3)
         )
         XCTAssertEqual(
             ApplyFormStateLogic.state(
@@ -92,7 +92,7 @@ final class ApplyFeatureTests: XCTestCase {
                 stepIds: steps,
                 locallyComplete: false
             ),
-            .inProgress(completedSections: 0, totalSections: 3)
+            .inProgress(completedSteps: 0, totalSteps: 3)
         )
         XCTAssertEqual(
             ApplyFormStateLogic.state(
@@ -104,7 +104,7 @@ final class ApplyFeatureTests: XCTestCase {
                 stepIds: [],
                 locallyComplete: false
             ),
-            .inProgress(completedSections: 0, totalSections: 1)
+            .inProgress(completedSteps: 0, totalSteps: 1)
         )
         XCTAssertEqual(
             ApplyFormStateLogic.state(
@@ -128,7 +128,7 @@ final class ApplyFeatureTests: XCTestCase {
                 stepIds: ["step-1"],
                 locallyComplete: false
             ),
-            .inProgress(completedSections: 0, totalSections: 1)
+            .inProgress(completedSteps: 0, totalSteps: 1)
         )
         XCTAssertEqual(
             ApplyFormStateLogic.state(
@@ -155,12 +155,12 @@ final class ApplyFeatureTests: XCTestCase {
         )
         XCTAssertEqual(ApplyFormStateLogic.displayName(formName: nil, shortName: nil), "")
         XCTAssertEqual(
-            workspaceStateDescription(.inProgress(completedSections: 0, totalSections: 1)),
+            workspaceStateDescription(.inProgress(completedSteps: 0, totalSteps: 1)),
             "In progress"
         )
         XCTAssertEqual(
-            workspaceStateDescription(.inProgress(completedSections: 2, totalSections: 5)),
-            "In progress · 2 of 5 sections"
+            workspaceStateDescription(.inProgress(completedSteps: 2, totalSteps: 5)),
+            "In progress · 2 of 5 steps"
         )
         XCTAssertEqual(validationSummaryMessage(fieldCount: 1), "Fix 1 field before you continue.")
         XCTAssertEqual(validationSummaryMessage(fieldCount: 2), "Fix 2 fields before you continue.")
@@ -177,6 +177,26 @@ final class ApplyFeatureTests: XCTestCase {
             workspaceDueLabel(date: dueDate, days: 67, timeZone: timeZone),
             "Due Dec 12 · 67 days"
         )
+    }
+
+    func testCompletedStepIdsMigratesFullyCompletedLegacySections() throws {
+        let steps = try FormModel(definition: multiSectionStepDefinition()).steps
+        let firstStep = try XCTUnwrap(steps.first)
+        let secondStep = steps[1]
+        let thirdStep = steps[2]
+        let stored = Set([
+            firstStep.id,
+            secondStep.sections[0].id,
+            secondStep.sections[1].id,
+            thirdStep.id,
+            "unknown"
+        ])
+
+        XCTAssertEqual(
+            completedStepIds(stored: stored, steps: steps),
+            Set([firstStep.id, secondStep.id, thirdStep.id])
+        )
+        XCTAssertTrue(completedStepIds(stored: ["applicant_information"], steps: steps).isEmpty)
     }
 
     @MainActor
@@ -354,8 +374,46 @@ final class ApplyFeatureTests: XCTestCase {
         XCTAssertEqual(outcome, .stayed)
         XCTAssertEqual(viewModel.sectionErrors["applicant_information"], [firstError])
         XCTAssertEqual(viewModel.sectionErrors["applicant_contact"], [secondError])
+        XCTAssertEqual(viewModel.revealedSectionErrors["applicant_information"], [firstError])
+        XCTAssertEqual(viewModel.revealedSectionErrors["applicant_contact"], [secondError])
         XCTAssertEqual(viewModel.errors, [firstError, secondError])
         XCTAssertEqual(viewModel.firstErrorSectionID, "applicant_information")
+    }
+
+    @MainActor
+    func testLastStepShowsOnlyTheFirstInvalidStepErrors() async {
+        let firstError = FieldError(path: "$.submission_type", message: "Step one error")
+        let thirdError = FieldError(path: "$.federal_agency", message: "Step three error")
+        let progress = InMemoryFormProgressStore(
+            completedSections: ["apply-demo/sf424": ["step-1", "step-2", "step-3", "step-4"]]
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: multiSectionStepDefinition()
+            ),
+            progressStore: progress,
+            validator: { _, section, _ in
+                switch section.id {
+                case "submission_type": [firstError]
+                case "federal_agency": [thirdError]
+                default: []
+                }
+            }
+        )
+        await viewModel.load()
+        XCTAssertEqual(viewModel.currentStep, 4)
+
+        let outcome = await viewModel.continueTapped()
+
+        XCTAssertEqual(outcome, .stayed)
+        XCTAssertEqual(viewModel.currentStep, 0)
+        XCTAssertEqual(viewModel.errors, [firstError])
+        XCTAssertEqual(viewModel.sectionErrors["submission_type"], [firstError])
+        XCTAssertFalse(viewModel.errors.contains(thirdError))
+        XCTAssertFalse(viewModel.sectionErrors.values.flatMap { $0 }.contains(thirdError))
     }
 
     @MainActor
@@ -437,6 +495,86 @@ final class ApplyFeatureTests: XCTestCase {
 
         XCTAssertEqual(validOutcome, .advanced)
         XCTAssertEqual(viewModel.currentStep, 2)
+    }
+
+    @MainActor
+    func testAttachSingleRequiredAttachmentAndValidate() async throws {
+        let definition = attachmentFormDefinition(array: false)
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let model = try XCTUnwrap(viewModel.model)
+        let section = try XCTUnwrap(model.sections.first)
+        let field = try XCTUnwrap(section.fields.first)
+        XCTAssertEqual(field.kind, .attachment)
+        XCTAssertEqual(FormValidator.validate(viewModel.values, section: section, model: model).count, 1)
+
+        viewModel.attach(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/required-support.pdf")]
+        ))
+
+        guard case let .string(id)? = viewModel.values.value(at: field.dataPath) else {
+            return XCTFail("Expected an attachment id at the field path")
+        }
+        XCTAssertTrue(id.hasPrefix("demo-attachment-"))
+        XCTAssertEqual(viewModel.attachmentNames[id], "required-support.pdf")
+        XCTAssertTrue(FormValidator.validate(viewModel.values, section: section, model: model).isEmpty)
+    }
+
+    @MainActor
+    func testAttachMultipleFilesAppendsToAttachmentArray() async throws {
+        let definition = attachmentFormDefinition(array: true)
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let model = try XCTUnwrap(viewModel.model)
+        let section = try XCTUnwrap(model.sections.first)
+        let field = try XCTUnwrap(section.fields.first)
+        XCTAssertEqual(field.kind, .attachmentArray)
+        viewModel.values.setValue(.array([.string("existing-attachment")]), at: field.dataPath)
+
+        viewModel.attach(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [
+                URL(fileURLWithPath: "/fictional/first-support.pdf"),
+                URL(fileURLWithPath: "/fictional/second-support.pdf")
+            ]
+        ))
+
+        guard case let .array(ids)? = viewModel.values.value(at: field.dataPath) else {
+            return XCTFail("Expected attachment ids at the array field path")
+        }
+        XCTAssertEqual(ids.count, 3)
+        XCTAssertEqual(ids.first, .string("existing-attachment"))
+        let newIds = ids.dropFirst().compactMap {
+            if case let .string(id) = $0 { return id }
+            return nil
+        }
+        XCTAssertEqual(newIds.count, 2)
+        XCTAssertEqual(viewModel.attachmentNames[newIds[0]], "first-support.pdf")
+        XCTAssertEqual(viewModel.attachmentNames[newIds[1]], "second-support.pdf")
+        XCTAssertTrue(FormValidator.validate(viewModel.values, section: section, model: model).isEmpty)
     }
 
     @MainActor
@@ -872,7 +1010,7 @@ final class ApplyFeatureTests: XCTestCase {
 
         XCTAssertEqual(
             workspace.requiredRows.first(where: { $0.id == formId })?.state,
-            .inProgress(completedSections: 1, totalSections: 1)
+            .inProgress(completedSteps: 1, totalSteps: 1)
         )
 
         let viewModel = FormScreenViewModel(
@@ -920,6 +1058,43 @@ final class ApplyFeatureTests: XCTestCase {
                 section("areas_affected"),
                 section("state_review")
             ])
+        )
+    }
+
+    private func attachmentFormDefinition(array: Bool) -> FormDefinition {
+        let attachmentSchema: JSONValue = array
+            ? .object([
+                "type": .string("array"),
+                "minItems": .number(1),
+                "items": .object([
+                    "type": .string("string"),
+                    "format": .string("uuid")
+                ])
+            ])
+            : .object([
+                "type": .string("string"),
+                "format": .string("uuid")
+            ])
+        let field = JSONValue.object([
+            "type": .string("field"),
+            "definition": .string("/properties/supporting_attachment")
+        ])
+        let section = JSONValue.object([
+            "type": .string("section"),
+            "name": .string("attachments"),
+            "label": .string("Attachments"),
+            "children": .array([field])
+        ])
+        return FormDefinition(
+            formId: "sf424",
+            formName: "Attachment application",
+            shortFormName: "ATTACHMENT",
+            formJsonSchema: .object([
+                "type": .string("object"),
+                "properties": .object(["supporting_attachment": attachmentSchema]),
+                "required": .array([.string("supporting_attachment")])
+            ]),
+            formUiSchema: .array([section])
         )
     }
 

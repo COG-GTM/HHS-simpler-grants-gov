@@ -1,9 +1,19 @@
+import SGForms
 import SGModels
 
 public enum ApplyFormState: Hashable, Sendable {
     case notStarted
-    case inProgress(completedSections: Int, totalSections: Int)
+    case inProgress(completedSteps: Int, totalSteps: Int)
     case complete
+}
+
+func completedStepIds(stored: Set<String>, steps: [FormStep]) -> Set<String> {
+    let stepIds = Set(steps.map(\.id))
+    let migratedStepIds: [String] = steps.compactMap { step -> String? in
+        guard !step.sectionIDs.isEmpty, Set(step.sectionIDs).isSubset(of: stored) else { return nil }
+        return step.id
+    }
+    return stored.intersection(stepIds).union(migratedStepIds)
 }
 
 public struct ApplyFormRow: Identifiable, Hashable, Sendable {
@@ -52,7 +62,7 @@ public enum ApplyFormStateLogic {
         let total = max(stepIds.count, 1)
         let done = completedStepIds.intersection(stepIds).count
         if done > 0 || hasDraft || isNonEmptyObject(response) {
-            return .inProgress(completedSections: done, totalSections: total)
+            return .inProgress(completedSteps: done, totalSteps: total)
         }
         return .notStarted
     }

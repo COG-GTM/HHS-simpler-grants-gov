@@ -257,36 +257,45 @@ public struct ReviewSubmitView: View {
     }
 
     private func submitFooter(_ viewModel: ReviewSubmitViewModel) -> some View {
-        Button {
-            Task {
-                let step = await viewModel.requestSubmit()
-                if case let .submitted(result) = step, let result {
-                    router.push(
-                        .submitted(
-                            applicationId: applicationId,
-                            trackingNumber: result.trackingNumber
+        VStack(alignment: .leading, spacing: 10) {
+            Text("apply.review.demo_note".localized(bundle: .module))
+                .font(ApplyTheme.F.sans(12))
+                .foregroundStyle(ApplyTheme.C.muted)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("apply.review.demo_note")
+
+            Button {
+                Task {
+                    let step = await viewModel.requestSubmit()
+                    if case let .submitted(result) = step, let result {
+                        router.push(
+                            .submitted(
+                                applicationId: applicationId,
+                                trackingNumber: result.trackingNumber
+                            )
                         )
+                    }
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    if viewModel.isSubmitting {
+                        ProgressView().tint(.white)
+                    }
+                    Text(
+                        viewModel.isSubmitting
+                            ? "apply.review.submitting".localized(bundle: .module)
+                            : "apply.review.submit".localized(bundle: .module)
                     )
                 }
             }
-        } label: {
-            HStack(spacing: 8) {
-                if viewModel.isSubmitting {
-                    ProgressView().tint(.white)
-                }
-                Text(
-                    viewModel.isSubmitting
-                        ? "apply.review.submitting".localized(bundle: .module)
-                        : "apply.review.submit".localized(bundle: .module)
-                )
-            }
+            .buttonStyle(ApplyPrimaryButtonStyle(isEnabled: viewModel.canSubmit))
+            .disabled(!viewModel.canSubmit)
+            .accessibilityIdentifier("apply.review.submit")
         }
-        .buttonStyle(ApplyPrimaryButtonStyle(isEnabled: viewModel.canSubmit))
-        .disabled(!viewModel.canSubmit)
-        .accessibilityIdentifier("apply.review.submit")
         .padding(.horizontal, ApplyTheme.S.margin)
         .padding(.top, 12)
         .padding(.bottom, 28)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(ApplyTheme.C.canvas)
         .overlay(alignment: .top) {
             Rectangle().fill(ApplyTheme.C.line).frame(height: 1)

@@ -46,18 +46,31 @@ enum ApplicationLoader {
         for form in application.applicationForms {
             let formId = form.formId
             let model = try? FormModel(definition: form.form)
-            let stepIds = model?.steps.map(\.id) ?? []
-            let progressStepIds = model?.sections.isEmpty == true || stepIds.isEmpty
-                ? ["application"]
-                : stepIds
+            let displayName = ApplyFormStateLogic.displayName(
+                formName: form.form.formName,
+                shortName: form.form.shortFormName,
+                formId: formId
+            )
+            let progressSteps: [FormStep]
+            if let model, !model.steps.isEmpty {
+                progressSteps = model.steps
+            } else {
+                let fallbackSection = FormSection(id: "application", title: displayName, fields: [])
+                progressSteps = [FormStep(
+                    id: "application",
+                    title: displayName,
+                    sections: [fallbackSection]
+                )]
+            }
             let draft = try? await draftStore.loadDraft(
                 applicationId: applicationId,
                 formId: formId
             )
-            let completedStepIds = await progressStore.completedSections(
+            let storedProgressIds = await progressStore.completedSections(
                 applicationId: applicationId,
                 formId: formId
             )
+            let completedSteps = completedStepIds(stored: storedProgressIds, steps: progressSteps)
             let isComplete = await progressStore.isFormComplete(
                 applicationId: applicationId,
                 formId: formId
@@ -65,11 +78,7 @@ enum ApplicationLoader {
             let row = ApplyFormRow(
                 id: formId,
                 applicationFormId: form.applicationFormId,
-                displayName: ApplyFormStateLogic.displayName(
-                    formName: form.form.formName,
-                    shortName: form.form.shortFormName,
-                    formId: formId
-                ),
+                displayName: displayName,
                 shortName: form.form.shortFormName ?? formId,
                 isRequired: form.isRequired,
                 state: ApplyFormStateLogic.state(
@@ -77,8 +86,8 @@ enum ApplicationLoader {
                     response: form.applicationResponse,
                     hasDraft: draft != nil,
                     hasUnsyncedDraft: draft.map { $0 != form.applicationResponse } ?? false,
-                    completedStepIds: completedStepIds,
-                    stepIds: progressStepIds,
+                    completedStepIds: completedSteps,
+                    stepIds: progressSteps.map(\.id),
                     locallyComplete: isComplete
                 )
             )
