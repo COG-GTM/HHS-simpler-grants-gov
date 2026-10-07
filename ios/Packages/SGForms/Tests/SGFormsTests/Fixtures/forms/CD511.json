@@ -1,0 +1,265 @@
+{
+  "agency_code": "SGG",
+  "form_id": "7057eaee-f043-4029-b7f2-c932f11ce900",
+  "form_json_schema": {
+    "allOf": [
+      {
+        "if": {
+          "not": {
+            "required": [
+              "award_number"
+            ]
+          }
+        },
+        "then": {
+          "required": [
+            "project_name"
+          ]
+        }
+      },
+      {
+        "if": {
+          "not": {
+            "required": [
+              "project_name"
+            ]
+          }
+        },
+        "then": {
+          "required": [
+            "award_number"
+          ]
+        }
+      }
+    ],
+    "properties": {
+      "applicant_name": {
+        "allOf": [
+          {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Organization Name",
+            "type": "string"
+          }
+        ],
+        "description": "Enter legal name of applicant, which will undertake the assistance activity.",
+        "title": "Name of Applicant"
+      },
+      "award_number": {
+        "description": "Required if Project Name is blank.",
+        "maxLength": 25,
+        "minLength": 1,
+        "title": "Award Number",
+        "type": "string"
+      },
+      "contact_person": {
+        "allOf": [
+          {
+            "description": "",
+            "properties": {
+              "first_name": {
+                "description": "Enter the first name.",
+                "maxLength": 35,
+                "minLength": 1,
+                "title": "First Name",
+                "type": "string"
+              },
+              "last_name": {
+                "description": "Enter the last name.",
+                "maxLength": 60,
+                "minLength": 1,
+                "title": "Last Name",
+                "type": "string"
+              },
+              "middle_name": {
+                "description": "Enter the middle name.",
+                "maxLength": 25,
+                "minLength": 1,
+                "title": "Middle Name",
+                "type": "string"
+              },
+              "prefix": {
+                "description": "Enter the prefix.",
+                "maxLength": 10,
+                "minLength": 1,
+                "title": "Prefix",
+                "type": "string"
+              },
+              "suffix": {
+                "description": "Enter the suffix.",
+                "maxLength": 10,
+                "minLength": 1,
+                "title": "Suffix",
+                "type": "string"
+              }
+            },
+            "required": [
+              "first_name",
+              "last_name"
+            ],
+            "title": "Name and Contact Information",
+            "type": "object"
+          }
+        ],
+        "title": "Contact Person"
+      },
+      "contact_person_title": {
+        "allOf": [
+          {
+            "description": "Enter the position title.",
+            "maxLength": 45,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        ]
+      },
+      "project_name": {
+        "description": "Required if Award Number is blank.",
+        "maxLength": 60,
+        "minLength": 1,
+        "title": "Project Name",
+        "type": "string"
+      },
+      "signature": {
+        "allOf": [
+          {
+            "description": "Completed by Grants.gov upon submission.",
+            "maxLength": 144,
+            "minLength": 1,
+            "title": "Signature",
+            "type": "string"
+          }
+        ]
+      },
+      "submitted_date": {
+        "allOf": [
+          {
+            "description": "Completed by Grants.gov upon submission.",
+            "format": "date",
+            "title": "Submitted Date",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "required": [
+      "applicant_name",
+      "contact_person",
+      "contact_person_title"
+    ],
+    "type": "object"
+  },
+  "form_name": "CD511",
+  "form_rule_schema": {
+    "signature": {
+      "gg_post_population": {
+        "rule": "signature"
+      }
+    },
+    "submitted_date": {
+      "gg_post_population": {
+        "rule": "current_date"
+      }
+    }
+  },
+  "form_type": "CD511",
+  "form_ui_schema": [
+    {
+      "children": [],
+      "description": "Applicants should also review the instructions for certification included in the regulations before completing this form. Signature on this form provides for compliance with certification requirements under 15 CFR Part 28, 'New Restrictions on Lobbying.' The certifications shall be treated as a material representation of fact upon which reliance will be placed when the Department of Commerce determines to award the covered transaction, grant, or cooperative agreement.",
+      "label": "CERTIFICATION REGARDING LOBBYING",
+      "name": "directions1",
+      "type": "section"
+    },
+    {
+      "children": [],
+      "description": "\nAs required by Section 1352, Title 31 of the U.S. Code, and implemented at 15 CFR Part 28, for persons entering into a grant, cooperative agreement or contract over $100,000 or a loan or loan guarantee over $150,000 as defined at 15 CFR Part 28, Sections 28.105 and 28.110, the applicant certifies that to the best of his or her knowledge and belief, that:\n\n(1) No Federal appropriated funds have been paid or will be paid, by or on behalf of the undersigned, to any person for influencing or attempting to influence an officer or employee of any agency, a Member of Congress in connection with the awarding of any Federal contract, the making of any Federal grant, the making of any Federal loan, the entering into of any cooperative agreement, and the extension, continuation, renewal, amendment, or modification of any Federal contract, grant, loan, or cooperative agreement.\n\n(2) If any funds other than Federal appropriated funds have been paid or will be paid to any person for influencing or attempting to influence an officer or employee of any agency, a Member of Congress, an officer or employee of Congress, or an employee of a member of Congress in connection with this Federal contract, grant, loan, or cooperative agreement, the undersigned shall complete and submit Standard Form-LLL, 'Disclosure Form to Report Lobbying.' in accordance with its instructions.\n\n(3) The undersigned shall require that the language of this certification be included in the award documents for all subawards at all tiers (including subcontracts, subgrants, and contracts under grants, loans, and cooperative agreements) and that all subrecipients shall certify and disclose accordingly.\n\nThis certification is a material representation of fact upon which reliance was placed when this transaction was made or entered into. Submission of this certification is a prerequisite for making or entering into this transaction imposed by section 1352, title 31, U.S. Code. Any person who fails to file the required certification shall be subject to a civil penalty of not less than $10,000 and not more than $100,000 for each such failure occurring on or before October 23, 1996, and of not less than $11,000 and not more than $110,000 for each such failure occurring after October 23, 1996.\n",
+      "label": "Lobbying",
+      "name": "directions2",
+      "type": "section"
+    },
+    {
+      "children": [],
+      "description": "\nThe undersigned states, to the best of his or her knowledge and belief, that:\n\nIn any funds have been paid or will be paid to any person for influencing or attempting to influence an officer or employee of any agency, a Member of Congress, an officer or employee of Congress, or an employee of a Member of Congress in connection with this commitment providing for the United States to insure or guarantee a loan, the undersigned shall complete and submit Standard Form-LLL, 'Disclosure Form to Report Lobbying,' in accordance with its instructions.\n\nSubmission of this statement is a prerequisite for making or entering into this transaction imposed by section 1352, title 31, U.S. Code. Any person who fails to file the required statement shall be subject to a civil penalty of not less than $10,000 and not more than $100,000 for each such failure occurring on or before October 23, 1996, and of not less than $11,000 and not more than $110,000 for each such failure occurring after October 23, 1996.\n",
+      "label": "Statement for Loan Guarantees and Loan Insurance",
+      "name": "directions3",
+      "type": "section"
+    },
+    {
+      "children": [],
+      "description": "As the duly authorized representative of the applicant, I hereby certify that the applicant will comply with the above applicable certification.",
+      "label": "Acknowledgement",
+      "name": "directions4",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/applicant_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/award_number",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_name",
+          "type": "field"
+        }
+      ],
+      "label": "1. Applicant Information",
+      "name": "award",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/contact_person/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/contact_person/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/contact_person/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/contact_person/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/contact_person/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/contact_person_title",
+          "type": "field"
+        }
+      ],
+      "label": "2. Contact Person",
+      "name": "contact_person",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/signature",
+          "type": "null"
+        },
+        {
+          "definition": "/properties/submitted_date",
+          "type": "null"
+        }
+      ],
+      "label": "3. Signature",
+      "name": "signature",
+      "type": "section"
+    }
+  ],
+  "form_version": "1.1",
+  "omb_number": null,
+  "short_form_name": "CD511"
+}

@@ -1,0 +1,1541 @@
+{
+  "agency_code": "SGG",
+  "form_id": "b98c72d0-4dd4-425f-bb9c-a7b72dc6972b",
+  "form_json_schema": {
+    "$defs": {
+      "budget_calculated_row": {
+        "properties": {
+          "non_allowable_cost": {
+            "allOf": [
+              {
+                "maxLength": 15,
+                "minLength": 1,
+                "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_allowable_cost": {
+            "allOf": [
+              {
+                "maxLength": 15,
+                "minLength": 1,
+                "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_cost": {
+            "allOf": [
+              {
+                "maxLength": 15,
+                "minLength": 1,
+                "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "budget_row": {
+        "properties": {
+          "non_allowable_cost": {
+            "allOf": [
+              {
+                "maxLength": 13,
+                "minLength": 1,
+                "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_allowable_cost": {
+            "allOf": [
+              {
+                "maxLength": 15,
+                "minLength": 1,
+                "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_cost": {
+            "allOf": [
+              {
+                "maxLength": 13,
+                "minLength": 1,
+                "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "budget_information": {
+        "properties": {
+          "administrative_and_legal_expenses": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Administrative and Legal Expenses"
+          },
+          "architectural_engineering_fees": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Architectural and Engineering Fees"
+          },
+          "construction": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Construction"
+          },
+          "contingencies": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Contingencies"
+          },
+          "demolition_and_removal": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Demolition and Removal"
+          },
+          "equipment": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Equipment"
+          },
+          "land_structures_rights_of_way": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Land, Structures, Rights-of-Way, Appraisals, etc."
+          },
+          "miscellaneous": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Miscellaneous"
+          },
+          "other_architectural_engineering_fees": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Other Architectural and Engineering Fees"
+          },
+          "project_income": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Project Income"
+          },
+          "project_inspection_fees": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Project Inspection Fees"
+          },
+          "relocation_expenses": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Relocation Expenses and Payments"
+          },
+          "site_work": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,10}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Site Work"
+          },
+          "subtotal_1": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Subtotal"
+          },
+          "subtotal_2": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Subtotal"
+          },
+          "total_project_costs": {
+            "allOf": [
+              {
+                "properties": {
+                  "non_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_allowable_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_cost": {
+                    "allOf": [
+                      {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ],
+            "title": "Total Project Costs"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "federal_funding": {
+        "properties": {
+          "federal_funding_share": {
+            "allOf": [
+              {
+                "maxLength": 15,
+                "minLength": 1,
+                "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "federal_percentage_share": {
+            "allOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              }
+            ]
+          },
+          "total_project_costs": {
+            "allOf": [
+              {
+                "maxLength": 15,
+                "minLength": 1,
+                "pattern": "^\\d{1,12}([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    "required": [],
+    "type": "object"
+  },
+  "form_name": "Budget Information for Construction Programs (SF-424C)",
+  "form_rule_schema": {
+    "budget_information": {
+      "administrative_and_legal_expenses": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.administrative_and_legal_expenses.total_cost",
+              "budget_information.administrative_and_legal_expenses.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "architectural_engineering_fees": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.architectural_engineering_fees.total_cost",
+              "budget_information.architectural_engineering_fees.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "construction": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.construction.total_cost",
+              "budget_information.construction.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "contingencies": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.contingencies.total_cost",
+              "budget_information.contingencies.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "demolition_and_removal": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.demolition_and_removal.total_cost",
+              "budget_information.demolition_and_removal.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "equipment": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.equipment.total_cost",
+              "budget_information.equipment.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "land_structures_rights_of_way": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.land_structures_rights_of_way.total_cost",
+              "budget_information.land_structures_rights_of_way.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "miscellaneous": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.miscellaneous.total_cost",
+              "budget_information.miscellaneous.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "other_architectural_engineering_fees": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.other_architectural_engineering_fees.total_cost",
+              "budget_information.other_architectural_engineering_fees.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "project_income": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.project_income.total_cost",
+              "budget_information.project_income.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "project_inspection_fees": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.project_inspection_fees.total_cost",
+              "budget_information.project_inspection_fees.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "relocation_expenses": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.relocation_expenses.total_cost",
+              "budget_information.relocation_expenses.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "site_work": {
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.site_work.total_cost",
+              "budget_information.site_work.non_allowable_cost"
+            ],
+            "rule": "subtract_monetary"
+          }
+        }
+      },
+      "subtotal_1": {
+        "non_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.administrative_and_legal_expenses.non_allowable_cost",
+              "budget_information.land_structures_rights_of_way.non_allowable_cost",
+              "budget_information.relocation_expenses.non_allowable_cost",
+              "budget_information.architectural_engineering_fees.non_allowable_cost",
+              "budget_information.other_architectural_engineering_fees.non_allowable_cost",
+              "budget_information.project_inspection_fees.non_allowable_cost",
+              "budget_information.site_work.non_allowable_cost",
+              "budget_information.demolition_and_removal.non_allowable_cost",
+              "budget_information.construction.non_allowable_cost",
+              "budget_information.equipment.non_allowable_cost",
+              "budget_information.miscellaneous.non_allowable_cost"
+            ],
+            "rule": "sum_monetary"
+          }
+        },
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.subtotal_1.total_cost",
+              "budget_information.subtotal_1.non_allowable_cost"
+            ],
+            "order": 2,
+            "rule": "subtract_monetary"
+          }
+        },
+        "total_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.administrative_and_legal_expenses.total_cost",
+              "budget_information.land_structures_rights_of_way.total_cost",
+              "budget_information.relocation_expenses.total_cost",
+              "budget_information.architectural_engineering_fees.total_cost",
+              "budget_information.other_architectural_engineering_fees.total_cost",
+              "budget_information.project_inspection_fees.total_cost",
+              "budget_information.site_work.total_cost",
+              "budget_information.demolition_and_removal.total_cost",
+              "budget_information.construction.total_cost",
+              "budget_information.equipment.total_cost",
+              "budget_information.miscellaneous.total_cost"
+            ],
+            "rule": "sum_monetary"
+          }
+        }
+      },
+      "subtotal_2": {
+        "non_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.subtotal_1.non_allowable_cost",
+              "budget_information.contingencies.non_allowable_cost"
+            ],
+            "order": 3,
+            "rule": "sum_monetary"
+          }
+        },
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.subtotal_2.total_cost",
+              "budget_information.subtotal_2.non_allowable_cost"
+            ],
+            "order": 4,
+            "rule": "subtract_monetary"
+          }
+        },
+        "total_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.subtotal_1.total_cost",
+              "budget_information.contingencies.total_cost"
+            ],
+            "order": 3,
+            "rule": "sum_monetary"
+          }
+        }
+      },
+      "total_project_costs": {
+        "non_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.subtotal_2.non_allowable_cost",
+              "budget_information.project_income.non_allowable_cost"
+            ],
+            "order": 4,
+            "rule": "subtract_monetary"
+          }
+        },
+        "total_allowable_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.subtotal_2.total_allowable_cost",
+              "budget_information.project_income.total_allowable_cost"
+            ],
+            "order": 5,
+            "rule": "subtract_monetary"
+          }
+        },
+        "total_cost": {
+          "gg_pre_population": {
+            "fields": [
+              "budget_information.subtotal_2.total_cost",
+              "budget_information.project_income.total_cost"
+            ],
+            "order": 4,
+            "rule": "subtract_monetary"
+          }
+        }
+      }
+    },
+    "federal_funding": {
+      "federal_funding_share": {
+        "gg_pre_population": {
+          "amount": "federal_funding.total_project_costs",
+          "order": 7,
+          "percentage": "federal_funding.federal_percentage_share",
+          "rule": "multiply_by_percentage"
+        }
+      },
+      "total_project_costs": {
+        "gg_pre_population": {
+          "fields": [
+            "budget_information.total_project_costs.total_allowable_cost"
+          ],
+          "order": 6,
+          "rule": "sum_monetary"
+        }
+      }
+    }
+  },
+  "form_type": "SF424C",
+  "form_ui_schema": [
+    {
+      "children": [
+        {
+          "children": {
+            "columns": [
+              {
+                "columnHeader": "COST CLASSIFICATION",
+                "width": 40
+              },
+              {
+                "columnHeader": "a. Total Cost",
+                "width": 20
+              },
+              {
+                "columnHeader": "b. Costs Not Allowable for Participation",
+                "width": 20
+              },
+              {
+                "columnHeader": "c. Total Allowable Costs (Columns a - b)",
+                "width": 20
+              }
+            ],
+            "rows": [
+              {
+                "cells": [
+                  {
+                    "staticContent": "1. Administrative and legal expenses",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/administrative_and_legal_expenses/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/administrative_and_legal_expenses/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/administrative_and_legal_expenses/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "2. Land, structures, rights-of-way, appraisals, etc.",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/land_structures_rights_of_way/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/land_structures_rights_of_way/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/land_structures_rights_of_way/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "3. Relocation expenses and payments",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/relocation_expenses/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/relocation_expenses/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/relocation_expenses/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "4. Architectural and engineering fees",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/architectural_engineering_fees/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/architectural_engineering_fees/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/architectural_engineering_fees/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "5. Other architectural and engineering fees",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/other_architectural_engineering_fees/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/other_architectural_engineering_fees/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/other_architectural_engineering_fees/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "6. Project inspection fees",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/project_inspection_fees/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/project_inspection_fees/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/project_inspection_fees/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "7. Site work",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/site_work/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/site_work/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/site_work/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "8. Demolition and removal",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/demolition_and_removal/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/demolition_and_removal/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/demolition_and_removal/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "9. Construction",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/construction/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/construction/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/construction/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "10. Equipment",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/equipment/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/equipment/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/equipment/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "11. Miscellaneous",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/miscellaneous/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/miscellaneous/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/miscellaneous/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "12. SUBTOTAL (sum of lines 1-11)",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/subtotal_1/properties/total_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  },
+                  {
+                    "definition": "/properties/subtotal_1/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  },
+                  {
+                    "definition": "/properties/subtotal_1/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "13. Contingencies",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/contingencies/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/contingencies/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/contingencies/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "14. SUBTOTAL",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/subtotal_2/properties/total_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  },
+                  {
+                    "definition": "/properties/subtotal_2/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  },
+                  {
+                    "definition": "/properties/subtotal_2/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "15. Project (program) income",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/project_income/properties/total_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/project_income/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "input"
+                  },
+                  {
+                    "definition": "/properties/project_income/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "16.  TOTAL PROJECT COSTS (subtract 15 from 14)",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/total_project_costs/properties/total_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  },
+                  {
+                    "definition": "/properties/total_project_costs/properties/non_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  },
+                  {
+                    "definition": "/properties/total_project_costs/properties/total_allowable_cost",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              }
+            ]
+          },
+          "definition": [
+            "/properties/budget_information"
+          ],
+          "name": "budget_424c_table_1",
+          "type": "multiField",
+          "widget": "Table"
+        }
+      ],
+      "description": "NOTE: Certain Federal assistance programs require additional computations to arrive at the Federal share of project costs eligible for participation. If such is the case, you will be notified.",
+      "label": "Budget Information for Construction Programs",
+      "name": "Table1",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "children": {
+            "columns": [
+              {
+                "columnHeader": "Field",
+                "width": 60
+              },
+              {
+                "columnHeader": "Value",
+                "width": 40
+              }
+            ],
+            "rows": [
+              {
+                "cells": [
+                  {
+                    "staticContent": "Total project costs (from line 16c)",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/total_project_costs",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "Federal percentage share (Consult Federal agency for Federal percentage share.)",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/federal_percentage_share",
+                    "format": "percentage",
+                    "type": "input"
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "staticContent": "Federal funding share",
+                    "type": "plainText"
+                  },
+                  {
+                    "definition": "/properties/federal_funding_share",
+                    "format": "dollar",
+                    "type": "readOnly"
+                  }
+                ]
+              }
+            ]
+          },
+          "definition": [
+            "/properties/federal_funding"
+          ],
+          "name": "budget_424c_table_2",
+          "type": "multiField",
+          "widget": "Table"
+        }
+      ],
+      "description": "17. Federal assistance requested, calculate as follows.",
+      "label": "Federal Funding",
+      "name": "Table2",
+      "type": "section"
+    }
+  ],
+  "form_version": "2.0",
+  "omb_number": "4040-0008",
+  "short_form_name": "SF424C"
+}
