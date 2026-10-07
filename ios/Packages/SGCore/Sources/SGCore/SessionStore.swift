@@ -1,4 +1,5 @@
 import Observation
+import Foundation
 import SGModels
 
 public enum SessionState: Sendable, Equatable {
@@ -12,17 +13,33 @@ public enum SessionState: Sendable, Equatable {
 public final class SessionStore {
     public private(set) var state: SessionState = .signedOut
     public private(set) var lastError: GrantsError?
+    public private(set) var isBusy = false
 
     private let authenticator: any Authenticating
+    private var sessionExpiredObserver: SessionExpiredObserver?
 
     public init(authenticator: any Authenticating) {
         self.authenticator = authenticator
+        sessionExpiredObserver = SessionExpiredObserver(
+            NotificationCenter.default.addObserver(
+                forName: .sgSessionExpired,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in self?.handleSessionExpired() }
+            }
+        )
     }
 
     public func signIn(pivRequired: Bool) async {
+        guard !isBusy else { return }
+        isBusy = true
+        defer { isBusy = false }
         do {
             let user = try await authenticator.signIn(pivRequired: pivRequired)
             state = .signedIn(user)
+            lastError = nil
+        } catch is CancellationError {
             lastError = nil
         } catch let error as GrantsError {
             state = .signedOut
@@ -45,11 +62,31 @@ public final class SessionStore {
     }
 
     public func restore() async {
-        if let user = await authenticator.restore() {
+        let user = await authenticator.restore()
+        if let user {
             state = .signedIn(user)
-        } else {
+            lastError = nil
+        } else if state == .signedOut {
             state = .signedOut
+            lastError = nil
         }
-        lastError = nil
+    }
+
+    public func handleSessionExpired() {
+        state = .signedOut
+        lastError = .unauthorized
+    }
+
+}
+
+private final class SessionExpiredObserver {
+    private let token: NSObjectProtocol
+
+    init(_ token: NSObjectProtocol) {
+        self.token = token
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(token)
     }
 }

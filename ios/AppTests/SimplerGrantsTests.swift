@@ -1,5 +1,7 @@
+import Foundation
 import SGCore
 import SGModels
+import SGNetworking
 import XCTest
 
 final class SimplerGrantsTests: XCTestCase {
@@ -23,5 +25,20 @@ final class SimplerGrantsTests: XCTestCase {
         let sessionStore = SessionStore(authenticator: PreviewAuthenticator())
         sessionStore.continueAsGuest()
         XCTAssertEqual(sessionStore.state, .guest)
+    }
+
+    func testKeychainTokenStoreRoundTrip() throws {
+        let store = KeychainTokenStore(
+            service: "ai.cognition.demo.simplergrants.tests.\(UUID().uuidString)",
+            account: "token"
+        )
+        defer { store.clear() }
+
+        try store.save("first")
+        XCTAssertEqual(store.load(), "first")
+        try store.save("second")
+        XCTAssertEqual(store.load(), "second")
+        store.clear()
+        XCTAssertNil(store.load())
     }
 }
