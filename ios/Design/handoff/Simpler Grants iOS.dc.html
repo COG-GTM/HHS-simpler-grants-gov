@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#ECEBE6;font-family:'Public Sans',system-ui,sans-serif;color:#14171F}a{color:#1F3D6E}a:hover{color:#14171F}</style>
+</helmet>
+<section id="t0" style="padding:56px 56px 40px;border-bottom:1px solid rgba(0,0,0,.08);display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:56px">
+<div>
+<div style="font:600 12px 'Public Sans';letter-spacing:.08em;text-transform:uppercase;color:#1F3D6E">Simpler.Grants.gov · iOS design templates</div>
+<h1 style="margin:12px 0 0;font:600 44px/1.08 'Source Serif 4',Georgia,serif;letter-spacing:-.01em">Ask first, then search, then apply.</h1>
+<p style="margin:16px 0 0;font-size:17px;line-height:1.55;color:#4A4F5C;text-wrap:pretty">The home screen is a plain-language question, following america.gov. Answers come only from Grants.gov listings and cite them. Search, opportunity detail, and the full application flow sit behind it in four tabs: Ask, Search, Apply, Profile.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.5;color:#4A4F5C;padding-top:28px">
+<div style="font:600 13px 'Public Sans';color:#14171F">Assumptions to confirm</div>
+<div>• I couldn't access america.gov or the forked repo, so the style here is my own reading of america.gov from press coverage: calm, editorial, one big question box.</div>
+<div>• Copy on onboarding, sign-in and roadmap is taken from simpler.grants.gov. Opportunity data is realistic sample data, not live.</div>
+<div>• Applicants are the primary user. Grantor (agency staff) entry exists via PIV/CAC sign-in only; grantor tools aren't designed.</div>
+<div>• Light mode only, iPhone 15/16 size (390×844).</div>
+</div>
+</section>
+
+<section id="t1" style="padding:40px 56px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><a href="#t1" style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#14171F;color:#fff;border-radius:4px;text-decoration:none">P</a><span style="font:600 14px 'Public Sans'">Clickable prototype</span></div>
+<dc-import name="GrantsApp" screen="welcome" hint-size="406px,860px"></dc-import>
+</div>
+<div style="max-width:420px;display:flex;flex-direction:column;gap:22px;padding-top:34px">
+<div style="font:600 24px/1.2 'Source Serif 4',Georgia,serif">Paths to try</div>
+<div style="display:flex;flex-direction:column;gap:14px;font-size:15px;line-height:1.5;color:#4A4F5C">
+<div><b style="color:#14171F">Ask.</b> Sign in with Login.gov → type a question or tap a suggestion → tap a cited listing.</div>
+<div><b style="color:#14171F">Search.</b> Search tab → a recent search → toggle Open / Closing soon / Forecasted → Filters sheet.</div>
+<div><b style="color:#14171F">Apply.</b> Opportunity → Start application → SF-424 (clear the email to see validation) → finish every form → certify → Submit.</div>
+<div><b style="color:#14171F">Feedback.</b> Profile → Roadmap &amp; feedback → vote, send a note.</div>
+</div>
+<div style="font:600 24px/1.2 'Source Serif 4',Georgia,serif;margin-top:8px">Design tokens</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+<sc-for list="{{ swatches }}" as="s" hint-placeholder-count="8">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:44px;border-radius:10px;background:{{ s.hex }};border:1px solid rgba(0,0,0,.08)"></div><span style="font:600 12px 'Public Sans'">{{ s.name }}</span><span style="font:400 11px ui-monospace,Menlo,monospace;color:#5A6070">{{ s.hex }}</span></div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#4A4F5C;line-height:1.5">
+<div><span style="font:600 22px 'Source Serif 4',Georgia,serif;color:#14171F">Source Serif 4</span> · titles 34/28/18, answers 17</div>
+<div><span style="font:600 18px 'Public Sans';color:#14171F">Public Sans</span> · UI 17/15/13, labels 12 caps +8% tracking</div>
+<div>Radii: cards 18 · buttons 16 · inputs 12 · chips full. Spacing on a 4pt grid, 20pt screen margins. Tap targets ≥ 44pt.</div>
+<div>In SwiftUI, swap Public Sans for SF Pro if you'd rather stay native; keep the serif for titles.</div>
+</div>
+</div>
+</section>
+
+<section id="t2" style="padding:40px 56px 60px">
+<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:24px"><a href="#t2" style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#14171F;color:#fff;border-radius:4px;text-decoration:none">S</a><span style="font:600 14px 'Public Sans'">All screens</span><span style="font-size:13px;color:#5A6070">Each phone is live; tap through from any starting point.</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:36px 28px">
+<sc-for list="{{ screens }}" as="s" hint-placeholder-count="14">
+<div id="{{ s.id }}" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px"><span style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);border-radius:5px">{{ s.id }}</span><span style="font:600 13px 'Public Sans'">{{ s.label }}</span><span style="font-size:12px;color:#5A6070">{{ s.group }}</span></div>
+<dc-import name="GrantsApp" screen="{{ s.key }}" hint-size="406px,860px"></dc-import>
+</div>
+</sc-for>
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const list = [
+      ['welcome','Welcome','Onboarding'],['signin','Sign in with Login.gov','Onboarding'],
+      ['ask','Ask (home)','Ask'],['answer','Cited answer','Ask'],
+      ['search','Search','Search'],['results','Results','Search'],['filters','Filters sheet','Search'],['detail','Opportunity detail','Search'],
+      ['apply','Application workspace','Apply'],['form','SF-424 form','Apply'],['review','Review & submit','Apply'],['submitted','Submitted + status','Apply'],
+      ['profile','Profile & organization','Profile'],['roadmap','Roadmap & feedback','Profile']
+    ];
+    return {
+      screens: list.map(([key, label, group], i) => ({ key, label, group, id: String(i + 1).padStart(2, '0') })),
+      swatches: [
+        { name:'Ink', hex:'#14171F' }, { name:'Muted', hex:'#5A6070' }, { name:'Canvas', hex:'#F6F6F3' }, { name:'Line', hex:'#E4E4DF' },
+        { name:'Federal navy', hex:'#1F3D6E' }, { name:'Navy tint', hex:'#E8EDF5' }, { name:'Open / success', hex:'#1E7A4C' }, { name:'Deadline / error', hex:'#B42318' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

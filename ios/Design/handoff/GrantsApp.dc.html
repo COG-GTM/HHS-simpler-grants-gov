@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:#1F3D6E}a:hover{color:#14171F}input::placeholder,textarea::placeholder{color:#8A8F99}</style>
+</helmet>
+<div style="width:406px;height:860px;padding:8px;box-sizing:border-box;background:#0E1014;border-radius:62px;box-shadow:0 30px 60px -20px rgba(20,23,31,.35);font-family:'Public Sans',-apple-system,system-ui,sans-serif;color:#14171F">
+<div style="position:relative;width:390px;height:844px;border-radius:54px;overflow:hidden;background:#F6F6F3;display:flex;flex-direction:column">
+
+<div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 34px 0 42px;font-weight:600;font-size:16px;position:relative;z-index:5">
+<span>9:41</span>
+<div style="position:absolute;left:50%;top:11px;transform:translateX(-50%);width:124px;height:36px;background:#000;border-radius:20px"></div>
+<div style="display:flex;gap:6px;align-items:center">
+<div style="display:flex;gap:2px;align-items:flex-end"><div style="width:3px;height:5px;background:#14171F;border-radius:1px"></div><div style="width:3px;height:7px;background:#14171F;border-radius:1px"></div><div style="width:3px;height:9px;background:#14171F;border-radius:1px"></div><div style="width:3px;height:11px;background:#14171F;border-radius:1px"></div></div>
+<div style="width:25px;height:12px;border:1.5px solid rgba(20,23,31,.4);border-radius:4px;padding:1.5px;box-sizing:border-box"><div style="width:80%;height:100%;background:#14171F;border-radius:1.5px"></div></div>
+</div>
+</div>
+
+<sc-if value="{{ is.welcome }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;flex-direction:column;padding:4px 24px 44px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#5A6070"><div style="width:16px;height:11px;background:repeating-linear-gradient(#B42318 0 1.6px,#fff 1.6px 3.2px);border-radius:1px;position:relative;outline:1px solid #E4E4DF"><div style="position:absolute;left:0;top:0;width:7px;height:6px;background:#1F3D6E"></div></div>An official app of the United States government</div>
+<div style="margin-top:24px;height:290px;border-radius:24px;background:repeating-linear-gradient(135deg,#E9E8E2 0 10px,#EFEEE9 10px 20px);display:flex;align-items:flex-end;padding:16px;box-sizing:border-box"><span style="font:500 11px ui-monospace,Menlo,monospace;color:#6B6F78;background:#F6F6F3;padding:4px 8px;border-radius:6px">photo · grant recipients at work</span></div>
+<div style="margin-top:28px;font:600 12px 'Public Sans';letter-spacing:.08em;text-transform:uppercase;color:#1F3D6E">Simpler.Grants.gov</div>
+<h1 style="margin:10px 0 0;font:600 34px/1.1 'Source Serif 4',Georgia,serif;letter-spacing:-.01em;text-wrap:pretty">Find federal funding by asking a question.</h1>
+<p style="margin:14px 0 0;font-size:16px;line-height:1.5;color:#5A6070;text-wrap:pretty">Search every opportunity on Grants.gov, see if you're eligible, and apply for your organization in one place.</p>
+<div style="flex:1"></div>
+<div style="display:flex;justify-content:center;gap:6px;margin-bottom:20px"><div style="width:18px;height:6px;border-radius:3px;background:#1F3D6E"></div><div style="width:6px;height:6px;border-radius:3px;background:#D5D5D0"></div><div style="width:6px;height:6px;border-radius:3px;background:#D5D5D0"></div></div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<button onClick="{{ goSignin }}" style="height:54px;border:0;border-radius:16px;background:#1F3D6E;color:#fff;font:600 17px 'Public Sans';cursor:pointer" style-active="background:#16305A">Sign in with Login.gov</button>
+<button onClick="{{ goAsk }}" style="height:50px;border:0;border-radius:16px;background:transparent;color:#1F3D6E;font:600 16px 'Public Sans';cursor:pointer">Continue without an account</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.signin }}">
+<div style="position:absolute;inset:0;background:rgba(20,23,31,.45);display:flex;flex-direction:column;justify-content:flex-end;z-index:6">
+<div style="height:770px;background:#fff;border-radius:14px 14px 0 0;padding:10px 24px 44px;box-sizing:border-box;display:flex;flex-direction:column">
+<div style="width:36px;height:5px;border-radius:3px;background:#D5D5D0;margin:0 auto 14px"></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 17px 'Public Sans'">Sign in</span><button onClick="{{ back }}" style="border:0;background:none;color:#1F3D6E;font:500 17px 'Public Sans';cursor:pointer;padding:10px 0">Cancel</button></div>
+<div style="margin-top:28px;width:60px;height:60px;border-radius:16px;background:#E8EDF5;display:flex;align-items:center;justify-content:center;font:500 10px ui-monospace,Menlo,monospace;color:#1F3D6E">logo</div>
+<h2 style="margin:20px 0 0;font:600 28px/1.15 'Source Serif 4',Georgia,serif">Sign in to Simpler.Grants.gov</h2>
+<p style="margin:12px 0 0;font-size:16px;line-height:1.5;color:#5A6070">Simpler.Grants.gov uses Login.gov to verify your identity and manage your account securely. You don't need a separate username or password for this site.</p>
+<p style="margin:12px 0 0;font-size:16px;line-height:1.5;color:#5A6070">You'll be redirected to Login.gov to sign in or create an account. Then, you'll return to Simpler.Grants.gov as a signed-in user.</p>
+<div style="flex:1"></div>
+<button onClick="{{ goAsk }}" style="height:54px;border:0;border-radius:16px;background:#1F3D6E;color:#fff;font:600 17px 'Public Sans';cursor:pointer" style-active="background:#16305A">Continue to Login.gov</button>
+<button onClick="{{ goAsk }}" style="margin-top:6px;height:48px;border:0;background:none;color:#1F3D6E;font:500 15px 'Public Sans';cursor:pointer">Agency staff: sign in with PIV/CAC</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.ask }}">
+<div style="flex:1;overflow-y:auto;padding:8px 20px 24px;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font:600 12px 'Public Sans';letter-spacing:.08em;text-transform:uppercase;color:#1F3D6E">Simpler.Grants.gov</span>
+<button onClick="{{ goProfile }}" style="width:36px;height:36px;border-radius:18px;border:0;background:#E8EDF5;color:#1F3D6E;font:600 13px 'Public Sans';cursor:pointer">DR</button>
+</div>
+<h1 style="margin:40px 0 0;font:600 34px/1.1 'Source Serif 4',Georgia,serif;letter-spacing:-.01em;text-wrap:pretty">What do you need funding for?</h1>
+<p style="margin:10px 0 0;font-size:15px;line-height:1.5;color:#5A6070">Describe your project or organization. Answers come only from official Grants.gov listings.</p>
+<div style="margin-top:24px;background:#fff;border:1px solid #E4E4DF;border-radius:22px;padding:16px 16px 12px;box-shadow:0 8px 24px -16px rgba(20,23,31,.25)">
+<textarea value="{{ query }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" placeholder="e.g. We run a rural clinic and want to expand addiction treatment" rows="3" style="width:100%;border:0;outline:none;resize:none;font:400 17px/1.4 'Public Sans';color:#14171F;background:transparent;padding:0"></textarea>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+<div style="display:flex;gap:6px"><div style="height:32px;padding:0 12px;border-radius:16px;background:#F6F6F3;display:flex;align-items:center;font-size:13px;color:#5A6070">Eligibility: Nonprofit</div></div>
+<button onClick="{{ submitAsk }}" style="width:40px;height:40px;border-radius:20px;border:0;background:#1F3D6E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></button>
+</div>
+</div>
+<div style="margin-top:28px;font:600 13px 'Public Sans';color:#5A6070">Try asking</div>
+<div style="margin-top:10px;display:flex;flex-direction:column;border-top:1px solid #E4E4DF">
+<sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+<button onClick="{{ s.go }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 0;border:0;border-bottom:1px solid #E4E4DF;background:none;text-align:left;font:400 16px/1.35 'Public Sans';color:#14171F;cursor:pointer"><span>{{ s.text }}</span><span style="color:#8A8F99;font-size:18px">›</span></button>
+</sc-for>
+</div>
+<div style="margin-top:28px;background:#1F3D6E;color:#fff;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:6px">
+<span style="font:600 12px 'Public Sans';letter-spacing:.06em;text-transform:uppercase;opacity:.8">Application in progress</span>
+<span style="font:600 18px/1.25 'Source Serif 4',Georgia,serif">Rural Communities Opioid Response Program</span>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px"><span style="font-size:14px;opacity:.85">{{ doneCount }} of 6 forms · Due Dec 12</span><button onClick="{{ goApply }}" style="height:34px;padding:0 14px;border-radius:17px;border:0;background:#fff;color:#1F3D6E;font:600 14px 'Public Sans';cursor:pointer;white-space:nowrap;flex:none">Continue</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.answer }}">
+<div style="height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px">
+<button onClick="{{ back }}" style="border:0;background:none;color:#1F3D6E;font:500 17px 'Public Sans';cursor:pointer;padding:8px">‹ Ask</button>
+<span style="font:600 15px 'Public Sans'">Answer</span>
+<button onClick="{{ newAsk }}" style="border:0;background:none;color:#1F3D6E;font:500 15px 'Public Sans';cursor:pointer;padding:8px">New</button>
+</div>
+<div style="flex:1;overflow-y:auto;padding:12px 20px 20px;display:flex;flex-direction:column;gap:18px">
+<div style="align-self:flex-end;max-width:80%;background:#1F3D6E;color:#fff;padding:12px 16px;border-radius:20px 20px 6px 20px;font-size:16px;line-height:1.4">{{ asked }}</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:600 12px 'Public Sans';letter-spacing:.06em;text-transform:uppercase;color:#5A6070">From 3 Grants.gov listings</div>
+<p style="margin:0;font:400 17px/1.55 'Source Serif 4',Georgia,serif;text-wrap:pretty">The closest match is HRSA's <b style="font-weight:600">Rural Communities Opioid Response Program</b><sup style="color:#1F3D6E;font:600 11px 'Public Sans'"> 1</sup>. It funds nonprofits and local governments in rural areas to expand treatment and recovery services, with awards up to $1,000,000. Applications close December 12, 2026.</p>
+<p style="margin:0;font:400 17px/1.55 'Source Serif 4',Georgia,serif;text-wrap:pretty">USDA's Community Facilities Technical Assistance<sup style="color:#1F3D6E;font:600 11px 'Public Sans'"> 2</sup> closes sooner, on October 30. NSF's Smart and Connected Communities<sup style="color:#1F3D6E;font:600 11px 'Public Sans'"> 3</sup> is forecasted for March 2027.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ answerOpps }}" as="o" hint-placeholder-count="3">
+<button onClick="{{ o.open }}" style="display:flex;gap:12px;align-items:flex-start;text-align:left;background:#fff;border:1px solid #E4E4DF;border-radius:16px;padding:14px;cursor:pointer;font-family:'Public Sans'">
+<div style="width:22px;height:22px;flex:none;border-radius:11px;background:#E8EDF5;color:#1F3D6E;font:600 12px 'Public Sans';display:flex;align-items:center;justify-content:center">{{ o.cite }}</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+<span style="font:600 15px/1.3 'Public Sans';color:#14171F">{{ o.title }}</span>
+<span style="font-size:13px;color:#5A6070">{{ o.agencyShort }} · {{ o.closeLabel }}</span>
+</div>
+</button>
+</sc-for>
+</div>
+<p style="margin:0;font-size:12px;line-height:1.5;color:#8A8F99">Answers are generated from Grants.gov listings and may be incomplete. Read the full opportunity before you apply.</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<button onClick="{{ goResults }}" style="height:36px;padding:0 14px;border-radius:18px;border:1px solid #D5D5D0;background:#fff;font:500 14px 'Public Sans';color:#14171F;cursor:pointer;white-space:nowrap">See all 214 results</button>
+<button style="height:36px;padding:0 14px;border-radius:18px;border:1px solid #D5D5D0;background:#fff;font:500 14px 'Public Sans';color:#14171F;cursor:pointer;white-space:nowrap">Am I eligible?</button>
+<button style="height:36px;padding:0 14px;border-radius:18px;border:1px solid #D5D5D0;background:#fff;font:500 14px 'Public Sans';color:#14171F;cursor:pointer;white-space:nowrap">Only open now</button>
+</div>
+</div>
+<div style="flex:none;padding:10px 16px 34px;border-top:1px solid #E4E4DF;background:#F6F6F3">
+<div style="height:46px;border-radius:23px;background:#fff;border:1px solid #E4E4DF;display:flex;align-items:center;padding:0 6px 0 18px;font-size:16px;color:#8A8F99"><span style="flex:1">Ask a follow-up</span><div style="width:34px;height:34px;border-radius:17px;background:#D5D5D0"></div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.search }}">
+<div style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+<h1 style="margin:0;font:600 34px/1.1 'Source Serif 4',Georgia,serif">Search</h1>
+<button onClick="{{ goResults }}" style="margin-top:16px;width:100%;height:44px;border-radius:12px;border:0;background:#EAEAE5;display:flex;align-items:center;gap:8px;padding:0 12px;cursor:pointer;font:400 17px 'Public Sans';color:#8A8F99"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8A8F99" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>Keyword, agency, or opportunity number</button>
+<div style="margin-top:28px;display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 20px 'Public Sans'">Recent</span><span style="font-size:15px;color:#1F3D6E">Clear</span></div>
+<div style="margin-top:6px;display:flex;flex-direction:column">
+<sc-for list="{{ recents }}" as="r" hint-placeholder-count="3">
+<button onClick="{{ goResults }}" style="display:flex;align-items:center;gap:12px;padding:13px 0;border:0;border-bottom:1px solid #E4E4DF;background:none;text-align:left;cursor:pointer;font-family:'Public Sans'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8F99" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span style="flex:1;font-size:16px;color:#14171F">{{ r.q }}</span><span style="font-size:13px;color:#8A8F99">{{ r.n }}</span></button>
+</sc-for>
+</div>
+<div style="margin-top:28px;font:600 20px 'Public Sans'">Browse by category</div>
+<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ categories }}" as="c" hint-placeholder-count="8">
+<button onClick="{{ goResults }}" style="height:76px;border-radius:16px;border:1px solid #E4E4DF;background:#fff;padding:12px 14px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;font-family:'Public Sans'"><span style="font:600 15px/1.2 'Public Sans';color:#14171F">{{ c.name }}</span><span style="font-size:13px;color:#5A6070">{{ c.n }} open</span></button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.results }}">
+<div style="flex:none;padding:4px 16px 10px;display:flex;gap:10px;align-items:center">
+<button onClick="{{ back }}" style="border:0;background:none;color:#1F3D6E;font:500 26px 'Public Sans';cursor:pointer;padding:0 4px;line-height:1">‹</button>
+<div style="flex:1;height:40px;border-radius:12px;background:#EAEAE5;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A6070" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>rural health</div>
+</div>
+<div style="flex:none;display:flex;gap:8px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none">
+<button onClick="{{ openSheet }}" style="flex:none;height:34px;padding:0 14px;border-radius:17px;border:0;background:#14171F;color:#fff;font:600 14px 'Public Sans';cursor:pointer;white-space:nowrap">Filters · {{ filterCount }}</button>
+<sc-for list="{{ chips }}" as="c" hint-placeholder-count="3">
+<button onClick="{{ c.toggle }}" style="flex:none;height:34px;padding:0 14px;border-radius:17px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};font:500 14px 'Public Sans';cursor:pointer;white-space:nowrap">{{ c.label }}</button>
+</sc-for>
+</div>
+<div style="flex:1;overflow-y:auto;padding:4px 16px 24px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;font-size:13px;color:#5A6070;padding:0 4px 4px"><span>{{ resultLabel }}</span><span style="color:#1F3D6E">Sort: Close date</span></div>
+<sc-for list="{{ results }}" as="o" hint-placeholder-count="4">
+<div onClick="{{ o.open }}" style="background:#fff;border:1px solid #E4E4DF;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="height:24px;padding:0 9px;border-radius:12px;background:{{ o.sBg }};color:{{ o.sFg }};font:600 12px 'Public Sans';display:flex;align-items:center">{{ o.status }}</span>
+<span style="font-size:12px;color:#8A8F99;font-family:ui-monospace,Menlo,monospace">{{ o.num }}</span>
+</div>
+<span style="font:600 18px/1.25 'Source Serif 4',Georgia,serif;color:#14171F;text-wrap:pretty">{{ o.title }}</span>
+<span style="font-size:14px;color:#5A6070">{{ o.agency }}</span>
+<div style="display:flex;gap:16px;padding-top:8px;border-top:1px solid #EFEFEA;font-size:13px"><div style="display:flex;flex-direction:column;gap:2px"><span style="color:#8A8F99">Closes</span><span style="font-weight:600">{{ o.close }}</span></div><div style="display:flex;flex-direction:column;gap:2px"><span style="color:#8A8F99">Award</span><span style="font-weight:600">{{ o.award }}</span></div></div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ sheet }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(20,23,31,.4);z-index:6"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:640px;background:#fff;border-radius:14px 14px 0 0;z-index:7;display:flex;flex-direction:column">
+<div style="width:36px;height:5px;border-radius:3px;background:#D5D5D0;margin:8px auto 0"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 20px 10px"><button onClick="{{ resetFilters }}" style="border:0;background:none;color:#1F3D6E;font:500 16px 'Public Sans';cursor:pointer;padding:8px 0">Reset</button><span style="font:600 17px 'Public Sans'">Filters</span><button onClick="{{ closeSheet }}" style="border:0;background:none;color:#1F3D6E;font:600 16px 'Public Sans';cursor:pointer;padding:8px 0">Done</button></div>
+<div style="flex:1;overflow-y:auto;padding:0 20px">
+<sc-for list="{{ filterGroups }}" as="g" hint-placeholder-count="3">
+<div style="padding:16px 0 8px;font:600 13px 'Public Sans';color:#5A6070;text-transform:uppercase;letter-spacing:.06em">{{ g.name }}</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;padding-bottom:8px">
+<sc-for list="{{ g.items }}" as="f" hint-placeholder-count="4">
+<button onClick="{{ f.toggle }}" style="height:36px;padding:0 14px;border-radius:18px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};font:500 14px 'Public Sans';cursor:pointer;white-space:nowrap">{{ f.label }}</button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="padding:12px 20px 38px;border-top:1px solid #E4E4DF"><button onClick="{{ closeSheet }}" style="width:100%;height:52px;border:0;border-radius:16px;background:#1F3D6E;color:#fff;font:600 17px 'Public Sans';cursor:pointer">Show {{ sheetCount }} results</button></div>
+</div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ is.detail }}">
+<div style="height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px">
+<button onClick="{{ back }}" style="border:0;background:none;color:#1F3D6E;font:500 17px 'Public Sans';cursor:pointer;padding:8px">‹ Back</button>
+<div style="display:flex;gap:4px">
+<button onClick="{{ toggleSave }}" style="width:40px;height:40px;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="{{ saveFill }}" stroke="#1F3D6E" stroke-width="1.9" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg></button>
+<button style="width:40px;height:40px;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F3D6E" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v8h14v-8"></path></svg></button>
+</div>
+</div>
+<div style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+<div style="display:flex;gap:8px;align-items:center"><span style="height:24px;padding:0 9px;border-radius:12px;background:{{ opp.sBg }};color:{{ opp.sFg }};font:600 12px 'Public Sans';display:flex;align-items:center">{{ opp.status }}</span><span style="font-size:13px;color:#5A6070">{{ opp.daysLabel }}</span></div>
+<h1 style="margin:12px 0 0;font:600 28px/1.15 'Source Serif 4',Georgia,serif;letter-spacing:-.005em;text-wrap:pretty">{{ opp.title }}</h1>
+<div style="margin-top:10px;font-size:15px;color:#5A6070">{{ opp.agency }}</div>
+<div style="margin-top:4px;font:500 13px ui-monospace,Menlo,monospace;color:#8A8F99">{{ opp.num }}</div>
+<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;background:#fff;border:1px solid #E4E4DF;border-radius:18px;overflow:hidden">
+<sc-for list="{{ opp.facts }}" as="f" hint-placeholder-count="6">
+<div style="padding:14px 16px;border-bottom:1px solid #EFEFEA;display:flex;flex-direction:column;gap:3px"><span style="font-size:12px;color:#8A8F99">{{ f.k }}</span><span style="font:600 15px 'Public Sans'">{{ f.v }}</span></div>
+</sc-for>
+</div>
+<button onClick="{{ askAbout }}" style="margin-top:12px;width:100%;height:48px;border-radius:14px;border:1px solid #D5D5D0;background:transparent;font:500 15px 'Public Sans';color:#1F3D6E;cursor:pointer">Ask a question about this listing</button>
+<div style="margin-top:28px;font:600 20px 'Public Sans'">Eligibility</div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ opp.eligible }}" as="e" hint-placeholder-count="3"><span style="height:32px;padding:0 12px;border-radius:16px;background:#E8EDF5;color:#1F3D6E;font:500 14px 'Public Sans';display:flex;align-items:center">{{ e }}</span></sc-for>
+</div>
+<div style="margin-top:28px;font:600 20px 'Public Sans'">Summary</div>
+<p style="margin:10px 0 0;font:400 17px/1.55 'Source Serif 4',Georgia,serif;color:#2A2E38;text-wrap:pretty">{{ opp.summary }}</p>
+<div style="margin-top:28px;font:600 20px 'Public Sans'">Documents</div>
+<div style="margin-top:10px;background:#fff;border:1px solid #E4E4DF;border-radius:16px">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #EFEFEA"><div style="width:34px;height:40px;border-radius:6px;background:#F6F6F3;border:1px solid #E4E4DF;font:600 9px ui-monospace,Menlo,monospace;color:#B42318;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;box-sizing:border-box">PDF</div><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:600 15px 'Public Sans'">Notice of Funding Opportunity</span><span style="font-size:13px;color:#8A8F99">84 pages · 1.2 MB</span></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px"><div style="width:34px;height:40px;border-radius:6px;background:#F6F6F3;border:1px solid #E4E4DF;font:600 9px ui-monospace,Menlo,monospace;color:#B42318;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;box-sizing:border-box">PDF</div><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:600 15px 'Public Sans'">Applicant FAQ</span><span style="font-size:13px;color:#8A8F99">6 pages · 210 KB</span></div></div>
+</div>
+<div style="margin-top:28px;font:600 20px 'Public Sans'">Agency contact</div>
+<div style="margin-top:8px;font-size:15px;line-height:1.6;color:#2A2E38">Office of Rural Health Policy<br>ruralopioidresponse@hrsa.gov</div>
+</div>
+<div style="flex:none;padding:12px 20px 34px;border-top:1px solid #E4E4DF;background:rgba(246,246,243,.96);display:flex;gap:10px">
+<button onClick="{{ goApply }}" style="flex:1;height:52px;border:0;border-radius:16px;background:#1F3D6E;color:#fff;font:600 17px 'Public Sans';cursor:pointer" style-active="background:#16305A">Start application</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.apply }}">
+<div style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+<h1 style="margin:0;font:600 34px/1.1 'Source Serif 4',Georgia,serif">Apply</h1>
+<div style="margin-top:18px;background:#fff;border:1px solid #E4E4DF;border-radius:18px;padding:16px">
+<div style="font:500 12px ui-monospace,Menlo,monospace;color:#8A8F99">HRSA-27-014</div>
+<div style="margin-top:6px;font:600 19px/1.25 'Source Serif 4',Georgia,serif">Rural Communities Opioid Response Program – Implementation</div>
+<div style="margin-top:8px;font-size:14px;color:#5A6070">Applying as Bluefield Community Health Center</div>
+<div style="margin-top:14px;height:6px;border-radius:3px;background:#EFEFEA;overflow:hidden"><div style="height:100%;width:{{ progressPct }};background:#1E7A4C;border-radius:3px"></div></div>
+<div style="margin-top:8px;display:flex;justify-content:space-between;font-size:13px"><span style="font-weight:600">{{ doneCount }} of 6 forms complete</span><span style="color:#B42318;font-weight:600">Due Dec 12 · 67 days</span></div>
+</div>
+<div style="margin-top:26px;display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 20px 'Public Sans'">Required forms</span><span style="font-size:13px;color:#5A6070">Saved automatically</span></div>
+<div style="margin-top:10px;background:#fff;border:1px solid #E4E4DF;border-radius:18px;overflow:hidden">
+<sc-for list="{{ forms }}" as="f" hint-placeholder-count="6">
+<button onClick="{{ f.open }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border:0;border-bottom:1px solid #EFEFEA;background:none;text-align:left;cursor:pointer;font-family:'Public Sans'">
+<div style="width:24px;height:24px;flex:none;border-radius:12px;border:{{ f.ring }};background:{{ f.dot }};color:#fff;font:700 13px 'Public Sans';display:flex;align-items:center;justify-content:center;box-sizing:border-box">{{ f.mark }}</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:600 15px/1.3 'Public Sans';color:#14171F">{{ f.name }}</span><span style="font-size:13px;color:{{ f.stateColor }}">{{ f.state }}</span></div>
+<span style="color:#8A8F99;font-size:18px">›</span>
+</button>
+</sc-for>
+</div>
+<button onClick="{{ goReview }}" style="margin-top:20px;width:100%;height:52px;border:0;border-radius:16px;background:#1F3D6E;color:#fff;font:600 17px 'Public Sans';cursor:pointer">Review and submit</button>
+<p style="margin:10px 0 0;font-size:13px;line-height:1.5;color:#5A6070;text-align:center">Only your organization's Authorized Representative can submit.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.form }}">
+<div style="height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px">
+<button onClick="{{ back }}" style="border:0;background:none;color:#1F3D6E;font:500 17px 'Public Sans';cursor:pointer;padding:8px">‹ Forms</button>
+<span style="font:600 15px 'Public Sans'">SF-424</span>
+<span style="font-size:13px;color:#8A8F99;padding:8px;width:50px;text-align:right">2 of 5</span>
+</div>
+<div style="flex:none;display:flex;gap:4px;padding:0 20px"><div style="flex:1;height:4px;border-radius:2px;background:#1F3D6E"></div><div style="flex:1;height:4px;border-radius:2px;background:#1F3D6E"></div><div style="flex:1;height:4px;border-radius:2px;background:#E4E4DF"></div><div style="flex:1;height:4px;border-radius:2px;background:#E4E4DF"></div><div style="flex:1;height:4px;border-radius:2px;background:#E4E4DF"></div></div>
+<div style="flex:1;overflow-y:auto;padding:20px 20px 24px">
+<div style="font-size:13px;color:#5A6070">Application for Federal Assistance</div>
+<h1 style="margin:6px 0 0;font:600 26px/1.15 'Source Serif 4',Georgia,serif">Applicant information</h1>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#5A6070">Pre-filled from your SAM.gov registration. Check each field.</p>
+<div style="margin-top:20px;display:flex;flex-direction:column;gap:16px">
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px 'Public Sans'">Legal name</span><input value="{{ f.legal }}" onChange="{{ on.legal }}" style="height:48px;border:1px solid #D5D5D0;border-radius:12px;padding:0 14px;font:400 16px 'Public Sans';background:#fff;outline:none" style-focus="border-color:#1F3D6E;box-shadow:0 0 0 3px #E8EDF5"></label>
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px 'Public Sans'">Unique Entity ID (UEI)</span><div style="height:48px;border:1px solid #E4E4DF;border-radius:12px;padding:0 14px;font:400 16px ui-monospace,Menlo,monospace;background:#F6F6F3;display:flex;align-items:center;justify-content:space-between;color:#5A6070">K7LMN2QX4R91<span style="font:600 12px 'Public Sans';color:#1E7A4C">Verified</span></div></label>
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px 'Public Sans'">Type of applicant</span><div style="height:48px;border:1px solid #D5D5D0;border-radius:12px;padding:0 14px;font:400 16px 'Public Sans';background:#fff;display:flex;align-items:center;justify-content:space-between">Nonprofit with 501(c)(3) status<span style="color:#8A8F99">⌄</span></div></label>
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px 'Public Sans'">Point of contact email</span><input value="{{ f.email }}" onChange="{{ on.email }}" placeholder="name@organization.org" style="height:48px;border:1px solid {{ emailBorder }};border-radius:12px;padding:0 14px;font:400 16px 'Public Sans';background:#fff;outline:none"><sc-if value="{{ emailErr }}"><span style="font-size:13px;color:#B42318">Enter a valid email address, like name@organization.org</span></sc-if></label>
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px 'Public Sans'">Phone</span><input value="{{ f.phone }}" onChange="{{ on.phone }}" style="height:48px;border:1px solid #D5D5D0;border-radius:12px;padding:0 14px;font:400 16px 'Public Sans';background:#fff;outline:none"></label>
+</div>
+</div>
+<div style="flex:none;padding:12px 20px 34px;border-top:1px solid #E4E4DF;display:flex;gap:10px">
+<button onClick="{{ back }}" style="flex:none;white-space:nowrap;height:52px;padding:0 20px;border:1px solid #D5D5D0;border-radius:16px;background:#fff;color:#14171F;font:600 16px 'Public Sans';cursor:pointer">Save draft</button>
+<button onClick="{{ saveForm }}" style="flex:1;height:52px;border:0;border-radius:16px;background:{{ saveBg }};color:#fff;font:600 17px 'Public Sans';cursor:pointer">Save and continue</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.review }}">
+<div style="height:44px;flex:none;display:flex;align-items:center;padding:0 12px"><button onClick="{{ back }}" style="border:0;background:none;color:#1F3D6E;font:500 17px 'Public Sans';cursor:pointer;padding:8px">‹ Forms</button></div>
+<div style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+<h1 style="margin:0;font:600 30px/1.1 'Source Serif 4',Georgia,serif">Review and submit</h1>
+<p style="margin:10px 0 0;font-size:15px;line-height:1.5;color:#5A6070">You're submitting to the Health Resources and Services Administration on behalf of Bluefield Community Health Center.</p>
+<div style="margin-top:20px;background:#fff;border:1px solid #E4E4DF;border-radius:18px;overflow:hidden">
+<sc-for list="{{ forms }}" as="f" hint-placeholder-count="6">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #EFEFEA"><div style="width:20px;height:20px;flex:none;border-radius:10px;border:{{ f.ring }};background:{{ f.dot }};color:#fff;font:700 11px 'Public Sans';display:flex;align-items:center;justify-content:center;box-sizing:border-box">{{ f.mark }}</div><span style="flex:1;font-size:14px">{{ f.name }}</span><span style="font-size:13px;color:{{ f.stateColor }}">{{ f.short }}</span></div>
+</sc-for>
+</div>
+<sc-if value="{{ incomplete }}"><div style="margin-top:14px;padding:14px 16px;border-radius:14px;background:#FBEDEB;color:#8A1C13;font-size:14px;line-height:1.45">{{ remainingLabel }} still need to be completed before you can submit.</div></sc-if>
+<button onClick="{{ toggleCertify }}" style="margin-top:18px;width:100%;display:flex;gap:12px;align-items:flex-start;text-align:left;padding:16px;border-radius:16px;border:1px solid #E4E4DF;background:#fff;cursor:pointer;font-family:'Public Sans'"><div style="width:22px;height:22px;flex:none;border-radius:6px;border:2px solid {{ certBorder }};background:{{ certBg }};color:#fff;font:700 13px 'Public Sans';display:flex;align-items:center;justify-content:center;box-sizing:border-box">{{ certMark }}</div><span style="font-size:14px;line-height:1.45;color:#2A2E38">I certify that the statements in this application are true, complete, and accurate to the best of my knowledge.</span></button>
+</div>
+<div style="flex:none;padding:12px 20px 34px;border-top:1px solid #E4E4DF"><button onClick="{{ submit }}" style="width:100%;height:52px;border:0;border-radius:16px;background:{{ submitBg }};color:#fff;font:600 17px 'Public Sans';cursor:{{ submitCursor }}">Submit application</button></div>
+</sc-if>
+
+<sc-if value="{{ is.submitted }}">
+<div style="flex:1;overflow-y:auto;padding:40px 24px 24px;display:flex;flex-direction:column">
+<div style="width:64px;height:64px;border-radius:32px;background:#1E7A4C;color:#fff;font:700 30px 'Public Sans';display:flex;align-items:center;justify-content:center">✓</div>
+<h1 style="margin:22px 0 0;font:600 32px/1.1 'Source Serif 4',Georgia,serif">Application submitted</h1>
+<p style="margin:12px 0 0;font-size:16px;line-height:1.5;color:#5A6070">We'll notify you as it moves through review. Keep your tracking number for your records.</p>
+<div style="margin-top:20px;padding:16px;border-radius:16px;background:#fff;border:1px solid #E4E4DF;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12px;color:#8A8F99">Tracking number</span><span style="font:600 17px ui-monospace,Menlo,monospace">GRANT14102837</span></div><span style="font:600 14px 'Public Sans';color:#1F3D6E">Copy</span></div>
+<div style="margin-top:28px;font:600 20px 'Public Sans'">Status</div>
+<div style="margin-top:14px;display:flex;flex-direction:column">
+<sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+<div style="display:flex;gap:14px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:14px;height:14px;border-radius:7px;background:{{ t.dot }};border:2px solid {{ t.ring }};box-sizing:border-box;margin-top:3px"></div><div style="flex:1;width:2px;background:#E4E4DF;min-height:26px"></div></div><div style="padding-bottom:18px;display:flex;flex-direction:column;gap:2px"><span style="font:600 15px 'Public Sans';color:{{ t.color }}">{{ t.label }}</span><span style="font-size:13px;color:#8A8F99">{{ t.when }}</span></div></div>
+</sc-for>
+</div>
+<div style="flex:1"></div>
+<button onClick="{{ goAskTab }}" style="height:52px;border:0;border-radius:16px;background:#1F3D6E;color:#fff;font:600 17px 'Public Sans';cursor:pointer">Done</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.profile }}">
+<div style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+<h1 style="margin:0;font:600 34px/1.1 'Source Serif 4',Georgia,serif">Profile</h1>
+<div style="margin-top:18px;display:flex;gap:14px;align-items:center"><div style="width:56px;height:56px;border-radius:28px;background:#E8EDF5;color:#1F3D6E;font:600 20px 'Public Sans';display:flex;align-items:center;justify-content:center">DR</div><div style="display:flex;flex-direction:column;gap:3px"><span style="font:600 18px 'Public Sans'">Dana Reyes</span><span style="font-size:14px;color:#5A6070">dana@bluefieldchc.org</span><span style="font:600 12px 'Public Sans';color:#1E7A4C">Verified with Login.gov</span></div></div>
+<div style="margin-top:24px;font:600 13px 'Public Sans';color:#5A6070;text-transform:uppercase;letter-spacing:.06em">Organization</div>
+<div style="margin-top:10px;background:#fff;border:1px solid #E4E4DF;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font:600 17px/1.25 'Source Serif 4',Georgia,serif">Bluefield Community Health Center</span><span style="font-size:14px;color:#1F3D6E;flex:none">Switch</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="color:#8A8F99">UEI</span><span style="font:600 13px ui-monospace,Menlo,monospace">K7LMN2QX4R91</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="color:#8A8F99">SAM.gov</span><span style="font-weight:600;color:#1E7A4C">Active to Mar 2027</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="color:#8A8F99">Your role</span><span style="font-weight:600">Authorized Rep.</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="color:#8A8F99">Members</span><span style="font-weight:600">4 people</span></div>
+</div>
+</div>
+<div style="margin-top:24px;background:#fff;border:1px solid #E4E4DF;border-radius:18px;overflow:hidden">
+<sc-for list="{{ settings }}" as="s" hint-placeholder-count="5">
+<button onClick="{{ s.go }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:15px 16px;border:0;border-bottom:1px solid #EFEFEA;background:none;cursor:pointer;font:400 16px 'Public Sans';color:#14171F;text-align:left"><span>{{ s.label }}</span><span style="font-size:14px;color:#8A8F99">{{ s.value }} ›</span></button>
+</sc-for>
+</div>
+<button onClick="{{ signOut }}" style="margin-top:20px;width:100%;height:50px;border-radius:16px;border:1px solid #E4E4DF;background:#fff;color:#B42318;font:600 16px 'Public Sans';cursor:pointer">Sign out</button>
+<p style="margin:20px 0 0;font-size:12px;line-height:1.5;color:#8A8F99;text-align:center">Grants.gov Support Center · 1-800-518-4726<br>An official website of the U.S. Department of Health and Human Services</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.roadmap }}">
+<div style="height:44px;flex:none;display:flex;align-items:center;padding:0 12px"><button onClick="{{ back }}" style="border:0;background:none;color:#1F3D6E;font:500 17px 'Public Sans';cursor:pointer;padding:8px">‹ Profile</button></div>
+<div style="flex:1;overflow-y:auto;padding:4px 20px 28px">
+<h1 style="margin:0;font:600 30px/1.1 'Source Serif 4',Georgia,serif">Roadmap &amp; feedback</h1>
+<p style="margin:10px 0 0;font-size:15px;line-height:1.5;color:#5A6070">Let's build a simpler Grants.gov together. Vote on what we build next and tell us what's working.</p>
+<div style="margin-top:24px;font:600 20px 'Public Sans'">What we're working on</div>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ roadmap }}" as="r" hint-placeholder-count="4">
+<div style="background:#fff;border:1px solid #E4E4DF;border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="align-self:flex-start;height:22px;padding:0 8px;border-radius:11px;background:{{ r.bg }};color:{{ r.fg }};font:600 11px 'Public Sans';display:flex;align-items:center">{{ r.stage }}</span><span style="font:600 15px/1.3 'Public Sans'">{{ r.title }}</span></div>
+<button onClick="{{ r.vote }}" style="width:52px;height:56px;flex:none;border-radius:12px;border:1px solid {{ r.vBorder }};background:{{ r.vBg }};color:{{ r.vFg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:'Public Sans'"><span style="font-size:12px">▲</span><span style="font:600 14px 'Public Sans'">{{ r.votes }}</span></button>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:28px;font:600 20px 'Public Sans'">Send us feedback</div>
+<sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+<textarea value="{{ feedback }}" onChange="{{ onFeedback }}" placeholder="Tell us what's working (and what's not)" rows="4" style="margin-top:10px;width:100%;box-sizing:border-box;border:1px solid #D5D5D0;border-radius:14px;padding:14px;font:400 16px/1.45 'Public Sans';resize:none;outline:none;background:#fff"></textarea>
+<button onClick="{{ sendFeedback }}" style="margin-top:10px;width:100%;height:50px;border:0;border-radius:16px;background:{{ fbBg }};color:#fff;font:600 16px 'Public Sans';cursor:pointer">Send feedback</button>
+</sc-if>
+<sc-if value="{{ sent }}"><div style="margin-top:10px;padding:16px;border-radius:14px;background:#E7F3EC;color:#14583A;font-size:15px;line-height:1.45">Thanks. Your feedback goes straight to the Simpler.Grants.gov team.</div></sc-if>
+<div style="margin-top:20px;display:flex;flex-direction:column;border-top:1px solid #E4E4DF">
+<div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #E4E4DF;font-size:15px"><span>Email the team</span><span style="color:#1F3D6E">simpler@grants.gov</span></div>
+<div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #E4E4DF;font-size:15px"><span>Participate in user research</span><span style="color:#8A8F99">›</span></div>
+<div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #E4E4DF;font-size:15px"><span>Subscribe to the newsletter</span><span style="color:#8A8F99">›</span></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showTabs }}">
+<div style="flex:none;height:84px;padding-bottom:26px;box-sizing:border-box;border-top:1px solid #E4E4DF;background:rgba(250,250,248,.94);display:flex">
+<button onClick="{{ tabAsk }}" style="flex:1;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ tc.ask }};font:500 10px 'Public Sans'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>Ask</button>
+<button onClick="{{ tabSearch }}" style="flex:1;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ tc.search }};font:500 10px 'Public Sans'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>Search</button>
+<button onClick="{{ tabApply }}" style="flex:1;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ tc.apply }};font:500 10px 'Public Sans'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h5"></path></svg>Apply</button>
+<button onClick="{{ tabProfile }}" style="flex:1;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ tc.profile }};font:500 10px 'Public Sans'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1-4 4-6 8-6s7 2 8 6"></path></svg>Profile</button>
+</div>
+</sc-if>
+
+<div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#14171F;z-index:9"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;406px&quot;,&quot;height&quot;:&quot;860px&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;welcome&quot;,&quot;signin&quot;,&quot;ask&quot;,&quot;answer&quot;,&quot;search&quot;,&quot;results&quot;,&quot;filters&quot;,&quot;detail&quot;,&quot;apply&quot;,&quot;form&quot;,&quot;review&quot;,&quot;submitted&quot;,&quot;profile&quot;,&quot;roadmap&quot;],&quot;default&quot;:&quot;welcome&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const OPPS = [
+  { id:'hrsa', num:'HRSA-27-014', title:'Rural Communities Opioid Response Program – Implementation', agency:'Health Resources and Services Administration', agencyShort:'HHS · HRSA', status:'Open', close:'Dec 12, 2026', closeLabel:'Closes Dec 12', daysLabel:'67 days left to apply', award:'Up to $1M', cat:'open',
+    facts:[{k:'Award ceiling',v:'$1,000,000'},{k:'Award floor',v:'$500,000'},{k:'Expected awards',v:'60'},{k:'Total program funding',v:'$60,000,000'},{k:'Close date',v:'Dec 12, 2026'},{k:'Cost sharing',v:'Not required'}],
+    eligible:['Nonprofits','Local governments','Tribal governments','Public universities'],
+    summary:'This program funds rural communities to strengthen and expand prevention, treatment, and recovery services for substance use disorder. Recipients form consortiums with at least three other organizations and serve areas designated as rural by the Federal Office of Rural Health Policy.' },
+  { id:'usda', num:'USDA-RD-27-05', title:'Community Facilities Technical Assistance and Training', agency:'USDA Rural Development', agencyShort:'USDA', status:'Closing soon', close:'Oct 30, 2026', closeLabel:'Closes Oct 30', daysLabel:'24 days left to apply', award:'Up to $150K', cat:'soon',
+    facts:[{k:'Award ceiling',v:'$150,000'},{k:'Award floor',v:'$25,000'},{k:'Expected awards',v:'40'},{k:'Total program funding',v:'$4,500,000'},{k:'Close date',v:'Oct 30, 2026'},{k:'Cost sharing',v:'Not required'}],
+    eligible:['Nonprofits','Local governments','Tribal governments'],
+    summary:'Grants help public bodies and nonprofits identify and plan for community facility needs in rural areas, including health care, public safety, and educational facilities.' },
+  { id:'nsf', num:'NSF 27-512', title:'Smart and Connected Communities', agency:'National Science Foundation', agencyShort:'NSF', status:'Forecasted', close:'Est. Mar 2027', closeLabel:'Forecasted Mar 2027', daysLabel:'Expected to open Jan 2027', award:'Up to $1.5M', cat:'forecast',
+    facts:[{k:'Award ceiling',v:'$1,500,000'},{k:'Award floor',v:'$150,000'},{k:'Expected awards',v:'18'},{k:'Total program funding',v:'$15,000,000'},{k:'Est. close date',v:'Mar 2027'},{k:'Cost sharing',v:'Not required'}],
+    eligible:['Universities','Nonprofits','Local governments'],
+    summary:'Supports research that integrates technology with community needs to improve quality of life in cities, towns, and rural areas.' },
+  { id:'epa', num:'EPA-R-27-03', title:'Environmental Justice Collaborative Problem-Solving', agency:'Environmental Protection Agency', agencyShort:'EPA', status:'Open', close:'Jan 9, 2027', closeLabel:'Closes Jan 9', daysLabel:'95 days left to apply', award:'Up to $500K', cat:'open',
+    facts:[{k:'Award ceiling',v:'$500,000'},{k:'Award floor',v:'$100,000'},{k:'Expected awards',v:'50'},{k:'Total program funding',v:'$25,000,000'},{k:'Close date',v:'Jan 9, 2027'},{k:'Cost sharing',v:'Not required'}],
+    eligible:['Nonprofits','Tribal governments'],
+    summary:'Funds community-based organizations to partner with stakeholders on local environmental and public health problems.' },
+  { id:'nea', num:'NEA-27-02', title:'Grants for Arts Projects', agency:'National Endowment for the Arts', agencyShort:'NEA', status:'Open', close:'Feb 13, 2027', closeLabel:'Closes Feb 13', daysLabel:'130 days left to apply', award:'$10K–$100K', cat:'open',
+    facts:[{k:'Award ceiling',v:'$100,000'},{k:'Award floor',v:'$10,000'},{k:'Expected awards',v:'1,100'},{k:'Total program funding',v:'$60,000,000'},{k:'Close date',v:'Feb 13, 2027'},{k:'Cost sharing',v:'1:1 match'}],
+    eligible:['Nonprofits','Local governments','Tribal governments'],
+    summary:'Supports public engagement with, and access to, the arts across the country through project-based funding.' }
+];
+const STAT = { open:['#E7F3EC','#14583A'], soon:['#FBEDEB','#8A1C13'], forecast:['#FFF3DD','#7A4A00'] };
+const FORMS = [
+  { id:'sf424', name:'SF-424 Application for Federal Assistance', init:'progress' },
+  { id:'sf424a', name:'SF-424A Budget Information', init:'done' },
+  { id:'narr', name:'Project Narrative', init:'done' },
+  { id:'budget', name:'Budget Justification', init:'todo' },
+  { id:'site', name:'Project/Performance Site Location', init:'done' },
+  { id:'lll', name:'SF-LLL Disclosure of Lobbying Activities', init:'todo' }
+];
+const TAB_ROOTS = { ask:'ask', answer:'ask', search:'search', results:'search', apply:'apply', profile:'profile' };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const s = props.screen ?? 'welcome';
+    const sheet = s === 'filters';
+    this.state = {
+      screen: sheet ? 'results' : s, stack: [], sheet, oppId: 'hrsa',
+      saved: { hrsa: true }, query: '', asked: 'We run a rural clinic and want to expand addiction treatment',
+      chips: { open: true, soon: false, forecast: false },
+      filters: { Nonprofits: true, Health: true, Grant: true },
+      forms: Object.fromEntries(FORMS.map(f => [f.id, f.init])),
+      f: { legal: 'Bluefield Community Health Center', email: 'dana@bluefieldchc', phone: '(304) 555-0142' },
+      touched: s === 'form', certify: false,
+      votes: { r2: false }, feedback: '', sent: false
+    };
+  }
+  componentDidUpdate(prev) {
+    if (prev.screen !== this.props.screen && this.props.screen) {
+      const s = this.props.screen;
+      this.setState({ screen: s === 'filters' ? 'results' : s, sheet: s === 'filters', stack: [] });
+    }
+  }
+  go = (screen, extra = {}) => this.setState(st => ({ screen, stack: [...st.stack, st.screen], sheet: false, ...extra }));
+  tab = screen => this.setState({ screen, stack: [], sheet: false });
+  back = () => this.setState(st => {
+    const stack = [...st.stack]; const prev = stack.pop() || TAB_ROOTS[st.screen] || 'ask';
+    return { screen: prev === st.screen ? 'ask' : prev, stack, sheet: false };
+  });
+  pill(on) { return on ? { bg: '#1F3D6E', fg: '#fff', border: '#1F3D6E' } : { bg: '#fff', fg: '#14171F', border: '#D5D5D0' }; }
+
+  renderVals() {
+    const st = this.state;
+    const scr = st.screen;
+    const is = {}; ['welcome','signin','ask','answer','search','results','detail','apply','form','review','submitted','profile','roadmap'].forEach(k => is[k] = scr === k);
+    if (scr === 'signin') is.welcome = true;
+    const decorate = o => ({ ...o, sBg: STAT[o.cat][0], sFg: STAT[o.cat][1], open: () => this.go('detail', { oppId: o.id }) });
+    const anyChip = st.chips.open || st.chips.soon || st.chips.forecast;
+    const results = OPPS.filter(o => !anyChip || st.chips[o.cat]).map(decorate);
+    const counts = { open: 186, soon: 21, forecast: 7 };
+    const total = anyChip ? Object.keys(counts).reduce((a, k) => a + (st.chips[k] ? counts[k] : 0), 0) : 214;
+    const opp = decorate(OPPS.find(o => o.id === st.oppId) || OPPS[0]);
+    const groups = { Eligibility: ['Nonprofits','Local governments','State governments','Tribal governments','Universities','Individuals','Small businesses'], Category: ['Health','Education','Environment','Arts','Agriculture','Science'], 'Funding instrument': ['Grant','Cooperative agreement','Loan'], Agency: ['HHS','USDA','NSF','EPA','NEA','DOJ'] };
+    const filterCount = Object.values(st.filters).filter(Boolean).length + (anyChip ? 1 : 0);
+    const formStates = FORMS.map(f => {
+      const s = st.forms[f.id];
+      const done = s === 'done', prog = s === 'progress';
+      return { ...f, mark: done ? '✓' : '', dot: done ? '#1E7A4C' : 'transparent', ring: done ? '0' : prog ? '2px solid #1F3D6E' : '2px solid #D5D5D0',
+        state: done ? 'Complete' : prog ? 'In progress · 2 of 5 sections' : 'Not started', short: done ? 'Complete' : prog ? 'In progress' : 'Not started',
+        stateColor: done ? '#1E7A4C' : prog ? '#1F3D6E' : '#8A8F99', open: () => this.go('form', { formId: f.id }) };
+    });
+    const doneCount = formStates.filter(f => f.dot !== 'transparent').length;
+    const remaining = 6 - doneCount;
+    const emailOk = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(st.f.email);
+    const emailErr = st.touched && !emailOk;
+    const canSubmit = remaining === 0 && st.certify;
+    const setF = k => e => this.setState({ f: { ...st.f, [k]: e.target.value } });
+    const RM = [
+      { id:'r1', stage:'In progress', title:'Simpler application process for all agencies', base:412 },
+      { id:'r2', stage:'Planned', title:'Email and push alerts for saved searches', base:288 },
+      { id:'r3', stage:'Planned', title:'Shared workspaces for application teams', base:173 },
+      { id:'r4', stage:'Released', title:'New search with closer keyword matches', base:0 }
+    ];
+    const stageC = { 'In progress':['#E8EDF5','#1F3D6E'], Planned:['#FFF3DD','#7A4A00'], Released:['#E7F3EC','#14583A'] };
+    const tabActive = TAB_ROOTS[scr];
+    const tcol = k => tabActive === k ? '#1F3D6E' : '#8A8F99';
+    const ask = q => this.go('answer', { asked: q, query: '' });
+    return {
+      is, sheet: st.sheet && is.results,
+      showTabs: ['ask','search','results','apply','profile'].includes(scr),
+      tc: { ask: tcol('ask'), search: tcol('search'), apply: tcol('apply'), profile: tcol('profile') },
+      tabAsk: () => this.tab('ask'), tabSearch: () => this.tab('search'), tabApply: () => this.tab('apply'), tabProfile: () => this.tab('profile'),
+      back: this.back, goSignin: () => this.go('signin'), goAsk: () => this.tab('ask'), goAskTab: () => this.tab('ask'),
+      goProfile: () => this.tab('profile'), goApply: () => this.go('apply'), goResults: () => this.go('results'), goReview: () => this.go('review'),
+      query: st.query, asked: st.asked,
+      onQuery: e => this.setState({ query: e.target.value }),
+      onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (st.query.trim()) ask(st.query.trim()); } },
+      submitAsk: () => ask(st.query.trim() || st.asked),
+      newAsk: () => this.tab('ask'),
+      askAbout: () => this.go('answer', { asked: 'Can a health center that is part of a hospital system apply for ' + opp.num + '?' }),
+      suggestions: ['Grants for a rural health clinic','Arts funding for a small nonprofit','Climate resilience projects for my city','Research funding for early-career scientists'].map(t => ({ text: t, go: () => ask(t) })),
+      answerOpps: [OPPS[0], OPPS[1], OPPS[2]].map((o, i) => ({ ...decorate(o), cite: i + 1 })),
+      recents: [{ q:'rural health', n:'214' }, { q:'HRSA-27-014', n:'1' }, { q:'behavioral health workforce', n:'38' }],
+      categories: [{name:'Health',n:'1,204'},{name:'Education',n:'612'},{name:'Environment',n:'388'},{name:'Community development',n:'457'},{name:'Agriculture',n:'296'},{name:'Science & technology',n:'731'},{name:'Arts & humanities',n:'142'},{name:'Public safety',n:'219'}],
+      chips: [['open','Open'],['soon','Closing soon'],['forecast','Forecasted']].map(([k, label]) => ({ label, ...this.pill(st.chips[k]), toggle: () => this.setState({ chips: { ...st.chips, [k]: !st.chips[k] } }) })),
+      results, resultLabel: total.toLocaleString() + ' opportunities', filterCount, sheetCount: Math.max(12, total - (Object.values(st.filters).filter(Boolean).length * 31)),
+      openSheet: () => this.setState({ sheet: true }), closeSheet: () => this.setState({ sheet: false }),
+      resetFilters: () => this.setState({ filters: {} }),
+      filterGroups: Object.entries(groups).map(([name, items]) => ({ name, items: items.map(label => ({ label, ...this.pill(st.filters[label]), toggle: () => this.setState({ filters: { ...st.filters, [label]: !st.filters[label] } }) })) })),
+      opp, saveFill: st.saved[opp.id] ? '#1F3D6E' : 'none',
+      toggleSave: () => this.setState({ saved: { ...st.saved, [opp.id]: !st.saved[opp.id] } }),
+      forms: formStates, doneCount, progressPct: Math.round(doneCount / 6 * 100) + '%',
+      f: st.f, on: { legal: setF('legal'), email: setF('email'), phone: setF('phone') },
+      emailErr, emailBorder: emailErr ? '#B42318' : '#D5D5D0', saveBg: '#1F3D6E',
+      saveForm: () => { if (!emailOk) { this.setState({ touched: true }); return; } this.setState({ forms: { ...st.forms, [st.formId || 'sf424']: 'done' }, touched: false }); this.back(); },
+      incomplete: remaining > 0, remainingLabel: remaining === 1 ? '1 form' : remaining + ' forms',
+      toggleCertify: () => this.setState({ certify: !st.certify }),
+      certBorder: st.certify ? '#1F3D6E' : '#B5B5AE', certBg: st.certify ? '#1F3D6E' : '#fff', certMark: st.certify ? '✓' : '',
+      submitBg: canSubmit ? '#1F3D6E' : '#A9B3C4', submitCursor: canSubmit ? 'pointer' : 'not-allowed',
+      submit: () => { if (canSubmit) this.setState({ screen: 'submitted', stack: [] }); },
+      timeline: [
+        { label:'Submitted', when:'Today, 9:41 AM', dot:'#1E7A4C', ring:'#1E7A4C', color:'#14171F' },
+        { label:'Received by Grants.gov', when:'Usually within minutes', dot:'#fff', ring:'#1F3D6E', color:'#14171F' },
+        { label:'Validated', when:'Within 48 hours', dot:'#fff', ring:'#D5D5D0', color:'#8A8F99' },
+        { label:'Agency review', when:'After the Dec 12 deadline', dot:'#fff', ring:'#D5D5D0', color:'#8A8F99' }
+      ],
+      settings: [
+        { label:'Notifications', value:'On', go: () => {} },
+        { label:'Text size', value:'Default', go: () => {} },
+        { label:'Roadmap & feedback', value:'', go: () => this.go('roadmap') },
+        { label:'Help & support', value:'', go: () => {} },
+        { label:'Privacy policy', value:'', go: () => {} }
+      ],
+      signOut: () => this.setState({ screen: 'welcome', stack: [] }),
+      roadmap: RM.map(r => { const v = !!st.votes[r.id]; const released = r.stage === 'Released'; return { ...r, bg: stageC[r.stage][0], fg: stageC[r.stage][1], votes: released ? '—' : r.base + (v ? 1 : 0), vBg: v ? '#1F3D6E' : '#fff', vFg: v ? '#fff' : '#1F3D6E', vBorder: v ? '#1F3D6E' : '#D5D5D0', vote: () => { if (!released) this.setState({ votes: { ...st.votes, [r.id]: !v } }); } }; }),
+      feedback: st.feedback, onFeedback: e => this.setState({ feedback: e.target.value }),
+      fbBg: st.feedback.trim() ? '#1F3D6E' : '#A9B3C4',
+      sendFeedback: () => { if (st.feedback.trim()) this.setState({ sent: true }); },
+      sent: st.sent, notSent: !st.sent
+    };
+  }
+}
+</script>
+</body>
+</html>
