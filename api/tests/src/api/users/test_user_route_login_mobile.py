@@ -252,6 +252,20 @@ def test_ios_access_denied_from_login_gov_302(
     assert params == {"message": "error", "error_description": "User declined to login"}
 
 
+def test_ios_missing_code_after_state_resolved_302(
+    client, db_session, enable_factory_create, mobile_destination
+):
+    """A callback with a known iOS state but no code or error goes back to the app"""
+    login_gov_state = LoginGovStateFactory.create(login_client=LoginClient.IOS)
+
+    resp = client.get(f"/v1/users/login/callback?state={login_gov_state.login_gov_state_id}")
+
+    assert resp.status_code == 302
+    destination, params = _parse_location(resp)
+    assert destination == MOBILE_DESTINATION
+    assert params == {"message": "error", "error_description": "Missing code in request"}
+
+
 def test_unknown_state_goes_to_web_destination(client, mobile_destination):
     """Before the state is resolved we can't know the client, so errors go to the web destination"""
     resp = client.get(f"/v1/users/login/callback?state={uuid.uuid4()}&code=abc123")

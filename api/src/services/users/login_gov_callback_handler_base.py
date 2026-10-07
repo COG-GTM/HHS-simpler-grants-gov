@@ -93,12 +93,8 @@ class AbstractLoginGovCallbackHandler[
         # If we got an error back in the callback, raise an exception
         # The only two documented error values are access_denied and invalid_request
         if callback_params.error is not None:
-            # Look up (without consuming) the state so the error goes back to
-            # the client that started the flow, eg. a user cancelling in the iOS app
-            if callback_params.state is not None and is_valid_uuid(callback_params.state):
-                error_state = self.auth_handler.get_login_gov_state(callback_params.state)
-                if error_state is not None:
-                    self._set_login_client(error_state)
+            # Send the error back to the client that started the flow, eg. a user cancelling in the iOS app
+            self._set_login_client_from_unconsumed_state(callback_params.state)
 
             # access_denied means "The user has either cancelled or declined to authorize the client"
             # so raise a 401 and redirect them back to the frontend
@@ -113,6 +109,7 @@ class AbstractLoginGovCallbackHandler[
         # We can't validate the request like normal due to the redirect nature
         # of these endpoints.
         if callback_params.code is None:
+            self._set_login_client_from_unconsumed_state(callback_params.state)
             raise_flask_error(422, "Missing code in request")
         if callback_params.state is None:
             raise_flask_error(422, "Missing state in request")
@@ -143,6 +140,14 @@ class AbstractLoginGovCallbackHandler[
         self.db_session.delete(login_gov_state)
 
         return LoginGovDataContainer(code=callback_params.code, nonce=str(login_gov_state.nonce))
+
+    def _set_login_client_from_unconsumed_state(self, state: str | None) -> None:
+        """Look up (without consuming) the state so an error goes back to the client that started the flow"""
+        if state is None or not is_valid_uuid(state):
+            return
+        login_gov_state = self.auth_handler.get_login_gov_state(state)
+        if login_gov_state is not None:
+            self._set_login_client(login_gov_state)
 
     def _set_login_client(self, login_gov_state: LOGIN_GOV_STATE) -> None:
         login_client = (
