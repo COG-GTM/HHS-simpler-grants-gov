@@ -445,7 +445,8 @@ public struct AnswerView: View {
         case failed
     }
 
-    enum Preloaded {
+    /// A preloaded state for previews and snapshots.
+    public enum Preloaded {
         case answer(AskAnswer)
         case failed
     }
@@ -472,7 +473,7 @@ public struct AnswerView: View {
         self.skipsInitialLoad = false
     }
 
-    init(question: String, preloaded: Preloaded) {
+    public init(question: String, preloaded: Preloaded) {
         self.question = question
         self.skipsInitialLoad = true
 

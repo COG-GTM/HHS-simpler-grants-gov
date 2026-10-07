@@ -1,8 +1,7 @@
-#if os(iOS)
 import SGAsk
 import SGCore
 import SGDesign
-@testable import SGFeatureAsk
+import SGFeatureAsk
 import SGModels
 import SnapshotTesting
 import SwiftUI
@@ -36,7 +35,7 @@ final class AskSnapshotTests: XCTestCase {
             AskHomeView(),
             snapshotCase: #function
         )
-        assertSnapshot(host, testName: #function)
+        assertImage(host, named: #function)
     }
 
     func testAskWithText() async throws {
@@ -44,7 +43,7 @@ final class AskSnapshotTests: XCTestCase {
             AskHomeView(initialText: "We run a rural clinic"),
             snapshotCase: #function
         )
-        assertSnapshot(host, testName: #function)
+        assertImage(host, named: #function)
     }
 
     func testAskWithRecents() async throws {
@@ -57,7 +56,7 @@ final class AskSnapshotTests: XCTestCase {
                 "behavioral health workforce"
             ]
         )
-        assertSnapshot(host, testName: #function)
+        assertImage(host, named: #function)
     }
 
     func testAnswer() async throws {
@@ -68,7 +67,7 @@ final class AskSnapshotTests: XCTestCase {
             snapshotCase: #function,
             mode: .answer
         )
-        assertSnapshot(host, testName: #function)
+        assertImage(host, named: #function)
     }
 
     func testAnswerLoading() async throws {
@@ -77,7 +76,7 @@ final class AskSnapshotTests: XCTestCase {
             snapshotCase: #function,
             mode: .loading
         )
-        assertSnapshot(host, testName: #function)
+        assertImage(host, named: #function)
     }
 
     func testAnswerEmpty() async throws {
@@ -88,7 +87,7 @@ final class AskSnapshotTests: XCTestCase {
             snapshotCase: #function,
             mode: .empty
         )
-        assertSnapshot(host, testName: #function)
+        assertImage(host, named: #function)
     }
 
     func testAnswerError() async throws {
@@ -97,7 +96,7 @@ final class AskSnapshotTests: XCTestCase {
             snapshotCase: #function,
             mode: .failure
         )
-        assertSnapshot(host, testName: #function)
+        assertImage(host, named: #function)
     }
 
     func testAnswerXXXL() async throws {
@@ -109,7 +108,7 @@ final class AskSnapshotTests: XCTestCase {
             mode: .answer,
             accessibilitySize: true
         )
-        assertSnapshot(host, testName: #function, accessibilitySize: true)
+        assertImage(host, named: #function)
     }
 
     private func makeHost<Content: View>(
@@ -148,38 +147,39 @@ final class AskSnapshotTests: XCTestCase {
         return host
     }
 
-    private func assertSnapshot(
+    private func assertImage(
         _ host: UIViewController,
-        testName: String,
-        accessibilitySize: Bool = false,
-        file: StaticString = #filePath,
-        line: UInt = #line
+        named name: String
     ) {
-        let testName = testName.replacingOccurrences(of: "()", with: "")
-        let baseImage = Snapshotting<UIViewController, UIImage>.image(
-            precision: 0.99,
-            perceptualPrecision: 0.98,
-            size: CGSize(width: 390, height: 844),
-            traits: accessibilitySize
-                ? UITraitCollection(
-                    preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
-                )
-                : UITraitCollection()
-        )
-        let image = Snapshotting<UIViewController, UIImage>.wait(
-            for: 1.0,
-            on: baseImage
+        let snapshotName = name.replacingOccurrences(of: "()", with: "")
+        let size: CGSize
+        switch snapshotName {
+        case "testAskWithRecents":
+            size = CGSize(width: 390, height: 1200)
+        case "testAnswer":
+            size = CGSize(width: 390, height: 1400)
+        default:
+            size = CGSize(width: 390, height: 844)
+        }
+        let accessibilityTraits = snapshotName.contains("XXXL")
+            ? UITraitCollection(
+                preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
+            )
+            : UITraitCollection()
+        let config = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 47, left: 0, bottom: 34, right: 0),
+            size: size,
+            traits: UITraitCollection(traitsFrom: [
+                UITraitCollection(userInterfaceStyle: .light),
+                accessibilityTraits
+            ])
         )
         withSnapshotTesting(record: .never) {
-            SnapshotTesting.assertSnapshot(
-                matching: host,
-                as: image,
-                named: testName,
-                file: file,
-                testName: testName,
-                line: line
+            assertSnapshot(
+                of: host,
+                as: .image(on: config, precision: 0.99, perceptualPrecision: 0.98),
+                named: snapshotName
             )
         }
     }
 }
-#endif
