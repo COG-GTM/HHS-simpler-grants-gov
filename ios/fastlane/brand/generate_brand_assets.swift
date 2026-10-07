@@ -98,7 +98,8 @@ func drawLine(
 }
 
 func writeJSON(_ object: Any, to url: URL) throws {
-    let data = try JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted, .sortedKeys])
+    var data = try JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted, .sortedKeys])
+    data.append(0x0A)
     try data.write(to: url)
 }
 

@@ -41,10 +41,10 @@ for package in "${PACKAGES[@]}"; do
 done
 
 printf '\nSwift package summary:\n'
-for package in "${passed[@]}"; do
+for package in ${passed[@]+"${passed[@]}"}; do
   printf '  PASS %s\n' "$package"
 done
-for package in "${failed[@]}"; do
+for package in ${failed[@]+"${failed[@]}"}; do
   printf '  FAIL %s\n' "$package"
 done
 if ((failed_count > 0)); then
