@@ -123,7 +123,9 @@ public final class ResultsViewModel {
             if closingSoonOnly {
                 isLoadingMore = true
                 await autoFetchClosingSoonPages(maxPages: 5, requestGeneration: requestGeneration)
-                isLoadingMore = false
+                if requestGeneration == generation {
+                    isLoadingMore = false
+                }
             }
         } catch let error as GrantsError {
             guard requestGeneration == generation else { return }
@@ -147,10 +149,15 @@ public final class ResultsViewModel {
 
     public func loadNextPageIfAvailable() async {
         guard page < totalPages, !isLoadingMore else { return }
+        guard !(closingSoonOnly && closingSoonCountIsComplete) else { return }
         isLoadingMore = true
         loadMoreError = nil
         let requestGeneration = generation
-        defer { isLoadingMore = false }
+        defer {
+            if requestGeneration == generation {
+                isLoadingMore = false
+            }
+        }
         guard await fetchNextPage(requestGeneration: requestGeneration) else { return }
         if closingSoonOnly {
             await autoFetchClosingSoonPages(maxPages: 5, requestGeneration: requestGeneration)

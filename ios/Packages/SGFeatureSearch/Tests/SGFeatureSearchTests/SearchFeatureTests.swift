@@ -167,7 +167,7 @@ final class SearchFeatureTests: XCTestCase {
         XCTAssertEqual(requests.map(\.pagination.pageOffset), [1, 2])
     }
 
-    func testClosingSoonCountCompletesAfterPastWindowPageTail() async {
+    func testClosingSoonCountCompletesAfterPastWindowPageTailAndBlocksNextPage() async {
         let closingSoon = opportunity(id: "closing-soon", closeDate: "2026-10-09")
         let outsideWindow = opportunity(id: "outside-window", closeDate: "2026-10-26")
         let source = RecordingDataSource(responses: [
@@ -182,11 +182,57 @@ final class SearchFeatureTests: XCTestCase {
         model.closingSoonOnly = true
 
         await model.load()
+        await model.loadNextPageIfAvailable()
 
         XCTAssertEqual(model.displayedResults.map(\.id), ["closing-soon"])
         XCTAssertTrue(model.closingSoonCountIsComplete)
         let requests = await source.recordedRequests()
         XCTAssertEqual(requests.count, 1)
+    }
+
+    func testStaleClosingSoonLoadDoesNotClearNewerPaginationState() async {
+        let source = RecordingDataSource(
+            responses: [
+                response([opportunity(id: "old-first")], page: 1, pages: 3, total: 3),
+                response([opportunity(id: "new-first")], page: 1, pages: 3, total: 3)
+            ],
+            suspendedSearchRequestKeys: ["old:2", "new:2"]
+        )
+        let model = ResultsViewModel(
+            request: SearchRequest(query: "old"),
+            dataSource: source,
+            pageSize: 5,
+            now: now
+        )
+        model.closingSoonOnly = true
+
+        let oldLoad = Task { await model.load() }
+        await source.waitForSearchRequest(query: "old", page: 2)
+
+        let newLoad = Task { await model.submit(query: "new") }
+        await source.waitForSearchRequest(query: "new", page: 2)
+
+        XCTAssertTrue(model.isLoadingMore)
+        await source.resumeSearchRequest(
+            query: "old",
+            page: 2,
+            response: response([opportunity(id: "old-second")], page: 2, pages: 3, total: 3)
+        )
+        await oldLoad.value
+        XCTAssertTrue(model.isLoadingMore)
+
+        await source.resumeSearchRequest(
+            query: "new",
+            page: 2,
+            response: response(
+                [opportunity(id: "new-outside-window", closeDate: "2026-10-26")],
+                page: 2,
+                pages: 3,
+                total: 6
+            )
+        )
+        await newLoad.value
+        XCTAssertFalse(model.isLoadingMore)
     }
 
     func testResultsPaginationDeduplicatesAndStopsAtLastPage() async {
@@ -502,10 +548,13 @@ private actor RecordingDataSource: GrantsDataSource {
     private let savedLookupError: GrantsError?
     private let saveError: GrantsError?
     private let holdSave: Bool
+    private let suspendedSearchRequestKeys: Set<String>
     private let organizationsToReturn: [Organization]
     private let applicationId: String
     private var lastStart: (competitionId: String, name: String, organizationId: String?)?
     private var requestWaiters: [String: CheckedContinuation<Void, Never>] = [:]
+    private var suspendedSearchContinuations: [String: CheckedContinuation<SearchResponse, Error>] = [:]
+    private var suspendedSearchWaiters: [String: CheckedContinuation<Void, Never>] = [:]
     private var hasSaveStarted = false
     private var saveStartWaiter: CheckedContinuation<Void, Never>?
     private var saveCompletion: CheckedContinuation<Void, Never>?
@@ -519,6 +568,7 @@ private actor RecordingDataSource: GrantsDataSource {
         savedLookupError: GrantsError? = nil,
         saveError: GrantsError? = nil,
         holdSave: Bool = false,
+        suspendedSearchRequestKeys: Set<String> = [],
         organizations: [Organization] = [],
         applicationId: String = "application"
     ) {
@@ -529,6 +579,7 @@ private actor RecordingDataSource: GrantsDataSource {
         self.savedLookupError = savedLookupError
         self.saveError = saveError
         self.holdSave = holdSave
+        self.suspendedSearchRequestKeys = suspendedSearchRequestKeys
         organizationsToReturn = organizations
         self.applicationId = applicationId
     }
@@ -536,6 +587,13 @@ private actor RecordingDataSource: GrantsDataSource {
     func searchOpportunities(_ request: SearchRequest) async throws -> SearchResponse {
         requests.append(request)
         requestWaiters.removeValue(forKey: request.query ?? "")?.resume()
+        let suspendedRequestKey = "\(request.query ?? ""):\(request.pagination.pageOffset)"
+        if suspendedSearchRequestKeys.contains(suspendedRequestKey) {
+            return try await withCheckedThrowingContinuation { continuation in
+                suspendedSearchContinuations[suspendedRequestKey] = continuation
+                suspendedSearchWaiters.removeValue(forKey: suspendedRequestKey)?.resume()
+            }
+        }
         if request.query == "stale" {
             try await Task.sleep(for: .milliseconds(100))
             let stale = Opportunity(
@@ -579,6 +637,17 @@ private actor RecordingDataSource: GrantsDataSource {
         await withCheckedContinuation { continuation in
             requestWaiters[query] = continuation
         }
+    }
+
+    func waitForSearchRequest(query: String, page: Int) async {
+        let key = "\(query):\(page)"
+        if suspendedSearchContinuations[key] != nil { return }
+        await withCheckedContinuation { suspendedSearchWaiters[key] = $0 }
+    }
+
+    func resumeSearchRequest(query: String, page: Int, response: SearchResponse) {
+        let key = "\(query):\(page)"
+        suspendedSearchContinuations.removeValue(forKey: key)?.resume(returning: response)
     }
 
     func opportunity(id: String) async throws -> OpportunityDetail {
