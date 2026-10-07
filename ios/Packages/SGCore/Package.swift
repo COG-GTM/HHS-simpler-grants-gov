@@ -10,7 +10,8 @@ let package = Package(
         .package(path: "../SGAsk")
     ],
     targets: [
-        .target(name: "SGCore", dependencies: ["SGModels", "SGAsk"])
+        .target(name: "SGCore", dependencies: ["SGModels", "SGAsk"]),
+        .testTarget(name: "SGCoreTests", dependencies: ["SGCore", "SGModels"])
     ],
     swiftLanguageVersions: [.v5]
 )

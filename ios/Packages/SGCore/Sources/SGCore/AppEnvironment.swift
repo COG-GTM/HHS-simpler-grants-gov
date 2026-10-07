@@ -8,13 +8,19 @@ public struct AppEnvironment: Sendable {
 
     public let dataMode: DataMode
     public let uiTestToken: String?
+    public let deepLink: URL?
 
-    public init(arguments: [String] = ProcessInfo.processInfo.arguments) {
+    public init(
+        arguments: [String] = ProcessInfo.processInfo.arguments,
+        userDefaults: UserDefaults = .standard
+    ) {
         let mode = Self.argumentValue("-SGDataMode", in: arguments)?.lowercased()
         let token = Self.argumentValue("-SGUITestToken", in: arguments)
         uiTestToken = token?.isEmpty == false ? token : nil
+        deepLink = Self.argumentValue("-SGDeepLink", in: arguments).flatMap(URL.init(string:))
 
-        if mode == "live" {
+        let selectedMode = mode ?? (userDefaults.string(forKey: "sg_data_mode")?.lowercased() ?? "sample")
+        if selectedMode == "live" {
             dataMode = .live(baseURL: Self.localAPIBaseURL(
                 from: Self.argumentValue("-SGAPIBaseURL", in: arguments)
             ))

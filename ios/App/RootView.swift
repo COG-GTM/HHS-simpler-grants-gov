@@ -6,11 +6,20 @@ import SGFeatureOnboarding
 import SGFeatureProfile
 import SGFeatureSearch
 import SwiftUI
+import UIKit
 
 struct RootView: View {
     @AppStorage("sg.onboarding.completed") private var hasCompletedOnboarding = false
     @Environment(AppRouter.self) private var router
     @Environment(SessionStore.self) private var sessionStore
+    @Environment(\.appEnvironment) private var appEnvironment
+    @Environment(\.syncQueue) private var syncQueue
+    @Environment(\.networkStatus) private var networkStatus
+    @State private var isRestoring = true
+    @State private var didApplyInitialDeepLink = false
+#if DEBUG
+    @State private var didAttemptAutoSignIn = false
+#endif
 
     private var shouldSkipOnboarding: Bool {
         let arguments = ProcessInfo.processInfo.arguments
@@ -23,16 +32,87 @@ struct RootView: View {
         return ["yes", "true", "1"].contains(arguments[index + 1].lowercased())
     }
 
+#if DEBUG
+    private var shouldAutoSignIn: Bool {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard
+            let index = arguments.firstIndex(of: "-SGAutoSignIn"),
+            arguments.indices.contains(index + 1)
+        else {
+            return false
+        }
+        return ["yes", "true", "1"].contains(arguments[index + 1].lowercased())
+    }
+#endif
+
     var body: some View {
         Group {
-            if hasCompletedOnboarding || shouldSkipOnboarding {
-                MainTabsView()
+            if isRestoring {
+                Color(uiColor: UIColor(red: 246 / 255, green: 246 / 255, blue: 243 / 255, alpha: 1))
+                    .ignoresSafeArea()
             } else {
-                OnboardingFlowView(onFinish: finishOnboarding)
+                if hasCompletedOnboarding || shouldSkipOnboarding || isSignedIn {
+                    MainTabsView()
+                } else {
+                    OnboardingFlowView(onFinish: finishOnboarding)
+                }
+            }
+        }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if !isRestoring, let networkStatus, !networkStatus.isOnline {
+                InlineErrorBanner(
+                    message: "shell.offline.message".localized(bundle: .main),
+                    retry: { Task { await flushSyncQueue() } }
+                )
+                .accessibilityIdentifier("shell.offline.banner")
             }
         }
         .task {
             await sessionStore.restore()
+#if DEBUG
+            if shouldAutoSignIn, !didAttemptAutoSignIn {
+                if case .signedOut = sessionStore.state {
+                    didAttemptAutoSignIn = true
+                    hasCompletedOnboarding = true
+                    await sessionStore.signIn(pivRequired: false)
+                }
+            }
+#endif
+            isRestoring = false
+            applyInitialDeepLinkIfNeeded()
+        }
+        .onOpenURL { router.open($0) }
+        .onChange(of: sessionStore.state) { oldState, newState in
+            if case .signedIn = newState {
+                hasCompletedOnboarding = true
+                Task { await flushSyncQueue() }
+            }
+            if case .signedIn = oldState, case .signedOut = newState {
+                router.reset()
+            }
+        }
+    }
+
+    @MainActor
+    private func flushSyncQueue() async {
+        await syncQueue.flush()
+        let pendingCount = await syncQueue.pendingCount
+        networkStatus?.update(
+            isOnline: networkStatus?.isOnline ?? true,
+            pendingSyncCount: pendingCount
+        )
+    }
+
+    private var isSignedIn: Bool {
+        if case .signedIn = sessionStore.state { return true }
+        return false
+    }
+
+    private func applyInitialDeepLinkIfNeeded() {
+        guard !didApplyInitialDeepLink else { return }
+        didApplyInitialDeepLink = true
+        if let deepLink = appEnvironment.deepLink {
+            router.open(deepLink)
         }
     }
 
@@ -40,13 +120,11 @@ struct RootView: View {
         hasCompletedOnboarding = true
         switch result {
         case .signedIn:
-            Task {
-                await sessionStore.signIn(pivRequired: false)
-            }
+            Task { await sessionStore.signIn(pivRequired: false) }
         case .guest:
             sessionStore.continueAsGuest()
         }
-        router.tab = .ask
+        router.select(.ask)
     }
 }
 
@@ -56,7 +134,7 @@ private struct MainTabsView: View {
     var body: some View {
         TabView(selection: Binding(
             get: { router.tab },
-            set: { router.tab = $0 }
+            set: { router.select($0) }
         )) {
             tabStack(.ask)
                 .tabItem {
@@ -82,18 +160,24 @@ private struct MainTabsView: View {
                 }
                 .tag(AppTab.profile)
         }
-        .tint(Color(red: 31 / 255, green: 61 / 255, blue: 110 / 255))
-        .toolbarBackground(Color(red: 250 / 255, green: 250 / 255, blue: 248 / 255), for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
+        .background(canvasBackground.ignoresSafeArea())
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if shouldShowTabBar {
+                SGTabBar()
+            }
+        }
     }
 
     private func tabStack(_ tab: AppTab) -> some View {
-        NavigationStack(path: router.binding(for: tab)) {
+        NavigationStack(path: router.routesBinding(for: tab)) {
             tabRoot(tab)
+                .background(canvasBackground.ignoresSafeArea())
                 .navigationDestination(for: AppRoute.self) { route in
                     RouteView(route: route)
                 }
         }
+        .background(canvasBackground.ignoresSafeArea())
+        .toolbar(.hidden, for: .tabBar)
     }
 
     @ViewBuilder
@@ -108,5 +192,19 @@ private struct MainTabsView: View {
         case .profile:
             ProfileView()
         }
+    }
+
+    private var shouldShowTabBar: Bool {
+        guard let route = router.routes(for: router.tab).last else { return true }
+        switch route {
+        case .answer(_), .opportunity(_), .form(_, _), .review(_), .submitted(_, _), .roadmap:
+            return false
+        case .results(_), .application(_):
+            return true
+        }
+    }
+
+    private var canvasBackground: Color {
+        Color(uiColor: UIColor(red: 246 / 255, green: 246 / 255, blue: 243 / 255, alpha: 1))
     }
 }
