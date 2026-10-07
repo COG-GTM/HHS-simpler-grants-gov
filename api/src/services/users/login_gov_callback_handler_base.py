@@ -6,6 +6,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from src.adapters.oauth.login_gov.login_gov_jwt import (
+    LoginClient,
     LoginGovUser,
     get_login_gov_client_assertion,
     validate_token,
@@ -15,6 +16,7 @@ from src.adapters.oauth.oauth_client_models import OauthTokenRequest
 from src.api.route_utils import raise_flask_error
 from src.auth.auth_errors import JwtValidationError
 from src.auth.auth_handler_base import AbstractAuthHandler
+from src.auth.auth_utils import set_request_login_client
 from src.auth.jwt import JwtAuth
 from src.db.models.auth_base_models import (
     BaseLinkExternalUser,
@@ -91,6 +93,13 @@ class AbstractLoginGovCallbackHandler[
         # If we got an error back in the callback, raise an exception
         # The only two documented error values are access_denied and invalid_request
         if callback_params.error is not None:
+            # Look up (without consuming) the state so the error goes back to
+            # the client that started the flow, eg. a user cancelling in the iOS app
+            if callback_params.state is not None and is_valid_uuid(callback_params.state):
+                error_state = self.auth_handler.get_login_gov_state(callback_params.state)
+                if error_state is not None:
+                    self._set_login_client(error_state)
+
             # access_denied means "The user has either cancelled or declined to authorize the client"
             # so raise a 401 and redirect them back to the frontend
             if callback_params.error == "access_denied":
@@ -126,11 +135,22 @@ class AbstractLoginGovCallbackHandler[
         if login_gov_state is None:
             raise_flask_error(404, "OAuth state not found")
 
+        # Any error from here on goes to the destination of the client that started the flow
+        self._set_login_client(login_gov_state)
+
         # We do not want the login_gov_state to be reusable - so delete it
         # even if we later error to avoid any replay attacks.
         self.db_session.delete(login_gov_state)
 
         return LoginGovDataContainer(code=callback_params.code, nonce=str(login_gov_state.nonce))
+
+    def _set_login_client(self, login_gov_state: LOGIN_GOV_STATE) -> None:
+        login_client = (
+            LoginClient(login_gov_state.login_client)
+            if login_gov_state.login_client is not None
+            else None
+        )
+        set_request_login_client(login_client)
 
     def handle_token(self, login_gov_data: LoginGovDataContainer) -> LoginGovCallbackResponse:
         """Fetch user info from login gov, and handle user creation
