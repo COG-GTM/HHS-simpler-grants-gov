@@ -40,7 +40,7 @@
         "closing_date": "2026-12-12",
         "is_open": true,
         "is_simpler_grants_enabled": true,
-        "open_to_applicants": ["nonprofits_non_higher_education_with_501c3", "city_or_township_governments", "federally_recognized_native_american_tribal_governments", "public_and_state_institutions_of_higher_education"],
+        "open_to_applicants": ["organization"],
         "competition_forms": [],
         "competition_instructions": [],
         "sample_forms": [
@@ -92,7 +92,7 @@
         "closing_date": "2026-10-30",
         "is_open": true,
         "is_simpler_grants_enabled": true,
-        "open_to_applicants": ["nonprofits_non_higher_education_with_501c3", "city_or_township_governments"],
+        "open_to_applicants": ["organization"],
         "competition_forms": [],
         "competition_instructions": [],
         "sample_forms": [
@@ -179,7 +179,7 @@
         "closing_date": "2027-01-09",
         "is_open": true,
         "is_simpler_grants_enabled": false,
-        "open_to_applicants": ["nonprofits_non_higher_education_with_501c3"],
+        "open_to_applicants": ["organization"],
         "competition_forms": [],
         "competition_instructions": []
       }]
@@ -223,7 +223,7 @@
         "closing_date": "2027-02-13",
         "is_open": true,
         "is_simpler_grants_enabled": true,
-        "open_to_applicants": ["nonprofits_non_higher_education_with_501c3", "city_or_township_governments"],
+        "open_to_applicants": ["organization"],
         "competition_forms": [],
         "competition_instructions": [],
         "sample_forms": [
@@ -268,7 +268,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "93.243", "program_title": "Substance Abuse and Mental Health Services Projects of Regional and National Significance"}],
       "attachments": [{"file_name": "HHS-SAMHSA-27-021_NOFO.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1520000, "download_path": "https://sample.grants.example/files/HHS-SAMHSA-27-021_NOFO.pdf"}],
-      "competitions": [{"competition_id":"hhs-samhsa-27-021-open","competition_title":"Rural Behavioral Health and Recovery Partnerships","opening_date":"2026-09-25","closing_date":"2026-10-17","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","city_or_township_governments","federally_recognized_native_american_tribal_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
+      "competitions": [{"competition_id":"hhs-samhsa-27-021-open","competition_title":"Rural Behavioral Health and Recovery Partnerships","opening_date":"2026-09-25","closing_date":"2026-10-17","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
     },
     {
       "opportunity_id": "hhs-2027-cdc-008",
@@ -302,7 +302,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "93.283", "program_title": "Centers for Disease Control and Prevention Investigations and Technical Assistance"}],
       "attachments": [{"file_name": "CDC-27-008_Application_Guide.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 770000, "download_path": "https://sample.grants.example/files/CDC-27-008_Application_Guide.pdf"}],
-      "competitions": [{"competition_id":"hhs-2027-cdc-008-open","competition_title":"Community Health Worker Training for Rural Clinics","opening_date":"2026-08-30","closing_date":"2026-10-09","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","public_and_state_institutions_of_higher_education","city_or_township_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"hhs-2027-cdc-008-open","competition_title":"Community Health Worker Training for Rural Clinics","opening_date":"2026-08-30","closing_date":"2026-10-09","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "neh-27-003",
@@ -336,7 +336,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "45.163", "program_title": "Promotion of the Humanities Division of Public Programs"}],
       "attachments": [{"file_name": "NEH-27-003_Guidelines.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 880000, "download_path": "https://sample.grants.example/files/NEH-27-003_Guidelines.pdf"}],
-      "competitions": [{"competition_id":"neh-27-003-open","competition_title":"Humanities Connections: Community Research","opening_date":"2026-09-08","closing_date":"2026-11-22","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","public_and_state_institutions_of_higher_education","city_or_township_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"neh-27-003-open","competition_title":"Humanities Connections: Community Research","opening_date":"2026-09-08","closing_date":"2026-11-22","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "de-foa-0003012",
@@ -370,7 +370,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "81.049", "program_title": "Office of Science Financial Assistance Program"}],
       "attachments": [{"file_name": "DE-FOA-0003012_NOFO.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1640000, "download_path": "https://sample.grants.example/files/DE-FOA-0003012_NOFO.pdf"}],
-      "competitions": [{"competition_id":"de-foa-0003012-open","competition_title":"Early Career Research Program in Energy Science","opening_date":"2026-09-12","closing_date":"2026-10-20","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["public_and_state_institutions_of_higher_education","private_institutions_of_higher_education","nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
+      "competitions": [{"competition_id":"de-foa-0003012-open","competition_title":"Early Career Research Program in Energy Science","opening_date":"2026-09-12","closing_date":"2026-10-20","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
     },
     {
       "opportunity_id": "de-foa-0003040",
@@ -404,7 +404,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "81.087", "program_title": "Renewable Energy Research and Development"}],
       "attachments": [{"file_name": "DE-FOA-0003040_Notice.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1260000, "download_path": "https://sample.grants.example/files/DE-FOA-0003040_Notice.pdf"}],
-      "competitions": [{"competition_id":"de-foa-0003040-open","competition_title":"Community Energy Resilience Demonstrations","opening_date":"2026-09-28","closing_date":"2027-02-01","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["city_or_township_governments","nonprofits_non_higher_education_with_501c3","federally_recognized_native_american_tribal_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"de-foa-0003040-open","competition_title":"Community Energy Resilience Demonstrations","opening_date":"2026-09-28","closing_date":"2027-02-01","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "ed-grants-27-104",
@@ -438,7 +438,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "84.031", "program_title": "Higher Education Institutional Aid"}],
       "attachments": [{"file_name": "ED-GRANTS-27-104_Program_Notice.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 970000, "download_path": "https://sample.grants.example/files/ED-GRANTS-27-104_Program_Notice.pdf"}],
-      "competitions": [{"competition_id":"ed-grants-27-104-open","competition_title":"Rural Postsecondary Pathways Partnership","opening_date":"2026-09-04","closing_date":"2027-01-18","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["public_and_state_institutions_of_higher_education","nonprofits_non_higher_education_with_501c3","city_or_township_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"ed-grants-27-104-open","competition_title":"Rural Postsecondary Pathways Partnership","opening_date":"2026-09-04","closing_date":"2027-01-18","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "dot-fhwa-27-001",
@@ -472,7 +472,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "20.205", "program_title": "Highway Planning and Construction"}],
       "attachments": [{"file_name": "DOT-FHWA-27-001_NOFO.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1900000, "download_path": "https://sample.grants.example/files/DOT-FHWA-27-001_NOFO.pdf"}],
-      "competitions": [{"competition_id":"dot-fhwa-27-001-open","competition_title":"Local Climate Resilience for Transportation Networks","opening_date":"2026-09-22","closing_date":"2027-01-30","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["city_or_township_governments","county_governments","state_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
+      "competitions": [{"competition_id":"dot-fhwa-27-001-open","competition_title":"Local Climate Resilience for Transportation Networks","opening_date":"2026-09-22","closing_date":"2027-01-30","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
     },
     {
       "opportunity_id": "hud-27-06",
@@ -506,7 +506,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "14.218", "program_title": "Community Development Block Grants/Entitlement Grants"}],
       "attachments": [{"file_name": "HUD-27-06_Application_Guide.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1100000, "download_path": "https://sample.grants.example/files/HUD-27-06_Application_Guide.pdf"}],
-      "competitions": [{"competition_id":"hud-27-06-open","competition_title":"Neighborhood Climate Resilience Planning","opening_date":"2026-08-28","closing_date":"2027-01-11","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["city_or_township_governments","public_and_indian_housing_authorities","nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"hud-27-06-open","competition_title":"Neighborhood Climate Resilience Planning","opening_date":"2026-08-28","closing_date":"2027-01-11","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "o-bja-2027-009",
@@ -540,7 +540,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "16.738", "program_title": "Edward Byrne Memorial Justice Assistance Grant Program"}],
       "attachments": [{"file_name": "O-BJA-2027-009_NOFO.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1400000, "download_path": "https://sample.grants.example/files/O-BJA-2027-009_NOFO.pdf"}],
-      "competitions": [{"competition_id":"o-bja-2027-009-open","competition_title":"Rural Justice and Reentry Partnership Initiative","opening_date":"2026-09-18","closing_date":"2027-02-05","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["city_or_township_governments","federally_recognized_native_american_tribal_governments","nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"o-bja-2027-009-open","competition_title":"Rural Justice and Reentry Partnership Initiative","opening_date":"2026-09-18","closing_date":"2027-02-05","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "doc-eda-27-12",
@@ -574,7 +574,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "11.307", "program_title": "Economic Adjustment Assistance"}],
       "attachments": [{"file_name": "DOC-EDA-27-12_Notice.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1060000, "download_path": "https://sample.grants.example/files/DOC-EDA-27-12_Notice.pdf"}],
-      "competitions": [{"competition_id":"doc-eda-27-12-open","competition_title":"Regional Innovation and Small Business Growth","opening_date":"2026-09-11","closing_date":"2027-03-01","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","city_or_township_governments","public_and_state_institutions_of_higher_education"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
+      "competitions": [{"competition_id":"doc-eda-27-12-open","competition_title":"Regional Innovation and Small Business Growth","opening_date":"2026-09-11","closing_date":"2027-03-01","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
     },
     {
       "opportunity_id": "hrsa-27-020",
@@ -608,7 +608,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "93.224", "program_title": "Health Center Program"}],
       "attachments": [{"file_name": "HRSA-27-020_Program_Guide.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 900000, "download_path": "https://sample.grants.example/files/HRSA-27-020_Program_Guide.pdf"}],
-      "competitions": [{"competition_id":"hrsa-27-020-open","competition_title":"Rural Community Health Clinic Expansion","opening_date":"2026-09-10","closing_date":"2026-12-01","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","city_or_township_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"hrsa-27-020-open","competition_title":"Rural Community Health Clinic Expansion","opening_date":"2026-09-10","closing_date":"2026-12-01","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "hhs-samhsa-27-022",
@@ -642,7 +642,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "93.243", "program_title": "Substance Abuse and Mental Health Services Projects of Regional and National Significance"}],
       "attachments": [{"file_name": "HHS-SAMHSA-27-022_NOFO.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1230000, "download_path": "https://sample.grants.example/files/HHS-SAMHSA-27-022_NOFO.pdf"}],
-      "competitions": [{"competition_id":"hhs-samhsa-27-022-open","competition_title":"Opioid Treatment Access in Underserved Counties","opening_date":"2026-09-21","closing_date":"2027-01-22","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","city_or_township_governments","federally_recognized_native_american_tribal_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"hhs-samhsa-27-022-open","competition_title":"Opioid Treatment Access in Underserved Counties","opening_date":"2026-09-21","closing_date":"2027-01-22","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "nsf-27-601",
@@ -676,7 +676,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "47.041", "program_title": "Engineering Grants"}],
       "attachments": [{"file_name": "NSF-27-601_CAREER_Guide.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 850000, "download_path": "https://sample.grants.example/files/NSF-27-601_CAREER_Guide.pdf"}],
-      "competitions": [{"competition_id":"nsf-27-601-open","competition_title":"CAREER: Early-Career Researcher Awards","opening_date":"2026-08-14","closing_date":"2027-07-22","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["public_and_state_institutions_of_higher_education","private_institutions_of_higher_education"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
+      "competitions": [{"competition_id":"nsf-27-601-open","competition_title":"CAREER: Early-Career Researcher Awards","opening_date":"2026-08-14","closing_date":"2027-07-22","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
     },
     {
       "opportunity_id": "nea-27-04",
@@ -710,7 +710,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "45.024", "program_title": "Promotion of the Arts Grants to Organizations and Individuals"}],
       "attachments": [{"file_name": "NEA-27-04_Challenge_America.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 640000, "download_path": "https://sample.grants.example/files/NEA-27-04_Challenge_America.pdf"}],
-      "competitions": [{"competition_id":"nea-27-04-open","competition_title":"Challenge America: Arts Projects for Small Organizations","opening_date":"2026-09-01","closing_date":"2027-01-20","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"nea-27-04-open","competition_title":"Challenge America: Arts Projects for Small Organizations","opening_date":"2026-09-01","closing_date":"2027-01-20","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "epa-r-27-14",
@@ -744,7 +744,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "66.616", "program_title": "Environmental Justice Grants"}],
       "attachments": [{"file_name": "EPA-R-27-14_Climate_Guide.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1010000, "download_path": "https://sample.grants.example/files/EPA-R-27-14_Climate_Guide.pdf"}],
-      "competitions": [{"competition_id":"epa-r-27-14-open","competition_title":"City Climate Resilience and Environmental Health","opening_date":"2026-09-27","closing_date":"2027-02-19","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["city_or_township_governments","nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"epa-r-27-14-open","competition_title":"City Climate Resilience and Environmental Health","opening_date":"2026-09-27","closing_date":"2027-02-19","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "dot-fhwa-27-004",
@@ -778,7 +778,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "20.205", "program_title": "Highway Planning and Construction"}],
       "attachments": [{"file_name": "DOT-FHWA-27-004_Project_Guide.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 1450000, "download_path": "https://sample.grants.example/files/DOT-FHWA-27-004_Project_Guide.pdf"}],
-      "competitions": [{"competition_id":"dot-fhwa-27-004-open","competition_title":"Citywide Flood and Heat Adaptation Projects","opening_date":"2026-09-17","closing_date":"2027-02-25","is_open":true,"is_simpler_grants_enabled":false,"open_to_applicants":["city_or_township_governments","county_governments","special_district_governments"],"competition_forms":[],"competition_instructions":[]}]
+      "competitions": [{"competition_id":"dot-fhwa-27-004-open","competition_title":"Citywide Flood and Heat Adaptation Projects","opening_date":"2026-09-17","closing_date":"2027-02-25","is_open":true,"is_simpler_grants_enabled":false,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[]}]
     },
     {
       "opportunity_id": "neh-27-011",
@@ -812,7 +812,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "45.160", "program_title": "Promotion of the Humanities Federal/State Partnership"}],
       "attachments": [{"file_name": "NEH-27-011_Research_Guidance.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 720000, "download_path": "https://sample.grants.example/files/NEH-27-011_Research_Guidance.pdf"}],
-      "competitions": [{"competition_id":"neh-27-011-open","competition_title":"Public Humanities Research Fellowships","opening_date":"2026-08-20","closing_date":"2027-03-18","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","public_and_state_institutions_of_higher_education","individuals"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"neh-27-011-open","competition_title":"Public Humanities Research Fellowships","opening_date":"2026-08-20","closing_date":"2027-03-18","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["individual", "organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "usda-rd-27-08",
@@ -846,7 +846,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "10.766", "program_title": "Community Facilities Loans and Grants"}],
       "attachments": [{"file_name": "USDA-RD-27-08_Application_Guide.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 675000, "download_path": "https://sample.grants.example/files/USDA-RD-27-08_Application_Guide.pdf"}],
-      "competitions": [{"competition_id":"usda-rd-27-08-open","competition_title":"Rural Health Facility Planning and Design","opening_date":"2026-09-23","closing_date":"2026-12-08","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","city_or_township_governments","federally_recognized_native_american_tribal_governments"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
+      "competitions": [{"competition_id":"usda-rd-27-08-open","competition_title":"Rural Health Facility Planning and Design","opening_date":"2026-09-23","closing_date":"2026-12-08","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false},{"form_id":"778a1485-082a-463e-a61b-6615ccebe027","is_required":false}]}]
     },
     {
       "opportunity_id": "nsf-27-418",
@@ -880,7 +880,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "47.075", "program_title": "Social, Behavioral, and Economic Sciences"}],
       "attachments": [{"file_name": "NSF-27-418_Funding_Opportunity.pdf", "file_type": "application", "mime_type": "application/pdf", "size_bytes": 960000, "download_path": "https://sample.grants.example/files/NSF-27-418_Funding_Opportunity.pdf"}],
-      "competitions": [{"competition_id":"nsf-27-418-open","competition_title":"Rural Health Data and Technology Research","opening_date":"2026-09-07","closing_date":"2027-01-26","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["public_and_state_institutions_of_higher_education","private_institutions_of_higher_education","nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
+      "competitions": [{"competition_id":"nsf-27-418-open","competition_title":"Rural Health Data and Technology Research","opening_date":"2026-09-07","closing_date":"2027-01-26","is_open":true,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[],"sample_forms":[{"form_id":"1623b310-85be-496a-b84b-34bdee22a68a","is_required":true},{"form_id":"08e6603f-d197-4a60-98cd-d49acb1fc1fd","is_required":true},{"form_id":"1d0681f8-26f9-4ff1-a75e-e33477668f73","is_required":true},{"form_id":"32165da2-354d-42c0-a986-cf4f2f350039","is_required":true},{"form_id":"6ebd786f-cccf-4ee1-a100-61436975025b","is_required":false}]}]
     },
     {
       "opportunity_id": "hrsa-27-026",
@@ -1026,7 +1026,7 @@
         "closing_date": "2026-09-30",
         "is_open": false,
         "is_simpler_grants_enabled": true,
-        "open_to_applicants": ["nonprofits_non_higher_education_with_501c3", "city_or_township_governments"],
+        "open_to_applicants": ["organization"],
         "competition_forms": [],
         "competition_instructions": []
       }]
@@ -1063,7 +1063,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "66.035", "program_title": "Community Action for a Renewed Environment"}],
       "attachments": [{"file_name": "EPA-R-26-44_Closed_Notice.pdf", "file_type": "archive", "mime_type": "application/pdf", "size_bytes": 450000, "download_path": "https://sample.grants.example/files/EPA-R-26-44_Closed_Notice.pdf"}],
-      "competitions": [{"competition_id":"epa-r-26-44-closed","competition_title":"Community Clean Air Monitoring Partnerships — Closed Round","opening_date":"2026-04-01","closing_date":"2026-09-28","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","federally_recognized_native_american_tribal_governments"],"competition_forms":[],"competition_instructions":[]}]
+      "competitions": [{"competition_id":"epa-r-26-44-closed","competition_title":"Community Clean Air Monitoring Partnerships — Closed Round","opening_date":"2026-04-01","closing_date":"2026-09-28","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[]}]
     },
     {
       "opportunity_id": "ed-grants-26-071",
@@ -1097,7 +1097,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "84.287", "program_title": "Twenty-First Century Community Learning Centers"}],
       "attachments": [{"file_name": "ED-GRANTS-26-071_Closed.pdf", "file_type": "archive", "mime_type": "application/pdf", "size_bytes": 390000, "download_path": "https://sample.grants.example/files/ED-GRANTS-26-071_Closed.pdf"}],
-      "competitions": [{"competition_id":"ed-grants-26-071-closed","competition_title":"Career Pathways for Rural Learners — Closed Round","opening_date":"2026-02-11","closing_date":"2026-09-25","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["public_and_state_institutions_of_higher_education","independent_school_districts","nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[]}]
+      "competitions": [{"competition_id":"ed-grants-26-071-closed","competition_title":"Career Pathways for Rural Learners — Closed Round","opening_date":"2026-02-11","closing_date":"2026-09-25","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[]}]
     },
     {
       "opportunity_id": "nea-26-090",
@@ -1131,7 +1131,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "45.024", "program_title": "Promotion of the Arts Grants to Organizations and Individuals"}],
       "attachments": [{"file_name": "NEA-26-090_Archive.pdf", "file_type": "archive", "mime_type": "application/pdf", "size_bytes": 260000, "download_path": "https://sample.grants.example/files/NEA-26-090_Archive.pdf"}],
-      "competitions": [{"competition_id":"nea-26-090-closed","competition_title":"Arts Access for Rural Communities — Closed Round","opening_date":"2026-01-01","closing_date":"2026-08-15","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["nonprofits_non_higher_education_with_501c3","city_or_township_governments"],"competition_forms":[],"competition_instructions":[]}]
+      "competitions": [{"competition_id":"nea-26-090-closed","competition_title":"Arts Access for Rural Communities — Closed Round","opening_date":"2026-01-01","closing_date":"2026-08-15","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[]}]
     },
     {
       "opportunity_id": "usda-rd-26-41",
@@ -1165,7 +1165,7 @@
       },
       "opportunity_assistance_listings": [{"assistance_listing_number": "10.760", "program_title": "Water and Waste Disposal Systems for Rural Communities"}],
       "attachments": [{"file_name": "USDA-RD-26-41_Archive.pdf", "file_type": "archive", "mime_type": "application/pdf", "size_bytes": 245000, "download_path": "https://sample.grants.example/files/USDA-RD-26-41_Archive.pdf"}],
-      "competitions": [{"competition_id":"usda-rd-26-41-closed","competition_title":"Rural Water Systems Technical Assistance — Closed Round","opening_date":"2026-01-05","closing_date":"2026-08-30","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["city_or_township_governments","nonprofits_non_higher_education_with_501c3"],"competition_forms":[],"competition_instructions":[]}]
+      "competitions": [{"competition_id":"usda-rd-26-41-closed","competition_title":"Rural Water Systems Technical Assistance — Closed Round","opening_date":"2026-01-05","closing_date":"2026-08-30","is_open":false,"is_simpler_grants_enabled":true,"open_to_applicants":["organization"],"competition_forms":[],"competition_instructions":[]}]
     }
   ]
 }

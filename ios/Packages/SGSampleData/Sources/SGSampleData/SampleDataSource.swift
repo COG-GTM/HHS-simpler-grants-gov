@@ -514,6 +514,7 @@ private actor SampleStore {
                 form: item.form,
                 applicationResponse: response,
                 isRequired: item.isRequired,
+                isIncludedInSubmission: item.isRequired,
                 applicationId: identifier,
                 applicationName: name
             )
@@ -542,6 +543,12 @@ private actor SampleStore {
             throw GrantsError.server(status: 422, message: "A submitted application cannot be changed.")
         }
         let warnings = RequiredFieldValidator.validate(schema: existing.form.formJsonSchema, response: response)
+        let includeResponse: Bool
+        if case let .object(values) = response, !values.isEmpty {
+            includeResponse = true
+        } else {
+            includeResponse = false
+        }
         let updatedForm = ApplicationForm(
             applicationFormId: existing.applicationFormId,
             formId: existing.formId,
@@ -549,7 +556,7 @@ private actor SampleStore {
             applicationResponse: response,
             applicationFormStatus: warnings.isEmpty ? "complete" : "in_progress",
             isRequired: existing.isRequired,
-            isIncludedInSubmission: existing.isIncludedInSubmission,
+            isIncludedInSubmission: existing.isRequired || existing.isIncludedInSubmission == true || includeResponse,
             applicationId: existing.applicationId,
             applicationName: existing.applicationName
         )
@@ -565,8 +572,21 @@ private actor SampleStore {
 
     func submit(applicationId: String) throws -> SubmissionResult {
         guard let application = applicationsByID[applicationId] else { throw GrantsError.notFound }
-        guard !application.applicationForms.contains(where: { $0.isRequired && $0.applicationFormStatus != "complete" }) else {
+        guard application.applicationStatus == "in_progress" else {
+            throw GrantsError.server(
+                status: 403,
+                message: "Cannot submit application. It is currently in status: \(application.applicationStatus)"
+            )
+        }
+        guard !application.applicationForms.contains(where: {
+            ($0.isRequired || $0.isIncludedInSubmission == true) && $0.applicationFormStatus != "complete"
+        }) else {
             throw GrantsError.server(status: 422, message: "Complete all required forms before submitting.")
+        }
+        let requiresOrganization = application.competition.openToApplicants.contains("organization")
+            && !application.competition.openToApplicants.contains("individual")
+        guard !requiresOrganization || application.organization != nil else {
+            throw GrantsError.server(status: 422, message: "Application requires organization in order to submit")
         }
         applicationsByID[applicationId] = Self.copy(application, status: "submitted")
         nextTrackingNumber += 1
@@ -643,6 +663,7 @@ private actor SampleStore {
                 applicationResponse: response,
                 applicationFormStatus: status,
                 isRequired: item.isRequired,
+                isIncludedInSubmission: item.isRequired,
                 applicationId: applicationID,
                 applicationName: applicationName
             )

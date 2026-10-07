@@ -43,6 +43,14 @@ final class SampleDataSourceTests: XCTestCase {
             XCTAssertTrue((1...3).contains(detail.attachments.count))
             attachmentCounts.insert(detail.attachments.count)
             XCTAssertTrue(detail.attachments.allSatisfy { $0.downloadPath?.hasPrefix("https://sample.grants.example/") == true })
+            for competition in detail.competitions {
+                let applicants = Set(competition.openToApplicants)
+                XCTAssertTrue(applicants.isSubset(of: ["organization", "individual"]))
+                let expectedApplicants = detail.opportunityId == "neh-27-011"
+                    ? ["individual", "organization"]
+                    : ["organization"]
+                XCTAssertEqual(competition.openToApplicants, expectedApplicants)
+            }
             switch detail.opportunityStatus {
             case .posted:
                 XCTAssertTrue(detail.competitions.contains(where: \.isOpen), "Posted listing \(detail.opportunityId) has no open competition")
@@ -308,6 +316,40 @@ final class SampleDataSourceTests: XCTestCase {
             response: .object(["contact": .object(["email": .string("")])])
         )
         XCTAssertEqual(emptyWarnings.first?.field, "$.contact.email")
+
+        let minItemsSchema: JSONValue = .object([
+            "required": .array([.string("entries")]),
+            "properties": .object(["entries": .object([
+                "type": .string("array"),
+                "minItems": .number(2),
+                "items": .object([
+                    "type": .string("object"),
+                    "required": .array([.string("name")]),
+                    "properties": .object(["name": .object(["type": .string("string")])])
+                ])
+            ])])
+        ])
+        let shortArrayWarnings = RequiredFieldValidator.validate(
+            schema: minItemsSchema,
+            response: .object(["entries": .array([])])
+        )
+        XCTAssertEqual(shortArrayWarnings.map(\.field), ["$.entries"])
+        XCTAssertEqual(shortArrayWarnings.map(\.message), ["Expected at least 2 items"])
+        XCTAssertEqual(shortArrayWarnings.map(\.type), ["minItems"])
+        let missingArrayWarnings = RequiredFieldValidator.validate(
+            schema: minItemsSchema,
+            response: .object([:])
+        )
+        XCTAssertEqual(missingArrayWarnings.map(\.type), ["required"])
+        let generated = RequiredFieldValidator.minimalInstance(schema: minItemsSchema)
+        guard case let .object(generatedValues) = generated,
+              case let .array(entries)? = generatedValues["entries"]
+        else {
+            XCTFail("Expected generated entries array")
+            return
+        }
+        XCTAssertEqual(entries.count, 2)
+        XCTAssertTrue(entries.allSatisfy { $0["name"] != nil })
     }
 
     func testApplicationLifecycleAndPrefill() async throws {
@@ -370,9 +412,142 @@ final class SampleDataSourceTests: XCTestCase {
         } catch GrantsError.server(status: 422, _) {}
     }
 
+    func testRepeatSubmitDoesNotAdvanceTrackingNumber() async throws {
+        let source = try makeSource(anchorDate)
+        let organizations = try await source.organizations()
+        let organization = try XCTUnwrap(organizations.first)
+        let firstApplicationID = try await source.startApplication(
+            competitionId: "usda-rd-27-05-open",
+            name: "First Rural Facilities Plan",
+            organizationId: organization.organizationId
+        )
+        try await completeRequiredForms(source, applicationID: firstApplicationID)
+        let firstSubmission = try await source.submit(applicationId: firstApplicationID)
+        XCTAssertEqual(firstSubmission.trackingNumber, "GRANT14102837")
+
+        do {
+            _ = try await source.submit(applicationId: firstApplicationID)
+            XCTFail("Expected submitted application to be rejected")
+        } catch let error as GrantsError {
+            guard case let .server(status, message) = error else { throw error }
+            XCTAssertEqual(status, 403)
+            XCTAssertEqual(message, "Cannot submit application. It is currently in status: submitted")
+        }
+
+        let nextApplicationID = try await source.startApplication(
+            competitionId: "usda-rd-27-05-open",
+            name: "Second Rural Facilities Plan",
+            organizationId: organization.organizationId
+        )
+        try await completeRequiredForms(source, applicationID: nextApplicationID)
+        let nextSubmission = try await source.submit(applicationId: nextApplicationID)
+        XCTAssertEqual(nextSubmission.trackingNumber, "GRANT14102838")
+    }
+
+    func testOptionalFormsAreIncludedOnlyAfterNonEmptySave() async throws {
+        let source = try makeSource(anchorDate)
+        let organizations = try await source.organizations()
+        let organization = try XCTUnwrap(organizations.first)
+        let siteFormID = "6ebd786f-cccf-4ee1-a100-61436975025b"
+
+        let untouchedApplicationID = try await source.startApplication(
+            competitionId: "usda-rd-27-05-open",
+            name: "Application Without Optional Site",
+            organizationId: organization.organizationId
+        )
+        let untouchedApplication = try await source.application(id: untouchedApplicationID)
+        let untouchedSite = try XCTUnwrap(untouchedApplication.applicationForms.first(where: { $0.formId == siteFormID }))
+        XCTAssertFalse(untouchedSite.isRequired)
+        XCTAssertEqual(untouchedSite.isIncludedInSubmission, false)
+        try await completeRequiredForms(source, applicationID: untouchedApplicationID)
+        _ = try await source.submit(applicationId: untouchedApplicationID)
+
+        let includedApplicationID = try await source.startApplication(
+            competitionId: "usda-rd-27-05-open",
+            name: "Application With Optional Site",
+            organizationId: organization.organizationId
+        )
+        let partialSite = try await source.saveForm(
+            applicationId: includedApplicationID,
+            formId: siteFormID,
+            response: .object(["primary_site": .object([:])])
+        )
+        XCTAssertEqual(partialSite.form.isIncludedInSubmission, true)
+        XCTAssertEqual(partialSite.form.applicationFormStatus, "in_progress")
+        try await completeRequiredForms(source, applicationID: includedApplicationID)
+        do {
+            _ = try await source.submit(applicationId: includedApplicationID)
+            XCTFail("Expected incomplete included optional form to block submission")
+        } catch GrantsError.server(status: 422, _) {}
+
+        let siteDefinition = try await source.form(id: siteFormID)
+        let completeSite = RequiredFieldValidator.minimalInstance(schema: siteDefinition.formJsonSchema)
+        let savedSite = try await source.saveForm(
+            applicationId: includedApplicationID,
+            formId: siteFormID,
+            response: completeSite
+        )
+        XCTAssertTrue(savedSite.warnings.isEmpty)
+        XCTAssertEqual(savedSite.form.isIncludedInSubmission, true)
+        _ = try await source.submit(applicationId: includedApplicationID)
+    }
+
+    func testMinimumArrayCountsKeepFormsInProgress() async throws {
+        let source = try makeSource(anchorDate)
+        let organizations = try await source.organizations()
+        let organization = try XCTUnwrap(organizations.first)
+        let applicationID = try await source.startApplication(
+            competitionId: "usda-rd-27-05-open",
+            name: "Application With Empty Arrays",
+            organizationId: organization.organizationId
+        )
+        let narrativeID = "32165da2-354d-42c0-a986-cf4f2f350039"
+        let narrative = try await source.saveForm(
+            applicationId: applicationID,
+            formId: narrativeID,
+            response: .object(["attachments": .array([])])
+        )
+        XCTAssertTrue(narrative.warnings.contains {
+            $0.field == "$.attachments" && $0.message == "[] should be non-empty" && $0.type == "minItems"
+        })
+        XCTAssertEqual(narrative.form.applicationFormStatus, "in_progress")
+
+        let budgetID = "08e6603f-d197-4a60-98cd-d49acb1fc1fd"
+        let budget = try await source.saveForm(
+            applicationId: applicationID,
+            formId: budgetID,
+            response: .object(["activity_line_items": .array([])])
+        )
+        XCTAssertTrue(budget.warnings.contains {
+            $0.field == "$.activity_line_items" && $0.type == "minItems"
+        })
+        XCTAssertEqual(budget.form.applicationFormStatus, "in_progress")
+    }
+
+    func testSubmitRequiresOrganizationForOrganizationOnlyCompetition() async throws {
+        let source = try makeSource(anchorDate)
+        let applicationID = try await source.startApplication(
+            competitionId: "usda-rd-27-05-open",
+            name: "Application Without Organization",
+            organizationId: nil
+        )
+        try await completeRequiredForms(source, applicationID: applicationID)
+        do {
+            _ = try await source.submit(applicationId: applicationID)
+            XCTFail("Expected organization requirement to block submission")
+        } catch let error as GrantsError {
+            guard case let .server(status, message) = error else { throw error }
+            XCTAssertEqual(status, 422)
+            XCTAssertEqual(message, "Application requires organization in order to submit")
+        }
+    }
+
     func testSeededApplicationAndSavedOpportunityToggles() async throws {
         let source = try makeSource(anchorDate)
         let seeded = try await source.application(id: "sample-application-0001")
+        XCTAssertTrue(seeded.applicationForms.allSatisfy {
+            $0.isIncludedInSubmission == $0.isRequired
+        })
         XCTAssertEqual(seeded.applicationForms.count, 6)
         XCTAssertEqual(seeded.applicationForms.filter { $0.applicationFormStatus == "complete" }.count, 3)
         XCTAssertEqual(seeded.applicationForms.map(\.form.formName), [
@@ -462,6 +637,19 @@ final class SampleDataSourceTests: XCTestCase {
 
     private func makeSource(_ date: String) throws -> SampleDataSource {
         SampleDataSource(referenceDate: try XCTUnwrap(parseDate(date)), latency: .zero)
+    }
+
+    private func completeRequiredForms(_ source: SampleDataSource, applicationID: String) async throws {
+        let application = try await source.application(id: applicationID)
+        for form in application.applicationForms where form.isRequired {
+            let response = RequiredFieldValidator.minimalInstance(schema: form.form.formJsonSchema)
+            let result = try await source.saveForm(
+                applicationId: applicationID,
+                formId: form.formId,
+                response: response
+            )
+            XCTAssertTrue(result.warnings.isEmpty, "Generated response did not satisfy \(form.formId)")
+        }
     }
 
     private func parseDate(_ value: String?) -> Date? {

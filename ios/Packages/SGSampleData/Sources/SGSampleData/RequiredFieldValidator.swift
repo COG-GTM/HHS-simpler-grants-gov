@@ -51,9 +51,21 @@ enum RequiredFieldValidator {
             guard let propertyValue = objectValues[key] else { continue }
             validate(schema: propertySchema, value: propertyValue, path: "\(path).\(key)", warnings: &warnings)
         }
-        if case let .array(values) = value, let itemSchema = schemaObject["items"] {
-            for (index, item) in values.enumerated() {
-                validate(schema: itemSchema, value: item, path: "\(path).\(index)", warnings: &warnings)
+        if case let .array(values) = value {
+            if case let .number(minItems)? = schemaObject["minItems"] {
+                let minimumCount = max(0, Int(minItems))
+                if values.count < minimumCount {
+                    warnings.append(ValidationWarning(
+                        field: path,
+                        message: minimumCount == 1 ? "[] should be non-empty" : "Expected at least \(minimumCount) items",
+                        type: "minItems"
+                    ))
+                }
+            }
+            if let itemSchema = schemaObject["items"] {
+                for (index, item) in values.enumerated() {
+                    validate(schema: itemSchema, value: item, path: "\(path).\(index)", warnings: &warnings)
+                }
             }
         }
         if case let .array(prefixItems) = schemaObject["prefixItems"],
