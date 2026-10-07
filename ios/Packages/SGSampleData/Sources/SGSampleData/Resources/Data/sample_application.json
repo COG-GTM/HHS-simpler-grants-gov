@@ -9,7 +9,14 @@
             "personnel_amount": "420000.00",
             "fringe_benefits_amount": "84000.00",
             "travel_amount": "12000.00",
+            "equipment_amount": "0.00",
             "supplies_amount": "24000.00",
+            "contractual_amount": "0.00",
+            "construction_amount": "0.00",
+            "other_amount": "0.00",
+            "total_direct_charge_amount": "540000.00",
+            "total_indirect_charge_amount": "0.00",
+            "program_income_amount": "0.00",
             "total_amount": "540000.00"
           }
         }
@@ -22,7 +29,7 @@
     "6ebd786f-cccf-4ee1-a100-61436975025b": {
       "primary_site": {
         "address": {
-          "street1": "100 Sample Health Way",
+          "street1": "100 Recovery Way",
           "city": "Bluefield",
           "country": "USA: UNITED STATES",
           "state": "WV: West Virginia",

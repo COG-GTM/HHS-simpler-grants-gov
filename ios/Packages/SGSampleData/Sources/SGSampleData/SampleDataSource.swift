@@ -332,7 +332,7 @@ public struct SampleDataSource: GrantsDataSource {
     }
 
     private static func tokens(_ query: String?) -> [String] {
-        let stopwords: Set<String> = ["a", "an", "the", "for", "my", "of", "and", "or", "to", "in", "with", "grants", "grant", "funding"]
+        let stopwords: Set<String> = ["a", "an", "the", "for", "my", "of", "and", "or", "to", "in", "with", "we", "run", "want", "our", "grants", "grant", "funding"]
         return (query ?? "")
             .lowercased()
             .split { !$0.isLetter && !$0.isNumber }
@@ -440,14 +440,14 @@ public struct SampleDataSource: GrantsDataSource {
         return facets
     }
 
-    private static var dateFormatter: DateFormatter {
+    private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar.sampleUTC
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter
-    }
+    }()
 
     private static func parseDate(_ value: String?) -> Date? {
         guard let value else { return nil }
@@ -461,11 +461,11 @@ public struct SampleDataSource: GrantsDataSource {
 }
 
 private extension Calendar {
-    static var sampleUTC: Calendar {
+    static let sampleUTC: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .current
         return calendar
-    }
+    }()
 }
 
 private actor SampleStore {
@@ -616,12 +616,16 @@ private actor SampleStore {
             let form = item.form
             let response: JSONValue
             if form.formId == SampleFormIDs.sf424 {
-                response = .object([
+                let contact = JSONValue.object([
                     "organization_name": .string(organization.samGovEntity?.legalBusinessName ?? ""),
                     "sam_uei": .string(organization.samGovEntity?.uei ?? ""),
                     "contact_person": .object(["first_name": .string("Dana"), "last_name": .string("Reyes")]),
                     "phone_number": .string("(304) 555-0142")
                 ])
+                response = merge(
+                    Self.prefilledResponse(for: opportunity, organization: organization, form: form),
+                    contact
+                )
             } else if completed.contains(form.formId) {
                 let generated = RequiredFieldValidator.minimalInstance(schema: form.formJsonSchema)
                 response = merge(generated, overrides[form.formId] ?? .object([:]))

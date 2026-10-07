@@ -27,14 +27,44 @@ final class SampleDataSourceTests: XCTestCase {
             XCTAssertTrue(opportunities.contains(where: { $0.agencyCode == agency }), "Missing agency \(agency)")
         }
 
+        var attachmentCounts = Set<Int>()
+        var nonSimplerPostedCompetitionIDs = Set<String>()
+        let requiredFormIDs: Set<String> = [
+            "1623b310-85be-496a-b84b-34bdee22a68a",
+            "08e6603f-d197-4a60-98cd-d49acb1fc1fd",
+            "1d0681f8-26f9-4ff1-a75e-e33477668f73",
+            "32165da2-354d-42c0-a986-cf4f2f350039"
+        ]
         for opportunity in opportunities {
             let detail = try await source.opportunity(id: opportunity.opportunityId)
             XCTAssertFalse(detail.summary.summaryDescription?.isEmpty ?? true)
             XCTAssertFalse(detail.summary.applicantEligibilityDescription?.isEmpty ?? true)
             XCTAssertTrue(detail.summary.agencyContactDescription?.contains("@sample.grants.example") ?? false)
             XCTAssertTrue((1...3).contains(detail.attachments.count))
+            attachmentCounts.insert(detail.attachments.count)
             XCTAssertTrue(detail.attachments.allSatisfy { $0.downloadPath?.hasPrefix("https://sample.grants.example/") == true })
+            switch detail.opportunityStatus {
+            case .posted:
+                XCTAssertTrue(detail.competitions.contains(where: \.isOpen), "Posted listing \(detail.opportunityId) has no open competition")
+                for competition in detail.competitions where competition.isOpen {
+                    if !competition.isSimplerGrantsEnabled {
+                        nonSimplerPostedCompetitionIDs.insert(competition.competitionId)
+                    } else {
+                        XCTAssertTrue((4...6).contains(competition.competitionForms.count))
+                        let required = Set(competition.competitionForms.filter(\.isRequired).map(\.form.formId))
+                        XCTAssertTrue(requiredFormIDs.isSubset(of: required), "Missing required forms for \(detail.opportunityId)")
+                    }
+                }
+            case .forecasted:
+                XCTAssertTrue(detail.competitions.isEmpty, "Forecasted listing \(detail.opportunityId) should not have a competition")
+            case .closed, .archived:
+                XCTAssertFalse(detail.competitions.isEmpty, "Closed listing \(detail.opportunityId) should have a competition")
+                XCTAssertTrue(detail.competitions.allSatisfy { !$0.isOpen })
+            }
         }
+        XCTAssertTrue(attachmentCounts.contains(2))
+        XCTAssertTrue(attachmentCounts.contains(3))
+        XCTAssertEqual(nonSimplerPostedCompetitionIDs, ["epa-r-27-03-open", "dot-fhwa-27-004-open"])
 
         let closingSoon = opportunities.filter { opportunity in
             guard opportunity.opportunityStatus == .posted,
@@ -59,18 +89,26 @@ final class SampleDataSourceTests: XCTestCase {
         XCTAssertEqual(hrsa.competitions.first?.competitionForms.map(\.form.formId), [
             "1623b310-85be-496a-b84b-34bdee22a68a",
             "08e6603f-d197-4a60-98cd-d49acb1fc1fd",
-            "1d0681f8-26f9-4ff1-a75e-e33477668f73",
             "32165da2-354d-42c0-a986-cf4f2f350039",
+            "1d0681f8-26f9-4ff1-a75e-e33477668f73",
             "6ebd786f-cccf-4ee1-a100-61436975025b",
             "778a1485-082a-463e-a61b-6615ccebe027"
         ])
-        XCTAssertEqual(hrsa.competitions.first?.competitionForms.map(\.isRequired), [true, true, true, true, true, false])
+        XCTAssertEqual(hrsa.competitions.first?.competitionForms.map(\.isRequired), [true, true, true, true, true, true])
+        XCTAssertTrue(hrsa.attachments.contains {
+            $0.fileName?.hasSuffix(".xlsx") == true
+                && $0.mimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        })
         let usda = try await source.opportunity(id: "usda-rd-27-05")
         let nsf = try await source.opportunity(id: "nsf-27-512")
         let epa = try await source.opportunity(id: "epa-r-27-03")
         let nea = try await source.opportunity(id: "nea-27-02")
         XCTAssertEqual(usda.summary.closeDate, "2026-10-30")
         XCTAssertEqual(nsf.opportunityStatus, .forecasted)
+        XCTAssertTrue(nsf.attachments.contains {
+            $0.fileName?.hasSuffix(".docx") == true
+                && $0.mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        })
         XCTAssertTrue(epa.opportunityTitle?.contains("Environmental Justice") == true)
         XCTAssertTrue(nea.opportunityTitle?.contains("Arts Projects") == true)
         XCTAssertTrue(opportunities.contains(where: { $0.opportunityId != "hrsa-27-014" && $0.opportunityStatus == .posted }))
@@ -108,6 +146,14 @@ final class SampleDataSourceTests: XCTestCase {
             let result = try await source.searchOpportunities(SearchRequest(query: query, queryOperator: "OR"))
             XCTAssertEqual(result.data.first?.opportunityId, expectedID, "Unexpected first match for \(query)")
         }
+        let scriptedAsk = try await source.searchOpportunities(SearchRequest(
+            query: "We run a rural clinic and want to expand addiction treatment",
+            queryOperator: "OR"
+        ))
+        let scriptedTopFive = Array(scriptedAsk.data.prefix(5)).map(\.opportunityId)
+        XCTAssertEqual(scriptedTopFive.first, "hrsa-27-014")
+        XCTAssertTrue(scriptedTopFive.contains("usda-rd-27-05"), "Expected USDA in top five, got \(scriptedTopFive)")
+        XCTAssertTrue(scriptedTopFive.contains("nsf-27-512"), "Expected NSF in top five, got \(scriptedTopFive)")
 
         let and = try await source.searchOpportunities(SearchRequest(query: "rural opioid"))
         let or = try await source.searchOpportunities(SearchRequest(query: "rural opioid", queryOperator: "OR"))
@@ -332,11 +378,46 @@ final class SampleDataSourceTests: XCTestCase {
         XCTAssertEqual(seeded.applicationForms.map(\.form.formName), [
             "Application for Federal Assistance (SF-424)",
             "Budget Information for Non-Construction Programs (SF-424A)",
-            "Assurances for Non-Construction Programs (SF-424B)",
             "Project Narrative Attachment Form",
+            "Assurances for Non-Construction Programs (SF-424B)",
             "PROJECT/PERFORMANCE SITE LOCATION(S)",
             "Disclosure of Lobbying Activities (SF-LLL)"
         ])
+        XCTAssertEqual(seeded.applicationForms.map(\.formId), [
+            "1623b310-85be-496a-b84b-34bdee22a68a",
+            "08e6603f-d197-4a60-98cd-d49acb1fc1fd",
+            "32165da2-354d-42c0-a986-cf4f2f350039",
+            "1d0681f8-26f9-4ff1-a75e-e33477668f73",
+            "6ebd786f-cccf-4ee1-a100-61436975025b",
+            "778a1485-082a-463e-a61b-6615ccebe027"
+        ])
+        XCTAssertEqual(
+            Set(seeded.applicationForms.filter { $0.applicationFormStatus == "complete" }.map(\.formId)),
+            Set([
+                "08e6603f-d197-4a60-98cd-d49acb1fc1fd",
+                "32165da2-354d-42c0-a986-cf4f2f350039",
+                "6ebd786f-cccf-4ee1-a100-61436975025b"
+            ])
+        )
+        let seededSF424 = try XCTUnwrap(seeded.applicationForms.first(where: { $0.formId == "1623b310-85be-496a-b84b-34bdee22a68a" }))
+        XCTAssertEqual(seededSF424.applicationFormStatus, "in_progress")
+        XCTAssertEqual(seededSF424.applicationResponse["funding_opportunity_number"], .string("HRSA-27-014"))
+        XCTAssertEqual(seededSF424.applicationResponse["funding_opportunity_title"], .string("Rural Communities Opioid Response Program – Implementation"))
+        XCTAssertEqual(seededSF424.applicationResponse["organization_name"], .string("Bluefield Community Health Center"))
+        XCTAssertEqual(seededSF424.applicationResponse["sam_uei"], .string("K7LMN2QX4R91"))
+        XCTAssertEqual(seededSF424.applicationResponse["contact_person"], .object([
+            "first_name": .string("Dana"),
+            "last_name": .string("Reyes")
+        ]))
+        XCTAssertEqual(seededSF424.applicationResponse["phone_number"], .string("(304) 555-0142"))
+        let seededSF424B = try XCTUnwrap(seeded.applicationForms.first(where: { $0.formId == "1d0681f8-26f9-4ff1-a75e-e33477668f73" }))
+        let seededSFLLL = try XCTUnwrap(seeded.applicationForms.first(where: { $0.formId == "778a1485-082a-463e-a61b-6615ccebe027" }))
+        XCTAssertEqual(seededSF424B.applicationResponse, .object([:]))
+        XCTAssertEqual(seededSFLLL.applicationResponse, .object([:]))
+        let seededPlaceholderPaths = seeded.applicationForms.flatMap {
+            placeholderPaths(in: $0.applicationResponse, path: "$.\($0.formId)")
+        }
+        XCTAssertTrue(seededPlaceholderPaths.isEmpty, "Seeded responses contain placeholders at \(seededPlaceholderPaths)")
         for form in seeded.applicationForms where form.applicationFormStatus == "complete" {
             XCTAssertTrue(RequiredFieldValidator.validate(
                 schema: form.form.formJsonSchema,
@@ -408,6 +489,19 @@ final class SampleDataSourceTests: XCTestCase {
             values.contains(where: containsReference)
         default:
             false
+        }
+    }
+
+    private func placeholderPaths(in value: JSONValue, path: String) -> [String] {
+        switch value {
+        case .string("Sample"):
+            return [path]
+        case let .object(values):
+            return values.flatMap { placeholderPaths(in: $0.value, path: "\(path).\($0.key)") }
+        case let .array(values):
+            return values.enumerated().flatMap { placeholderPaths(in: $0.element, path: "\(path).\($0.offset)") }
+        default:
+            return []
         }
     }
 
