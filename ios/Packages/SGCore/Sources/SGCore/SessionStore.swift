@@ -1,5 +1,6 @@
 import Observation
 import Foundation
+import os
 import SGModels
 
 public enum SessionState: Sendable, Equatable {
@@ -16,6 +17,7 @@ public final class SessionStore {
     public private(set) var isBusy = false
 
     private let authenticator: any Authenticating
+    private let logger = Logger(subsystem: "ai.cognition.demo.simplergrants", category: "session")
     private var sessionExpiredObserver: SessionExpiredObserver?
 
     public init(authenticator: any Authenticating) {
@@ -39,14 +41,18 @@ public final class SessionStore {
             let user = try await authenticator.signIn(pivRequired: pivRequired)
             state = .signedIn(user)
             lastError = nil
+            logger.info("sign-in succeeded")
         } catch is CancellationError {
             lastError = nil
+            logger.info("sign-in cancelled")
         } catch let error as GrantsError {
             state = .signedOut
             lastError = error
+            logger.error("sign-in failed: \(Self.errorCaseName(for: error), privacy: .public)")
         } catch {
             state = .signedOut
             lastError = .server(status: 500, message: error.localizedDescription)
+            logger.error("sign-in failed: server")
         }
     }
 
@@ -59,6 +65,7 @@ public final class SessionStore {
         await authenticator.signOut()
         state = .signedOut
         lastError = nil
+        logger.info("signed out")
     }
 
     public func restore() async {
@@ -66,17 +73,34 @@ public final class SessionStore {
         if let user {
             state = .signedIn(user)
             lastError = nil
+            logger.info("session restored: signedIn")
         } else if state == .signedOut {
             state = .signedOut
             lastError = nil
+            logger.info("session restored: signedOut")
         }
     }
 
     public func handleSessionExpired() {
         state = .signedOut
         lastError = .unauthorized
+        logger.info("session expired")
     }
 
+    private static func errorCaseName(for error: GrantsError) -> String {
+        switch error {
+        case .unauthorized:
+            return "unauthorized"
+        case .notFound:
+            return "notFound"
+        case .offline:
+            return "offline"
+        case .server(_, _):
+            return "server"
+        case .decoding(_):
+            return "decoding"
+        }
+    }
 }
 
 private final class SessionExpiredObserver {

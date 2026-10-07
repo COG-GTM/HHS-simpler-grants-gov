@@ -17,6 +17,9 @@ struct RootView: View {
     @Environment(\.networkStatus) private var networkStatus
     @State private var isRestoring = true
     @State private var didApplyInitialDeepLink = false
+#if DEBUG
+    @State private var didAttemptAutoSignIn = false
+#endif
 
     private var shouldSkipOnboarding: Bool {
         let arguments = ProcessInfo.processInfo.arguments
@@ -28,6 +31,19 @@ struct RootView: View {
         }
         return ["yes", "true", "1"].contains(arguments[index + 1].lowercased())
     }
+
+#if DEBUG
+    private var shouldAutoSignIn: Bool {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard
+            let index = arguments.firstIndex(of: "-SGAutoSignIn"),
+            arguments.indices.contains(index + 1)
+        else {
+            return false
+        }
+        return ["yes", "true", "1"].contains(arguments[index + 1].lowercased())
+    }
+#endif
 
     var body: some View {
         Group {
@@ -53,6 +69,15 @@ struct RootView: View {
         }
         .task {
             await sessionStore.restore()
+#if DEBUG
+            if shouldAutoSignIn, !didAttemptAutoSignIn {
+                if case .signedOut = sessionStore.state {
+                    didAttemptAutoSignIn = true
+                    hasCompletedOnboarding = true
+                    await sessionStore.signIn(pivRequired: false)
+                }
+            }
+#endif
             isRestoring = false
             applyInitialDeepLinkIfNeeded()
         }
@@ -106,13 +131,8 @@ struct RootView: View {
 private struct MainTabsView: View {
     @Environment(AppRouter.self) private var router
 
-    private static let appearanceConfigured: Void = {
-        configureTabBarAppearance()
-    }()
-
     var body: some View {
-        let _ = Self.appearanceConfigured
-        return TabView(selection: Binding(
+        TabView(selection: Binding(
             get: { router.tab },
             set: { router.select($0) }
         )) {
@@ -140,18 +160,24 @@ private struct MainTabsView: View {
                 }
                 .tag(AppTab.profile)
         }
-        .tint(Color(uiColor: UIColor(red: 31 / 255, green: 61 / 255, blue: 110 / 255, alpha: 1)))
-        .toolbarBackground(Color(uiColor: UIColor(red: 250 / 255, green: 250 / 255, blue: 248 / 255, alpha: 0.94)), for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
+        .background(canvasBackground.ignoresSafeArea())
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if shouldShowTabBar {
+                SGTabBar()
+            }
+        }
     }
 
     private func tabStack(_ tab: AppTab) -> some View {
         NavigationStack(path: router.routesBinding(for: tab)) {
             tabRoot(tab)
+                .background(canvasBackground.ignoresSafeArea())
                 .navigationDestination(for: AppRoute.self) { route in
                     RouteView(route: route)
                 }
         }
+        .background(canvasBackground.ignoresSafeArea())
+        .toolbar(.hidden, for: .tabBar)
     }
 
     @ViewBuilder
@@ -168,26 +194,17 @@ private struct MainTabsView: View {
         }
     }
 
-    private static func configureTabBarAppearance() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = UIColor(
-            red: 250 / 255,
-            green: 250 / 255,
-            blue: 248 / 255,
-            alpha: 0.94
-        )
-        appearance.shadowColor = UIColor(red: 228 / 255, green: 228 / 255, blue: 223 / 255, alpha: 1)
-        let selected = UIColor(red: 31 / 255, green: 61 / 255, blue: 110 / 255, alpha: 1)
-        let unselected = UIColor(red: 138 / 255, green: 143 / 255, blue: 153 / 255, alpha: 1)
-        let font = UIFont(name: "PublicSans-Medium", size: 10) ?? .systemFont(ofSize: 10, weight: .medium)
-        for itemAppearance in [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance] {
-            itemAppearance.normal.iconColor = unselected
-            itemAppearance.normal.titleTextAttributes = [.foregroundColor: unselected, .font: font]
-            itemAppearance.selected.iconColor = selected
-            itemAppearance.selected.titleTextAttributes = [.foregroundColor: selected, .font: font]
+    private var shouldShowTabBar: Bool {
+        guard let route = router.routes(for: router.tab).last else { return true }
+        switch route {
+        case .answer(_), .opportunity(_), .form(_, _), .review(_), .submitted(_, _), .roadmap:
+            return false
+        case .results(_), .application(_):
+            return true
         }
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
+    private var canvasBackground: Color {
+        Color(uiColor: UIColor(red: 246 / 255, green: 246 / 255, blue: 243 / 255, alpha: 1))
     }
 }
