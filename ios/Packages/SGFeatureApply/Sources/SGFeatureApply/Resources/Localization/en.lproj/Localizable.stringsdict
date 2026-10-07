@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>apply.form.validation_summary</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@fieldCount@</string>
+        <key>fieldCount</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>Fix %d field before you continue.</string>
+            <key>other</key>
+            <string>Fix %d fields before you continue.</string>
+        </dict>
+    </dict>
+    <key>apply.workspace.due_days</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>Due %1$@ · %2$#@dayCount@</string>
+        <key>dayCount</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>%2$d day</string>
+            <key>other</key>
+            <string>%2$d days</string>
+        </dict>
+    </dict>
+    <key>apply.workspace.forms_complete</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%1$d of %2$#@formCount@ complete</string>
+        <key>formCount</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>%2$d form</string>
+            <key>other</key>
+            <string>%2$d forms</string>
+        </dict>
+    </dict>
+    <key>apply.review.incomplete</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@formCount@</string>
+        <key>formCount</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>%d required form still needs to be completed before you can submit.</string>
+            <key>other</key>
+            <string>%d required forms still need to be completed before you can submit.</string>
+        </dict>
+    </dict>
+</dict>
+</plist>

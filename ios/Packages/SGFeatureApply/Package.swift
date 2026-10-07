@@ -17,6 +17,10 @@ let package = Package(
             name: "SGFeatureApply",
             dependencies: ["SGModels", "SGDesign", "SGCore", "SGForms"],
             resources: [.process("Resources/Localization")]
+        ),
+        .testTarget(
+            name: "SGFeatureApplyTests",
+            dependencies: ["SGFeatureApply", "SGModels", "SGCore", "SGForms"]
         )
     ],
     swiftLanguageVersions: [.v5]

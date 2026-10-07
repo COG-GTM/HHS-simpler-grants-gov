@@ -542,7 +542,14 @@ private actor SampleStore {
         guard application.applicationStatus != "submitted" else {
             throw GrantsError.server(status: 422, message: "A submitted application cannot be changed.")
         }
-        let warnings = RequiredFieldValidator.validate(schema: existing.form.formJsonSchema, response: response)
+        let populatedResponse = FormRulePopulator.populate(
+            response: response,
+            ruleSchema: existing.form.formRuleSchema
+        )
+        let warnings = RequiredFieldValidator.validate(
+            schema: existing.form.formJsonSchema,
+            response: populatedResponse
+        )
         let includeResponse: Bool
         if case let .object(values) = response, !values.isEmpty {
             includeResponse = true
@@ -553,7 +560,7 @@ private actor SampleStore {
             applicationFormId: existing.applicationFormId,
             formId: existing.formId,
             form: existing.form,
-            applicationResponse: response,
+            applicationResponse: populatedResponse,
             applicationFormStatus: warnings.isEmpty ? "complete" : "in_progress",
             isRequired: existing.isRequired,
             isIncludedInSubmission: existing.isRequired || includeResponse,
