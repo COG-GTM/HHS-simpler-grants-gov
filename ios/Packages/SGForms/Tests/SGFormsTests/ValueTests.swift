@@ -66,4 +66,12 @@ final class ValueTests: XCTestCase {
         XCTAssertEqual(response["unknown"], [1])
         XCTAssertEqual(response.value(at: FieldPath(jsonPath: "$.contact_person.first_name")), "x")
     }
+
+    func testTextDraftReconcilesWithBoundValue() {
+        XCTAssertTrue(TextControl.draft("1.", matches: "1"))
+        XCTAssertTrue(TextControl.draft("1.50", matches: "1.5"))
+        XCTAssertTrue(TextControl.draft("Bluefield", matches: "Bluefield"))
+        XCTAssertFalse(TextControl.draft("Bluefield", matches: "Saved name"))
+        XCTAssertFalse(TextControl.draft("1.", matches: "2"))
+    }
 }

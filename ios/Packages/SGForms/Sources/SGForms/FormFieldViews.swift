@@ -246,6 +246,15 @@ struct TextControl: View {
     /// isn't redrawn as `1` from the stored number.
     @State private var draft: String?
 
+    /// Whether the bound value is still the one this draft produced; anything
+    /// else means the value changed from outside and the draft is stale.
+    static func draft(_ draft: String, matches value: String) -> Bool {
+        if draft == value { return true }
+        let trimmed = draft.trimmingCharacters(in: .whitespaces)
+        guard let typed = Double(trimmed), let stored = Double(value) else { return false }
+        return typed == stored
+    }
+
     private var editText: Binding<String> {
         Binding(
             get: { draft ?? text },
@@ -275,6 +284,9 @@ struct TextControl: View {
         .formInputChrome(hasError: hasError, isFocused: focusedPath.wrappedValue == focusKey, minHeight: multiline ? 112 : FormTheme.controlHeight)
         .onChange(of: focusedPath.wrappedValue) { _, newValue in
             if newValue != focusKey { draft = nil }
+        }
+        .onChange(of: text) { _, newValue in
+            if let draft, !Self.draft(draft, matches: newValue) { self.draft = nil }
         }
     }
 }
