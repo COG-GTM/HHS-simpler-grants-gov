@@ -3,6 +3,7 @@ import logging
 import urllib
 import uuid
 from datetime import timedelta
+from enum import StrEnum
 
 import jwt
 from pydantic import BaseModel, Field
@@ -16,8 +17,20 @@ logger = logging.getLogger(__name__)
 LOGIN_GOV_PIV_REQUIRED = "http://idmanagement.gov/ns/assurance/aal/2?hspd12=true"
 
 
+class LoginClient(StrEnum):
+    """The client that started the login flow, used to pick the final destination"""
+
+    WEB = "web"
+    IOS = "ios"
+
+
+class MobileLoginNotConfiguredError(Exception):
+    """A mobile client logged in, but no mobile final destination is configured"""
+
+
 class RedirectParams(BaseModel):
     piv_required: bool | None = None
+    client: LoginClient | None = None
 
 
 class LoginGovConfig(PydanticBaseEnvConfig):
@@ -52,6 +65,13 @@ class LoginGovConfig(PydanticBaseEnvConfig):
     # Where we send a user after they have successfully logged in
     # for now we'll always send them to the same place (a frontend page)
     login_final_destination: str = Field(alias="LOGIN_FINAL_DESTINATION")
+
+    # Where we send a user after login when the flow was started by the iOS app
+    # (eg. a custom URL scheme handled by ASWebAuthenticationSession).
+    # When unset, mobile logins are rejected rather than sent to the web destination.
+    login_mobile_final_destination: str | None = Field(
+        alias="LOGIN_MOBILE_FINAL_DESTINATION", default=None
+    )
 
     # Where we sent users after they have successfully logged out
     logout_final_destination: str = Field(alias="LOGOUT_FINAL_DESTINATION")
@@ -156,6 +176,24 @@ def get_login_gov_client_assertion(config: LoginGovConfig | None = None) -> str:
     )
 
 
+def get_login_final_destination(
+    login_client: LoginClient | None = None, config: LoginGovConfig | None = None
+) -> str:
+    """Get the configured destination for the client that started the login flow.
+
+    Destinations only ever come from config, never from the request.
+    """
+    if config is None:
+        config = get_config()
+
+    if login_client == LoginClient.IOS:
+        if not config.login_mobile_final_destination:
+            raise MobileLoginNotConfiguredError("Mobile login is not configured")
+        return config.login_mobile_final_destination
+
+    return config.login_final_destination
+
+
 def get_final_redirect_uri(
     message: str,
     token: str | None = None,
@@ -163,9 +201,12 @@ def get_final_redirect_uri(
     error_description: str | None = None,
     login_piv_required_error: str | None = None,
     config: LoginGovConfig | None = None,
+    login_client: LoginClient | None = None,
 ) -> str:
     if config is None:
         config = get_config()
+
+    final_destination = get_login_final_destination(login_client, config)
 
     params: dict = {"message": message}
 
@@ -182,7 +223,7 @@ def get_final_redirect_uri(
 
     encoded_params = urllib.parse.urlencode(params)
 
-    return f"{config.login_final_destination}?{encoded_params}"
+    return f"{final_destination}?{encoded_params}"
 
 
 def get_final_logout_redirect_uri(

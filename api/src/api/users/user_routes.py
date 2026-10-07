@@ -9,6 +9,7 @@ from src.adapters.db import flask_db
 from src.adapters.oauth.login_gov.login_gov_jwt import (
     get_final_logout_redirect_uri,
     get_final_redirect_uri,
+    get_login_final_destination,
 )
 from src.api import response
 from src.api.route_utils import raise_flask_error
@@ -56,6 +57,8 @@ from src.api.users.user_schemas import (
 )
 from src.auth.api_jwt_auth import api_jwt_auth
 from src.auth.auth_utils import (
+    get_request_login_client,
+    set_request_login_client,
     with_login_redirect_error_handler,
     with_logout_redirect_error_handler,
 )
@@ -119,12 +122,17 @@ the OAuth system.
 
 
 @user_blueprint.get("/login")
-@user_blueprint.doc(responses=[302], description=LOGIN_DESCRIPTION)
+@user_blueprint.doc(responses=[302, 400], description=LOGIN_DESCRIPTION)
 @user_blueprint.input(user_schemas.UserLoginSchema, location="query")
 @with_login_redirect_error_handler()
 @flask_db.with_db_session()
 def user_login(db_session: db.Session, query_data: dict) -> flask.Response:
     logger.info("GET /v1/users/login")
+    login_client = query_data.get("client", None)
+    set_request_login_client(login_client)
+    # Reject a client without a configured destination before sending the user to login.gov
+    get_login_final_destination(login_client)
+
     with db_session.begin():
         redirect_uri = get_login_gov_redirect_uri(query_data, db_session)
 
@@ -149,7 +157,12 @@ def user_login_callback(db_session: db.Session, query_data: dict) -> flask.Respo
 
     # Redirect to the final location for the user
     return response.redirect_response(
-        get_final_redirect_uri("success", result.token, result.is_user_new)
+        get_final_redirect_uri(
+            "success",
+            result.token,
+            result.is_user_new,
+            login_client=get_request_login_client(),
+        )
     )
 
 

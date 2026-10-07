@@ -7,7 +7,12 @@ let package = Package(
     products: [.library(name: "SGSampleData", targets: ["SGSampleData"])],
     dependencies: [.package(path: "../SGModels")],
     targets: [
-        .target(name: "SGSampleData", dependencies: ["SGModels"])
+        .target(
+            name: "SGSampleData",
+            dependencies: ["SGModels"],
+            resources: [.copy("Resources/Data"), .copy("Resources/Forms")]
+        ),
+        .testTarget(name: "SGSampleDataTests", dependencies: ["SGSampleData"])
     ],
     swiftLanguageVersions: [.v5]
 )

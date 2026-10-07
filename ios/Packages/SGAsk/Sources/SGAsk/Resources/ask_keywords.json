@@ -1,0 +1,220 @@
+{
+  "stopwords": [
+    "a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "at", "with", "by", "from", "about", "into",
+    "is", "are", "be", "can", "i", "we", "our", "my", "us", "you", "your", "me", "their", "they", "it", "its",
+    "this", "that", "these", "those", "what", "which", "who", "how", "where", "when", "any", "some", "there",
+    "get", "got", "need", "needs", "want", "wants", "looking", "look", "help", "find", "run", "runs", "running",
+    "apply", "applying", "grant", "grants", "funding", "fund", "funds", "funded", "money", "program", "programs",
+    "project", "projects", "opportunity", "opportunities", "available", "small", "new", "support", "do", "does",
+    "please"
+  ],
+  "entries": [
+    {
+      "terms": ["nonprofit", "nonprofits", "non profit", "non profits", "501c3", "501 c 3", "charity"],
+      "kind": "applicantType",
+      "values": ["nonprofits_non_higher_education_with_501c3"],
+      "confidence": 0.9,
+      "consumes": true
+    },
+    {
+      "terms": ["tribal government", "native american", "tribe", "tribes", "tribal"],
+      "kind": "applicantType",
+      "values": ["federally_recognized_native_american_tribal_governments"],
+      "confidence": 0.9,
+      "consumes": true
+    },
+    {
+      "terms": ["my city", "municipality", "township", "cities", "city", "town"],
+      "kind": "applicantType",
+      "values": ["city_or_township_governments"],
+      "confidence": 0.6,
+      "consumes": true
+    },
+    {
+      "terms": ["counties", "county"],
+      "kind": "applicantType",
+      "values": ["county_governments"],
+      "confidence": 0.6,
+      "consumes": true
+    },
+    {
+      "terms": ["state government", "state agency", "state"],
+      "kind": "applicantType",
+      "values": ["state_governments"],
+      "confidence": 0.5,
+      "consumes": true
+    },
+    {
+      "terms": ["local governments", "local government"],
+      "kind": "applicantType",
+      "values": ["city_or_township_governments", "county_governments"],
+      "confidence": 0.7,
+      "consumes": true
+    },
+    {
+      "terms": ["higher education", "universities", "university", "colleges", "college"],
+      "kind": "applicantType",
+      "values": [
+        "public_and_state_institutions_of_higher_education",
+        "private_institutions_of_higher_education"
+      ],
+      "confidence": 0.8,
+      "consumes": true
+    },
+    {
+      "terms": ["small businesses", "small business", "startups", "startup"],
+      "kind": "applicantType",
+      "values": ["small_businesses"],
+      "confidence": 0.9,
+      "consumes": true
+    },
+    {
+      "terms": ["individuals", "individual"],
+      "kind": "applicantType",
+      "values": ["individuals"],
+      "confidence": 0.8,
+      "consumes": true
+    },
+    {
+      "terms": ["for me", "for myself", "myself", "personal"],
+      "kind": "applicantType",
+      "values": ["individuals"],
+      "confidence": 0.5,
+      "consumes": true
+    },
+    {
+      "terms": ["health care", "mental health", "healthcare", "hospital", "medical", "health"],
+      "kind": "fundingCategory",
+      "values": ["health"],
+      "confidence": 0.9,
+      "consumes": false
+    },
+    {
+      "terms": ["substance use", "clinics", "clinic", "opioids", "opioid", "addiction"],
+      "kind": "fundingCategory",
+      "values": ["health"],
+      "confidence": 0.7,
+      "consumes": false
+    },
+    {
+      "terms": ["artists", "artist", "arts", "art"],
+      "kind": "fundingCategory",
+      "values": ["arts"],
+      "confidence": 0.9,
+      "consumes": false
+    },
+    {
+      "terms": ["museums", "museum", "theater", "music"],
+      "kind": "fundingCategory",
+      "values": ["arts"],
+      "confidence": 0.7,
+      "consumes": false
+    },
+    {
+      "terms": ["hazard mitigation", "wildfire", "flooding", "flood", "resilience", "climate"],
+      "kind": "fundingCategory",
+      "values": ["environment", "disaster_prevention_and_relief"],
+      "confidence": 0.7,
+      "consumes": false
+    },
+    {
+      "terms": ["environmental", "environment"],
+      "kind": "fundingCategory",
+      "values": ["environment"],
+      "confidence": 0.9,
+      "consumes": false
+    },
+    {
+      "terms": ["research"],
+      "kind": "fundingCategory",
+      "values": ["science_technology_and_other_research_and_development"],
+      "confidence": 0.8,
+      "consumes": false
+    },
+    {
+      "terms": ["scientists", "scientist", "science", "stem"],
+      "kind": "fundingCategory",
+      "values": ["science_technology_and_other_research_and_development"],
+      "confidence": 0.7,
+      "consumes": false
+    },
+    {
+      "terms": ["educational", "education"],
+      "kind": "fundingCategory",
+      "values": ["education"],
+      "confidence": 0.9,
+      "consumes": false
+    },
+    {
+      "terms": ["schools", "school", "students", "teachers"],
+      "kind": "fundingCategory",
+      "values": ["education"],
+      "confidence": 0.7,
+      "consumes": false
+    },
+    {
+      "terms": ["affordable housing", "homelessness", "homeless", "housing"],
+      "kind": "fundingCategory",
+      "values": ["housing"],
+      "confidence": 0.9,
+      "consumes": false
+    },
+    {
+      "terms": ["broadband", "infrastructure"],
+      "kind": "fundingCategory",
+      "values": ["infrastructure_investment_and_jobs_act"],
+      "confidence": 0.6,
+      "consumes": false
+    },
+    {
+      "terms": ["agricultural", "agriculture"],
+      "kind": "fundingCategory",
+      "values": ["agriculture"],
+      "confidence": 0.9,
+      "consumes": false
+    },
+    {
+      "terms": ["farmers", "farmer", "farms", "farm"],
+      "kind": "fundingCategory",
+      "values": ["agriculture"],
+      "confidence": 0.8,
+      "consumes": false
+    },
+    {
+      "terms": ["rural"],
+      "kind": "fundingCategory",
+      "values": ["agriculture"],
+      "confidence": 0.5,
+      "consumes": false
+    },
+    {
+      "terms": ["currently open", "accepting applications", "open now", "open"],
+      "kind": "status",
+      "values": ["posted"],
+      "confidence": 1.0,
+      "consumes": true
+    },
+    {
+      "terms": ["upcoming", "forecasted", "forecast", "future"],
+      "kind": "status",
+      "values": ["forecasted"],
+      "confidence": 1.0,
+      "consumes": true
+    },
+    {
+      "terms": ["closing soon", "deadline soon", "due soon"],
+      "kind": "status",
+      "values": ["posted"],
+      "confidence": 1.0,
+      "consumes": true,
+      "sortByCloseDate": true
+    },
+    {
+      "terms": ["now"],
+      "kind": "status",
+      "values": ["posted"],
+      "confidence": 1.0,
+      "consumes": true
+    }
+  ]
+}
