@@ -313,7 +313,8 @@ final class DemoFlowUITests: XCTestCase {
         in app: XCUIApplication,
         exerciseInvalidEmail: Bool = false,
         auditFirstStep: Bool = false,
-        preFilled: Bool = false
+        preFilled: Bool = false,
+        walkthroughHook: ((Int) -> Void)? = nil
     ) throws {
         let model = try FormModel(definition: applicationForm.form)
         let response = uiCompletionResponse(
@@ -347,6 +348,7 @@ final class DemoFlowUITests: XCTestCase {
 
             if exerciseInvalidEmail && stepIndex == emailStepIndex {
                 let emailInput = textInput("forms.field.$.email", in: app)
+                walkthroughHook?(16)
                 try fill(
                     emailInput,
                     "dana@bluefieldchc",
@@ -365,6 +367,8 @@ final class DemoFlowUITests: XCTestCase {
                 }
                 reveal(emailError, in: app)
                 capture(app, "apply-sf424-invalid-email-error")
+                walkthroughHook?(-1)
+                walkthroughHook?(17)
 
                 try fill(
                     emailInput,
@@ -848,3 +852,193 @@ final class DemoFlowUITests: XCTestCase {
         add(attachment)
     }
 }
+
+// Paced run used only to record the narrated demo walkthrough video.
+extension DemoFlowUITests {
+    @MainActor
+    func testWalkthroughRecording() async throws {
+        try XCTSkipUnless(
+            ProcessInfo.processInfo.environment["SG_WALKTHROUGH"] == "1",
+            "Set SG_WALKTHROUGH=1 to record the demo walkthrough"
+        )
+        func pause(_ seconds: Double) { Thread.sleep(forTimeInterval: seconds) }
+        func mark(_ scene: Int) {
+            print("WALKTHROUGH_MARK scene=\(scene) epoch=\(Date().timeIntervalSince1970)")
+        }
+
+        // Guest: welcome, Ask, cited answer, citation detail.
+        var app = launchFresh()
+        let guest = app.buttons["onboarding.welcome.guest"]
+        XCTAssertTrue(guest.waitForExistence(timeout: 15))
+        pause(1)
+        mark(1); pause(3)
+        mark(2); pause(2)
+        guest.tap()
+        let suggestion = app.buttons["ask.suggestion.0"]
+        XCTAssertTrue(suggestion.waitForExistence(timeout: 10))
+        pause(1)
+        mark(4); pause(2.5)
+        mark(5); pause(1)
+        suggestion.tap()
+        let citation = app.buttons["ask.answer.citation.1"]
+        XCTAssertTrue(citation.waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(6); pause(3)
+        mark(7)
+        app.swipeUp(velocity: .slow); pause(2.5)
+        app.swipeDown(velocity: .slow); pause(1)
+        if !citation.isHittable { app.swipeDown() }
+        mark(8)
+        citation.tap()
+        XCTAssertTrue(app.staticTexts["search.detail.title"].waitForExistence(timeout: 15))
+        pause(2.5)
+        app.swipeUp(velocity: .slow); pause(2.5)
+        mark(0)
+
+        // Search, filters, results, bookmark.
+        app.terminate()
+        app = launchFresh(skipOnboarding: true)
+        let searchTab = app.buttons["shell.tab.search"]
+        XCTAssertTrue(searchTab.waitForExistence(timeout: 10))
+        searchTab.tap()
+        let searchField = app.textFields["search.field"]
+        XCTAssertTrue(searchField.waitForExistence(timeout: 10))
+        pause(0.5)
+        mark(10); pause(3)
+        searchField.tap()
+        searchField.typeText("rural")
+        pause(0.8)
+        searchField.typeText("\n")
+        XCTAssertTrue(app.staticTexts["search.results.count"].waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(12); pause(2.5)
+        app.swipeUp(velocity: .slow); pause(2)
+        app.swipeDown(velocity: .slow); pause(1)
+        mark(11)
+        app.buttons["search.results.filters"].tap()
+        let health = app.buttons["search.filters.option.fundingCategory.health"]
+        XCTAssertTrue(health.waitForExistence(timeout: 10))
+        pause(2)
+        if !health.isHittable { app.swipeUp(velocity: .slow) }
+        health.tap(); pause(2)
+        app.buttons["search.filters.show_results"].tap()
+        XCTAssertTrue(app.staticTexts["search.results.count"].waitForExistence(timeout: 15))
+        pause(2.5)
+        let card = firstResultCard(in: app)
+        XCTAssertTrue(card.waitForExistence(timeout: 10))
+        card.tap()
+        let bookmark = app.buttons["search.detail.bookmark"]
+        XCTAssertTrue(bookmark.waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(9); pause(1.5)
+        bookmark.tap(); pause(2.5)
+        mark(0)
+
+        // Signed in: sign-in options, Apply workspace, SF-424, review, submit.
+        let source = SampleDataSource(latency: .zero)
+        let seeded = try await source.application(id: "sample-application-0001")
+        let sf424ID = "1623b310-85be-496a-b84b-34bdee22a68a"
+        let sf424 = try XCTUnwrap(seeded.applicationForms.first { $0.formId == sf424ID })
+        app.terminate()
+        app = launchFresh(additionalArguments: ["-SGUITestPrefillApplication"])
+        XCTAssertTrue(app.buttons["onboarding.welcome.sign_in"].waitForExistence(timeout: 15))
+        app.buttons["onboarding.welcome.sign_in"].tap()
+        let login = app.buttons["onboarding.sign_in.login_gov"]
+        XCTAssertTrue(login.waitForExistence(timeout: 10))
+        pause(0.5)
+        mark(3); pause(3.5)
+        login.tap()
+        let applyTab = app.buttons["shell.tab.apply"]
+        XCTAssertTrue(applyTab.waitForExistence(timeout: 15))
+        applyTab.tap()
+        let sf424Row = app.buttons["apply.workspace.form.\(sf424ID)"]
+        XCTAssertTrue(sf424Row.waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(13); pause(2.5)
+        mark(14)
+        app.swipeUp(velocity: .slow); pause(2)
+        app.swipeDown(velocity: .slow); pause(1)
+        if !sf424Row.isHittable { app.swipeDown() }
+        mark(15)
+        sf424Row.tap()
+        pause(2.5)
+        try completeApplicationForm(
+            sf424,
+            in: app,
+            exerciseInvalidEmail: true,
+            preFilled: true,
+            walkthroughHook: { event in
+                switch event {
+                case -1: pause(3.5)
+                default:
+                    if event == 16 { pause(2.5) }
+                    mark(event); pause(1)
+                }
+            }
+        )
+        let review = app.buttons["apply.workspace.review"]
+        XCTAssertTrue(review.waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(18); pause(3)
+        review.tap()
+        let certify = app.buttons["apply.review.certify"]
+        XCTAssertTrue(certify.waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(19); pause(3)
+        certify.tap(); pause(2)
+        mark(20)
+        app.buttons["apply.review.submit"].tap()
+        let sheet = app.sheets["Submit this application?"]
+        XCTAssertTrue(sheet.waitForExistence(timeout: 10))
+        pause(1.5)
+        sheet.buttons.matching(identifier: "apply.review.confirm.submit").firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["Application submitted"].waitForExistence(timeout: 20))
+        pause(3)
+        app.swipeUp(velocity: .slow); pause(2.5)
+        mark(0)
+
+        // Profile and roadmap.
+        app.terminate()
+        app = launchFresh()
+        XCTAssertTrue(app.buttons["onboarding.welcome.sign_in"].waitForExistence(timeout: 15))
+        app.buttons["onboarding.welcome.sign_in"].tap()
+        XCTAssertTrue(app.buttons["onboarding.sign_in.login_gov"].waitForExistence(timeout: 10))
+        app.buttons["onboarding.sign_in.login_gov"].tap()
+        let profileTab = app.buttons["shell.tab.profile"]
+        XCTAssertTrue(profileTab.waitForExistence(timeout: 15))
+        profileTab.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["profile.identity"].waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(21); pause(3)
+        app.swipeUp(velocity: .slow); pause(2)
+        let roadmap = app.buttons["profile.roadmap"]
+        if !roadmap.isHittable { app.swipeUp(velocity: .slow) }
+        roadmap.tap()
+        XCTAssertTrue(app.otherElements["roadmap.screen"].waitForExistence(timeout: 15))
+        pause(0.5)
+        mark(22); pause(3)
+        app.swipeUp(velocity: .slow); pause(2.5)
+        mark(0)
+
+        // Largest accessibility text size.
+        app.terminate()
+        app = launchFresh(
+            skipOnboarding: true,
+            additionalArguments: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        )
+        XCTAssertTrue(app.buttons["shell.tab.ask"].waitForExistence(timeout: 15))
+        pause(1)
+        mark(23); pause(3.5)
+        app.buttons["shell.tab.search"].tap(); pause(3.5)
+        mark(0)
+
+        // Closing.
+        app.terminate()
+        app = launchFresh(skipOnboarding: true)
+        XCTAssertTrue(app.buttons["shell.tab.ask"].waitForExistence(timeout: 15))
+        pause(1)
+        mark(24); pause(4)
+        mark(0)
+    }
+}
+
