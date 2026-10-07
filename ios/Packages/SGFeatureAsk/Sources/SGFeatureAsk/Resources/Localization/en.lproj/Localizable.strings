@@ -1,5 +1,5 @@
 "ask.home.title" = "What do you need funding for?";
-"ask.home.subtitle" = "Describe your project or organization. Answers come only from official Grants.gov listings.";
+"ask.home.subtitle" = "Describe your project or organization. Answers come only from listing data — this demo uses sample listings.";
 "ask.home.placeholder" = "e.g. We run a rural clinic and want to expand addiction treatment";
 "ask.home.guest_initials" = "G";
 "ask.home.eligibility_label" = "Eligibility: %@";
@@ -33,8 +33,8 @@
 "ask.answer.you_asked" = "You asked: %@";
 "ask.answer.understood" = "Understood as";
 "ask.answer.remove_filter" = "Remove filter %@";
-"ask.answer.listings" = "FROM %d GRANTS.GOV LISTINGS";
-"ask.answer.disclaimer" = "Answers are generated from Grants.gov listings and may be incomplete. Read the full opportunity before you apply.";
+"ask.answer.listings" = "FROM %d SAMPLE LISTINGS";
+"ask.answer.disclaimer" = "Answers are built from sample listings and may be incomplete. Read the full opportunity before you apply.";
 "ask.answer.source_label" = "Source %d. %@. %@";
 "ask.answer.source_hint" = "Opens the opportunity";
 "ask.answer.show_source" = "Show source %d";
@@ -42,7 +42,7 @@
 "ask.answer.see_all" = "See all %d results in Search";
 "ask.answer.followup.placeholder" = "Ask a follow-up";
 "ask.answer.followup.send" = "Send follow-up";
-"ask.answer.loading" = "Reading Grants.gov listings…";
+"ask.answer.loading" = "Reading sample listings…";
 "ask.answer.empty.title" = "No listings matched your question";
 "ask.answer.empty.message" = "Try naming your project and who you are, like “rural clinic, nonprofit”, or browse every listing in Search.";
 "ask.answer.empty.action" = "Try Search";

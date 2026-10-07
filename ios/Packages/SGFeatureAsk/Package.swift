@@ -10,7 +10,11 @@ let package = Package(
         .package(path: "../SGModels"),
         .package(path: "../SGDesign"),
         .package(path: "../SGCore"),
-        .package(path: "../SGAsk")
+        .package(path: "../SGAsk"),
+        .package(
+            url: "https://github.com/pointfreeco/swift-snapshot-testing",
+            exact: "1.17.6"
+        )
     ],
     targets: [
         .target(
@@ -20,7 +24,12 @@ let package = Package(
         ),
         .testTarget(
             name: "SGFeatureAskTests",
-            dependencies: ["SGFeatureAsk", "SGAsk", "SGModels"]
+            dependencies: [
+                "SGFeatureAsk",
+                "SGAsk",
+                "SGModels",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+            ]
         )
     ],
     swiftLanguageVersions: [.v5]

@@ -1,3 +1,4 @@
+#if os(iOS)
 import SGAsk
 import SGCore
 import SGDesign
@@ -163,9 +164,7 @@ final class AskSnapshotTests: XCTestCase {
             for: 1.0,
             on: baseImage
         )
-        withSnapshotTesting(
-            record: ProcessInfo.processInfo.environment["ASK_SNAPSHOT_RECORD"] == "1" ? .all : .never
-        ) {
+        withSnapshotTesting(record: .never) {
             SnapshotTesting.assertSnapshot(
                 matching: host,
                 as: image,
@@ -177,3 +176,4 @@ final class AskSnapshotTests: XCTestCase {
         }
     }
 }
+#endif

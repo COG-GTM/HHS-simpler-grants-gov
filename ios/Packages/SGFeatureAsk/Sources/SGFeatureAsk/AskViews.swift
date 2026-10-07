@@ -133,23 +133,26 @@ public struct AskHomeView: View {
         .padding(.horizontal, 16)
         .padding(.top, 16)
         .padding(.bottom, 12)
-        .background(SG.C.surface, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .background {
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(SG.C.surface)
+                .shadow(
+                    color: Color(
+                        .sRGB,
+                        red: 20.0 / 255.0,
+                        green: 23.0 / 255.0,
+                        blue: 31.0 / 255.0
+                    )
+                    .opacity(0.10),
+                    radius: 12,
+                    x: 0,
+                    y: 8
+                )
+        }
         .overlay {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(SG.C.line, lineWidth: 1)
         }
-        .shadow(
-            color: Color(
-                .sRGB,
-                red: 20.0 / 255.0,
-                green: 23.0 / 255.0,
-                blue: 31.0 / 255.0,
-                opacity: 0.25
-            ),
-            radius: 12,
-            x: 0,
-            y: 8
-        )
     }
 
     private var eligibilityMenu: some View {
@@ -909,7 +912,9 @@ private struct AnswerParagraphText: View {
             if let index = segment.citationIndex,
                let opportunityTitle = lookup[index]?.opportunity.opportunityTitle {
                 let name = segment.text.trimmingCharacters(in: .whitespacesAndNewlines)
-                if opportunityTitle.localizedCaseInsensitiveHasPrefix(name), !name.isEmpty {
+                if index == 1,
+                   opportunityTitle.localizedCaseInsensitiveHasPrefix(name),
+                   !name.isEmpty {
                     content.font = SG.F.serif(17, .semibold)
                 }
             }
@@ -940,7 +945,7 @@ private struct AnswerParagraphText: View {
             Text(attributedText)
                 .font(SG.F.answer)
                 .foregroundColor(SG.C.body)
-                .lineSpacing(6)
+                .lineSpacing(5)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(spokenLabel)
         )
