@@ -75,7 +75,9 @@ class AbstractAuthHandler[
     # --- login.gov state ---
 
     @abc.abstractmethod
-    def create_login_gov_state(self, state_id: uuid.UUID, nonce: uuid.UUID) -> LOGIN_GOV_STATE: ...
+    def create_login_gov_state(
+        self, state_id: uuid.UUID, nonce: uuid.UUID, login_client: str | None = None
+    ) -> LOGIN_GOV_STATE: ...
 
     @abc.abstractmethod
     def get_login_gov_state(self, state_id: str) -> LOGIN_GOV_STATE | None: ...
