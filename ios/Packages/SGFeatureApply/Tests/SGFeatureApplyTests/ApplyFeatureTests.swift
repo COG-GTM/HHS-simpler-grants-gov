@@ -170,11 +170,57 @@ final class ApplyFeatureTests: XCTestCase {
             ),
             "SF-LLL"
         )
+        let parentheticalFormCodes = [
+            ("Application for Federal Assistance (SF-424)", "SF-424"),
+            (
+                "Budget Information for Non-Construction Programs (SF-424A)",
+                "SF-424A"
+            ),
+            (
+                "Assurances for Non-Construction Programs (SF-424B)",
+                "SF-424B"
+            ),
+            ("Disclosure of Lobbying Activities (SF-LLL)", "SF-LLL")
+        ]
+        for (formName, expectedTitle) in parentheticalFormCodes {
+            XCTAssertEqual(
+                ApplyFormStateLogic.navTitle(
+                    formName: formName,
+                    shortName: "raw_short_name",
+                    formId: "form-id"
+                ),
+                expectedTitle
+            )
+        }
+        XCTAssertEqual(
+            ApplyFormStateLogic.navTitle(
+                formName: "Older (SF-424) name (SF-424B)",
+                shortName: "raw_short_name",
+                formId: "form-id"
+            ),
+            "SF-424B"
+        )
         XCTAssertEqual(
             ApplyFormStateLogic.navTitle(
                 formName: "Project Narrative",
                 shortName: "ProjectNarrative_1_0",
                 formId: "project-narrative"
+            ),
+            "ProjectNarrative_1_0"
+        )
+        XCTAssertEqual(
+            ApplyFormStateLogic.navTitle(
+                formName: "PROJECT/PERFORMANCE SITE LOCATION(S)",
+                shortName: "Site_1_0",
+                formId: "site"
+            ),
+            "Site_1_0"
+        )
+        XCTAssertEqual(
+            ApplyFormStateLogic.navTitle(
+                formName: "Project Narrative Attachment Form",
+                shortName: "ProjectNarrative_1_0",
+                formId: "narrative"
             ),
             "ProjectNarrative_1_0"
         )
@@ -486,6 +532,7 @@ final class ApplyFeatureTests: XCTestCase {
         )
 
         await viewModel.load()
+        XCTAssertEqual(viewModel.shortName, "SF-424")
         let model = try XCTUnwrap(viewModel.model)
         let step = try XCTUnwrap(viewModel.currentFormStep)
         XCTAssertEqual(viewModel.currentStep, 1)
@@ -648,6 +695,186 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     @MainActor
+    func testSaveDraftWaitsForPendingAttachmentStorage() async throws {
+        let definition = attachmentFormDefinition(array: false)
+        let source = SuspendingSaveDataSource(
+            base: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            )
+        )
+        let draftStore = SpyDraftStore()
+        let attachmentStore = SuspendingApplyAttachmentStore()
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: source,
+            draftStore: draftStore,
+            progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let field = try XCTUnwrap(viewModel.model?.sections.first?.fields.first)
+        let request = FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/slow-support.pdf")]
+        )
+
+        viewModel.attach(request)
+        await attachmentStore.waitUntilStoreStarts()
+        XCTAssertTrue(viewModel.isAttaching)
+        let saveTask = Task { @MainActor in await viewModel.saveDraftTapped() }
+
+        await attachmentStore.releaseStore()
+        await source.waitForFirstSave()
+
+        let attachmentId = "demo-attachment-slow"
+        let savedValues = await draftStore.savedValues
+        let serverResponses = await source.receivedResponses
+        XCTAssertEqual(
+            savedValues.last?.value(at: field.dataPath),
+            .string(attachmentId)
+        )
+        XCTAssertEqual(
+            serverResponses.first?.value(at: field.dataPath),
+            .string(attachmentId)
+        )
+
+        await source.releaseFirstSave()
+        let didSave = await saveTask.value
+        XCTAssertTrue(didSave)
+        XCTAssertFalse(viewModel.isAttaching)
+    }
+
+    @MainActor
+    func testRetryRetriesFailedAttachmentAndClearsBanner() async throws {
+        let definition = attachmentFormDefinition(array: false)
+        let attachmentStore = InMemoryApplyAttachmentStore(failuresRemaining: 1)
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let field = try XCTUnwrap(viewModel.model?.sections.first?.fields.first)
+        let request = FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/retry-support.pdf")]
+        )
+
+        await viewModel.attachFiles(request)
+        XCTAssertNotNil(viewModel.bannerMessage)
+
+        await viewModel.retry()
+
+        guard case let .string(id)? = viewModel.values.value(at: field.dataPath) else {
+            return XCTFail("Expected the retried attachment id at the field path")
+        }
+        XCTAssertTrue(id.hasPrefix("demo-attachment-"))
+        XCTAssertEqual(viewModel.attachmentNames[id], "retry-support.pdf")
+        XCTAssertNil(viewModel.bannerMessage)
+    }
+
+    @MainActor
+    func testAttachmentBatchRollsBackEarlierFilesWhenLaterCopyFails() async throws {
+        let definition = attachmentFormDefinition(array: true)
+        let attachmentStore = InMemoryApplyAttachmentStore(failingStoreCalls: [2])
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let field = try XCTUnwrap(viewModel.model?.sections.first?.fields.first)
+        let originalValues = viewModel.values
+
+        await viewModel.attachFiles(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [
+                URL(fileURLWithPath: "/fictional/first-batch.pdf"),
+                URL(fileURLWithPath: "/fictional/second-batch.pdf")
+            ]
+        ))
+
+        XCTAssertEqual(viewModel.values, originalValues)
+        let storedNames = await attachmentStore.names(
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertTrue(storedNames.isEmpty)
+        XCTAssertTrue(viewModel.attachmentNames.isEmpty)
+    }
+
+    @MainActor
+    func testSavingReplacementPrunesOldAttachmentAndKeepsNewOne() async throws {
+        let definition = attachmentFormDefinition(array: false)
+        let attachmentStore = InMemoryApplyAttachmentStore()
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let field = try XCTUnwrap(viewModel.model?.sections.first?.fields.first)
+
+        await viewModel.attachFiles(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/old-support.pdf")]
+        ))
+        guard case let .string(oldID)? = viewModel.values.value(at: field.dataPath) else {
+            return XCTFail("Expected the first attachment id at the field path")
+        }
+
+        await viewModel.attachFiles(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/new-support.pdf")]
+        ))
+        guard case let .string(newID)? = viewModel.values.value(at: field.dataPath) else {
+            return XCTFail("Expected the replacement attachment id at the field path")
+        }
+        XCTAssertNotEqual(oldID, newID)
+
+        let didFlush = await viewModel.flushDraft()
+        XCTAssertTrue(didFlush)
+
+        let storedNames = await attachmentStore.names(
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertNil(storedNames[oldID])
+        XCTAssertEqual(storedNames[newID], "new-support.pdf")
+        XCTAssertNil(viewModel.attachmentNames[oldID])
+        XCTAssertEqual(viewModel.attachmentNames[newID], "new-support.pdf")
+    }
+
+    @MainActor
     func testLoadRestoresAttachmentNamesFromStore() async throws {
         let attachmentStore = InMemoryApplyAttachmentStore()
         let stored = try await attachmentStore.store(
@@ -709,6 +936,39 @@ final class ApplyFeatureTests: XCTestCase {
         let namesData = try Data(contentsOf: formDirectory.appendingPathComponent("names.json"))
         let persistedNames = try JSONDecoder().decode([String: String].self, from: namesData)
         XCTAssertEqual(persistedNames[stored.id], "support.pdf")
+
+        let retained = try await store.store(
+            sourceURL,
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        let retainedURL = formDirectory
+            .appendingPathComponent(retained.id, isDirectory: true)
+            .appendingPathComponent("support.pdf")
+        await store.prune(
+            keeping: [retained.id],
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertFalse(FileManager.default.fileExists(atPath: copiedURL.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: retainedURL.path))
+        let namesAfterPrune = await store.names(
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertEqual(namesAfterPrune, [retained.id: "support.pdf"])
+
+        await store.remove(
+            ids: [retained.id],
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertFalse(FileManager.default.fileExists(atPath: retainedURL.path))
+        let namesAfterRemoval = await store.names(
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertTrue(namesAfterRemoval.isEmpty)
     }
 
     @MainActor
@@ -1029,6 +1289,145 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     @MainActor
+    func testReviewWarningsPreferLatestCachedValuesWithoutDuplicates() async throws {
+        let base = ApplyReferenceDataSource(scenario: .allComplete)
+        let original = try await base.application(id: "apply-demo")
+        let sf424 = try XCTUnwrap(original.applicationForms.first { $0.formId == "sf424" })
+        let applicationId = "review-warning-dedupe"
+        let expectedWarnings = [
+            ValidationWarning(field: "email", message: "Email format warning", type: "format"),
+            ValidationWarning(
+                field: "organization_name",
+                message: "Organization name warning",
+                type: "required"
+            )
+        ]
+        let application = applicationWithFormWarnings(
+            original,
+            applicationId: applicationId,
+            formValidationWarnings: .object([
+                sf424.applicationFormId: persistedWarningValues(expectedWarnings)
+            ])
+        )
+        await ApplyWarningsCache.shared.set(
+            expectedWarnings,
+            applicationId: applicationId,
+            formId: sf424.formId
+        )
+        let viewModel = ReviewSubmitViewModel(
+            applicationId: applicationId,
+            dataSource: OpportunityResolutionTestDataSource(
+                base: base,
+                application: application,
+                summaries: []
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: ApplyReferenceDataSource.progressStore(for: .allComplete),
+            authorizer: StubAuthorizer(result: .authorized)
+        )
+
+        await viewModel.load()
+
+        XCTAssertEqual(viewModel.warnings.count, 2)
+        XCTAssertEqual(viewModel.warnings.map(\.message), expectedWarnings.map(\.message))
+        XCTAssertEqual(viewModel.warnings.map(\.id), [
+            "sf424/email/Email format warning",
+            "sf424/organization_name/Organization name warning"
+        ])
+    }
+
+    @MainActor
+    func testReviewWarningsEmptyCacheOverridesPersistedWarnings() async throws {
+        let base = ApplyReferenceDataSource(scenario: .allComplete)
+        let original = try await base.application(id: "apply-demo")
+        let sf424 = try XCTUnwrap(original.applicationForms.first { $0.formId == "sf424" })
+        let applicationId = "review-warning-empty-cache"
+        let persistedWarnings = [
+            ValidationWarning(field: "email", message: "Email format warning", type: "format"),
+            ValidationWarning(
+                field: "organization_name",
+                message: "Organization name warning",
+                type: "required"
+            )
+        ]
+        let application = applicationWithFormWarnings(
+            original,
+            applicationId: applicationId,
+            formValidationWarnings: .object([
+                sf424.applicationFormId: persistedWarningValues(persistedWarnings)
+            ])
+        )
+        await ApplyWarningsCache.shared.set(
+            [],
+            applicationId: applicationId,
+            formId: sf424.formId
+        )
+        let cachedWarnings = await ApplyWarningsCache.shared.all(applicationId: applicationId)
+        XCTAssertTrue(cachedWarnings.keys.contains(sf424.formId))
+        XCTAssertTrue(cachedWarnings[sf424.formId]?.isEmpty == true)
+        let viewModel = ReviewSubmitViewModel(
+            applicationId: applicationId,
+            dataSource: OpportunityResolutionTestDataSource(
+                base: base,
+                application: application,
+                summaries: []
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: ApplyReferenceDataSource.progressStore(for: .allComplete),
+            authorizer: StubAuthorizer(result: .authorized)
+        )
+
+        await viewModel.load()
+
+        XCTAssertTrue(viewModel.warnings.isEmpty)
+    }
+
+    @MainActor
+    func testReviewWarningsDedupePersistedValuesByFormFieldAndMessage() async throws {
+        let base = ApplyReferenceDataSource(scenario: .allComplete)
+        let original = try await base.application(id: "apply-demo")
+        let sf424 = try XCTUnwrap(original.applicationForms.first { $0.formId == "sf424" })
+        let applicationId = "review-warning-persisted-dedup"
+        let expectedWarnings = [
+            ValidationWarning(field: "email", message: "Email format warning", type: "format"),
+            ValidationWarning(
+                field: "organization_name",
+                message: "Organization name warning",
+                type: "required"
+            )
+        ]
+        let persistedValues = persistedWarningValues(expectedWarnings)
+        let application = applicationWithFormWarnings(
+            original,
+            applicationId: applicationId,
+            formValidationWarnings: .object([
+                sf424.applicationFormId: persistedValues,
+                sf424.formId: persistedValues
+            ])
+        )
+        let viewModel = ReviewSubmitViewModel(
+            applicationId: applicationId,
+            dataSource: OpportunityResolutionTestDataSource(
+                base: base,
+                application: application,
+                summaries: []
+            ),
+            draftStore: SpyDraftStore(),
+            progressStore: ApplyReferenceDataSource.progressStore(for: .allComplete),
+            authorizer: StubAuthorizer(result: .authorized)
+        )
+
+        await viewModel.load()
+
+        XCTAssertEqual(viewModel.warnings.count, 2)
+        XCTAssertEqual(viewModel.warnings.map(\.message), expectedWarnings.map(\.message))
+        XCTAssertEqual(viewModel.warnings.map(\.id), [
+            "sf424/email/Email format warning",
+            "sf424/organization_name/Organization name warning"
+        ])
+    }
+
+    @MainActor
     func testSubmissionGatingAuthorizationAndFailure() async {
         let inProgress = ReviewSubmitViewModel(
             applicationId: "apply-demo",
@@ -1341,9 +1740,18 @@ private actor SpyDraftStore: DraftStore {
 private actor InMemoryApplyAttachmentStore: ApplyAttachmentStore {
     private var namesByForm: [String: [String: String]] = [:]
     private let shouldFail: Bool
+    private var failuresRemaining: Int
+    private let failingStoreCalls: Set<Int>
+    private var storeCallCount = 0
 
-    init(shouldFail: Bool = false) {
+    init(
+        shouldFail: Bool = false,
+        failuresRemaining: Int = 0,
+        failingStoreCalls: Set<Int> = []
+    ) {
         self.shouldFail = shouldFail
+        self.failuresRemaining = failuresRemaining
+        self.failingStoreCalls = failingStoreCalls
     }
 
     func store(
@@ -1351,7 +1759,11 @@ private actor InMemoryApplyAttachmentStore: ApplyAttachmentStore {
         applicationId: String,
         formId: String
     ) async throws -> (id: String, name: String) {
-        guard !shouldFail else { throw AttachmentStoreTestError.failed }
+        storeCallCount += 1
+        if shouldFail || failuresRemaining > 0 || failingStoreCalls.contains(storeCallCount) {
+            failuresRemaining = max(failuresRemaining - 1, 0)
+            throw AttachmentStoreTestError.failed
+        }
         let id = "demo-attachment-\(UUID().uuidString)"
         let name = url.lastPathComponent
         let key = "\(applicationId)/\(formId)"
@@ -1363,6 +1775,67 @@ private actor InMemoryApplyAttachmentStore: ApplyAttachmentStore {
 
     func names(applicationId: String, formId: String) async -> [String: String] {
         namesByForm["\(applicationId)/\(formId)"] ?? [:]
+    }
+
+    func remove(ids: Set<String>, applicationId: String, formId: String) async {
+        let key = "\(applicationId)/\(formId)"
+        var names = namesByForm[key] ?? [:]
+        for id in ids {
+            names.removeValue(forKey: id)
+        }
+        namesByForm[key] = names
+    }
+
+    func prune(keeping referenced: Set<String>, applicationId: String, formId: String) async {
+        let key = "\(applicationId)/\(formId)"
+        let names = namesByForm[key] ?? [:]
+        namesByForm[key] = names.filter { referenced.contains($0.key) }
+    }
+}
+
+private actor SuspendingApplyAttachmentStore: ApplyAttachmentStore {
+    private var hasStartedStore = false
+    private var storeStartedContinuation: CheckedContinuation<Void, Never>?
+    private var releaseContinuation: CheckedContinuation<Void, Never>?
+    private var storedNames: [String: String] = [:]
+
+    func waitUntilStoreStarts() async {
+        guard !hasStartedStore else { return }
+        await withCheckedContinuation { storeStartedContinuation = $0 }
+    }
+
+    func releaseStore() {
+        releaseContinuation?.resume()
+        releaseContinuation = nil
+    }
+
+    func store(
+        _ url: URL,
+        applicationId: String,
+        formId: String
+    ) async throws -> (id: String, name: String) {
+        hasStartedStore = true
+        storeStartedContinuation?.resume()
+        storeStartedContinuation = nil
+        await withCheckedContinuation { releaseContinuation = $0 }
+        let id = "demo-attachment-slow"
+        let name = url.lastPathComponent
+        storedNames[id] = name
+        return (id, name)
+    }
+
+    func names(applicationId: String, formId: String) async -> [String: String] {
+        storedNames
+    }
+
+    func remove(ids: Set<String>, applicationId: String, formId: String) async {
+        for id in ids {
+            storedNames.removeValue(forKey: id)
+        }
+    }
+
+    func prune(keeping referenced: Set<String>, applicationId: String, formId: String) async {
+        storedNames = storedNames.filter { referenced.contains($0.key) }
     }
 }
 
@@ -1489,6 +1962,32 @@ private struct StubAuthorizer: SubmissionAuthorizing {
     func authorize(reason: String) async -> SubmissionAuthorization {
         result
     }
+}
+
+private func persistedWarningValues(_ warnings: [ValidationWarning]) -> JSONValue {
+    .array(warnings.map { warning in
+        .object([
+            "field": .string(warning.field),
+            "message": .string(warning.message)
+        ])
+    })
+}
+
+private func applicationWithFormWarnings(
+    _ application: Application,
+    applicationId: String,
+    formValidationWarnings: JSONValue
+) -> Application {
+    Application(
+        applicationId: applicationId,
+        applicationName: application.applicationName,
+        applicationStatus: application.applicationStatus,
+        competition: application.competition,
+        organization: application.organization,
+        applicationForms: application.applicationForms,
+        formValidationWarnings: formValidationWarnings,
+        intendsToAddOrganization: application.intendsToAddOrganization
+    )
 }
 
 private func applicationWithoutOpportunityId(

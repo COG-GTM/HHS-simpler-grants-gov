@@ -134,6 +134,7 @@ public struct FormScreenView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
                             Text(viewModel.formDisplayName)
+                                .id("apply.form.top")
                                 .font(ApplyTheme.F.sans(13))
                                 .foregroundStyle(ApplyTheme.C.muted)
                             if step.sections.count == 1 {
@@ -220,6 +221,9 @@ public struct FormScreenView: View {
                     }
                     .onAppear {
                         errorScrollProxy = proxy
+                    }
+                    .onChange(of: viewModel.currentStep) { _, _ in
+                        proxy.scrollTo("apply.form.top", anchor: .top)
                     }
                     .onChange(of: viewModel.focusToken) { _, _ in
                         if let path = viewModel.errors.first?.path {

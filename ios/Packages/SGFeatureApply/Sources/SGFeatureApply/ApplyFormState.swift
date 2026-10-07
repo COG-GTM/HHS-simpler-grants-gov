@@ -86,6 +86,18 @@ public enum ApplyFormStateLogic {
         shortName: String?,
         formId: String
     ) -> String {
+        if let formName,
+           let expression = try? NSRegularExpression(
+            pattern: #"\(([A-Z]{2,}-[A-Z0-9]+)\)"#
+           ),
+           let match = expression.matches(
+            in: formName,
+            range: NSRange(formName.startIndex..<formName.endIndex, in: formName)
+           ).last,
+           let codeRange = Range(match.range(at: 1), in: formName) {
+            return String(formName[codeRange])
+        }
+
         let firstToken = formName?
             .split(whereSeparator: \.isWhitespace)
             .first

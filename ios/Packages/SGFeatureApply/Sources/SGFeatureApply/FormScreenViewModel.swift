@@ -46,6 +46,7 @@ public final class FormScreenViewModel {
     public private(set) var prefilledPaths: Set<String> = []
     public private(set) var attachmentNames: [String: String] = [:]
     public private(set) var isSyncing = false
+    public private(set) var isAttaching = false
     public private(set) var lastWarnings: [ValidationWarning] = []
     public private(set) var focusToken = 0
 
@@ -57,6 +58,9 @@ public final class FormScreenViewModel {
     private let autosaveDelay: Duration
     private var autosaveTask: Task<Void, Never>?
     private var syncTail: Task<Bool, Never>?
+    private var attachmentTask: Task<Void, Never>?
+    private var attachmentGeneration = 0
+    private var failedAttachmentRequest: FormAttachmentRequest?
     private var progressInvalidationTask: Task<Void, Never>?
     private var suppressAutosave = false
     private var formCompleteInvalidated = false
@@ -260,6 +264,7 @@ public final class FormScreenViewModel {
     }
 
     public func flushDraft() async -> Bool {
+        await waitForPendingAttachments()
         if let progressInvalidationTask {
             await progressInvalidationTask.value
             self.progressInvalidationTask = nil
@@ -268,7 +273,10 @@ public final class FormScreenViewModel {
         autosaveTask = nil
         saveStatus = .saving
         do {
+            await waitForPendingAttachments()
             try await draftStore.saveDraft(values, applicationId: applicationId, formId: formId)
+            await waitForPendingAttachments()
+            await pruneUnreferencedAttachments()
             saveStatus = .saved
             return true
         } catch {
@@ -292,7 +300,9 @@ public final class FormScreenViewModel {
     }
 
     private func performSyncToServer() async -> Bool {
+        await waitForPendingAttachments()
         guard await flushDraft() else { return false }
+        await waitForPendingAttachments()
         isSyncing = true
         defer { isSyncing = false }
         do {
@@ -333,6 +343,7 @@ public final class FormScreenViewModel {
     }
 
     public func continueTapped() async -> ContinueOutcome {
+        await waitForPendingAttachments()
         guard let step = currentFormStep, let model else { return .finished }
         let isLastStep = currentStep >= steps.count - 1
         if isLastStep {
@@ -400,7 +411,8 @@ public final class FormScreenViewModel {
     }
 
     public func attach(_ request: FormAttachmentRequest) {
-        Task { await attachFiles(request) }
+        failedAttachmentRequest = nil
+        attachmentTask = enqueueAttachment(request)
     }
 
     func attachFiles(_ request: FormAttachmentRequest) async {
@@ -417,10 +429,18 @@ public final class FormScreenViewModel {
                 )
             }
         } catch {
+            await attachmentStore.remove(
+                ids: Set(attachments.map(\.id)),
+                applicationId: applicationId,
+                formId: formId
+            )
+            failedAttachmentRequest = request
             bannerMessage = "apply.form.attachment_failed".localized(bundle: .module)
             return
         }
 
+        failedAttachmentRequest = nil
+        bannerMessage = nil
         for attachment in attachments {
             attachmentNames[attachment.id] = attachment.name
         }
@@ -493,6 +513,13 @@ public final class FormScreenViewModel {
     }
 
     public func retry() async {
+        if let failedAttachmentRequest {
+            self.failedAttachmentRequest = nil
+            let task = enqueueAttachment(failedAttachmentRequest)
+            attachmentTask = task
+            await task.value
+            return
+        }
         _ = await syncToServer()
     }
 
@@ -501,11 +528,68 @@ public final class FormScreenViewModel {
     }
 
     private func saveDraftLocally() async {
+        await waitForPendingAttachments()
         do {
             try await draftStore.saveDraft(values, applicationId: applicationId, formId: formId)
+            await waitForPendingAttachments()
+            await pruneUnreferencedAttachments()
             saveStatus = .saved
         } catch {
             await setSaveFailure(error)
+        }
+    }
+
+    private func pruneUnreferencedAttachments() async {
+        await attachmentStore.prune(
+            keeping: attachmentIdentifiers(in: values),
+            applicationId: applicationId,
+            formId: formId
+        )
+        attachmentNames = await attachmentStore.names(
+            applicationId: applicationId,
+            formId: formId
+        )
+    }
+
+    private func attachmentIdentifiers(in value: JSONValue) -> Set<String> {
+        switch value {
+        case let .string(id) where id.hasPrefix("demo-attachment-"):
+            return [id]
+        case let .array(values):
+            return values.reduce(into: Set<String>()) {
+                $0.formUnion(attachmentIdentifiers(in: $1))
+            }
+        case let .object(values):
+            return values.values.reduce(into: Set<String>()) {
+                $0.formUnion(attachmentIdentifiers(in: $1))
+            }
+        default:
+            return []
+        }
+    }
+
+    private func enqueueAttachment(_ request: FormAttachmentRequest) -> Task<Void, Never> {
+        attachmentGeneration += 1
+        let generation = attachmentGeneration
+        let previous = attachmentTask
+        isAttaching = true
+        return Task { @MainActor [weak self] in
+            await previous?.value
+            guard let self else { return }
+            await self.attachFiles(request)
+            if self.attachmentGeneration == generation {
+                self.isAttaching = false
+            }
+        }
+    }
+
+    private func waitForPendingAttachments() async {
+        while let task = attachmentTask {
+            let generation = attachmentGeneration
+            await task.value
+            if generation == attachmentGeneration {
+                return
+            }
         }
     }
 

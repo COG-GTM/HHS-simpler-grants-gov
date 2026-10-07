@@ -22,6 +22,21 @@ public enum SubmitStep: Sendable, Equatable {
     case submitted(SubmissionResult?)
 }
 
+private struct ParsedReviewWarning {
+    let field: String
+    let message: String
+}
+
+private struct ReviewWarningKey: Hashable {
+    let formId: String
+    let field: String
+    let message: String
+
+    var id: String {
+        "\(formId)/\(field)/\(message)"
+    }
+}
+
 @MainActor
 @Observable
 public final class ReviewSubmitViewModel {
@@ -96,26 +111,12 @@ public final class ReviewSubmitViewModel {
             organizationName = loaded.organizationName
             requiredRows = loaded.requiredRows
             optionalRows = loaded.optionalRows
+            let cached = await ApplyWarningsCache.shared.all(applicationId: applicationId)
             warnings = Self.parseWarnings(
                 application.formValidationWarnings,
-                forms: application.applicationForms
+                forms: application.applicationForms,
+                cachedWarnings: cached
             )
-            let cached = await ApplyWarningsCache.shared.all(applicationId: applicationId)
-            for form in application.applicationForms {
-                for warning in cached[form.formId] ?? [] {
-                    warnings.append(
-                        ReviewWarning(
-                            id: "\(form.formId)/\(warning.field)/\(warning.message)",
-                            formName: ApplyFormStateLogic.displayName(
-                                formName: form.form.formName,
-                                shortName: form.form.shortFormName,
-                                formId: form.formId
-                            ),
-                            message: warning.message
-                        )
-                    )
-                }
-            }
             phase = .loaded
         } catch {
             phase = .failed("apply.error.load".localized(bundle: .module))
@@ -153,36 +154,64 @@ public final class ReviewSubmitViewModel {
 
     private static func parseWarnings(
         _ value: JSONValue,
-        forms: [ApplicationForm]
+        forms: [ApplicationForm],
+        cachedWarnings: [String: [ValidationWarning]]
     ) -> [ReviewWarning] {
-        guard case let .object(warningsByForm) = value else { return [] }
+        let warningsByForm: [String: JSONValue]
+        if case let .object(warningValues) = value {
+            warningsByForm = warningValues
+        } else {
+            warningsByForm = [:]
+        }
         var result: [ReviewWarning] = []
+        var seen = Set<ReviewWarningKey>()
         for form in forms {
-            for key in [form.applicationFormId, form.formId] {
-                guard case let .array(warnings)? = warningsByForm[key] else { continue }
-                for (index, warning) in warnings.enumerated() {
-                    guard case let .object(fields) = warning,
-                          case let .string(message)? = fields["message"] else {
-                        continue
-                    }
-                    let field: String
-                    if case let .string(value)? = fields["field"] {
-                        field = value
-                    } else {
-                        field = ""
-                    }
-                    result.append(
-                        ReviewWarning(
-                            id: "\(key)/\(index)/\(field)",
-                            formName: ApplyFormStateLogic.displayName(
-                                formName: form.form.formName,
-                                shortName: form.form.shortFormName,
-                                formId: form.formId
-                            ),
-                            message: message
-                        )
-                    )
+            let formName = ApplyFormStateLogic.displayName(
+                formName: form.form.formName,
+                shortName: form.form.shortFormName,
+                formId: form.formId
+            )
+            let formWarnings: [ParsedReviewWarning]
+            if let cachedFormWarnings = cachedWarnings[form.formId] {
+                formWarnings = cachedFormWarnings.map {
+                    ParsedReviewWarning(field: $0.field, message: $0.message)
                 }
+            } else {
+                var persistedWarnings: [ParsedReviewWarning] = []
+                for key in [form.applicationFormId, form.formId] {
+                    guard case let .array(warnings)? = warningsByForm[key] else { continue }
+                    for warning in warnings {
+                        guard case let .object(fields) = warning,
+                              case let .string(message)? = fields["message"] else {
+                            continue
+                        }
+                        let field: String
+                        if case let .string(value)? = fields["field"] {
+                            field = value
+                        } else {
+                            field = ""
+                        }
+                        persistedWarnings.append(
+                            ParsedReviewWarning(field: field, message: message)
+                        )
+                    }
+                }
+                formWarnings = persistedWarnings
+            }
+            for warning in formWarnings {
+                let key = ReviewWarningKey(
+                    formId: form.formId,
+                    field: warning.field,
+                    message: warning.message
+                )
+                guard seen.insert(key).inserted else { continue }
+                result.append(
+                    ReviewWarning(
+                        id: key.id,
+                        formName: formName,
+                        message: warning.message
+                    )
+                )
             }
         }
         return result

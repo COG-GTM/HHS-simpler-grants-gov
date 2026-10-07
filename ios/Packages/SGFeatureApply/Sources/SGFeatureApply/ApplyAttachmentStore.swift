@@ -8,6 +8,10 @@ public protocol ApplyAttachmentStore: Sendable {
     ) async throws -> (id: String, name: String)
 
     func names(applicationId: String, formId: String) async -> [String: String]
+
+    func remove(ids: Set<String>, applicationId: String, formId: String) async
+
+    func prune(keeping referenced: Set<String>, applicationId: String, formId: String) async
 }
 
 public actor FileApplyAttachmentStore: ApplyAttachmentStore {
@@ -88,6 +92,72 @@ public actor FileApplyAttachmentStore: ApplyAttachmentStore {
         return (try? JSONDecoder().decode([String: String].self, from: data)) ?? [:]
     }
 
+    public func remove(ids: Set<String>, applicationId: String, formId: String) async {
+        guard !ids.isEmpty,
+              let formDirectory = try? formDirectoryURL(
+                applicationId: applicationId,
+                formId: formId,
+                create: false
+              ) else {
+            return
+        }
+        var attachmentNames = loadNames(in: formDirectory)
+        for id in ids where Self.isAttachmentIdentifier(id) {
+            try? fileManager.removeItem(
+                at: formDirectory.appendingPathComponent(id, isDirectory: true)
+            )
+            attachmentNames.removeValue(forKey: id)
+        }
+        persistNames(attachmentNames, in: formDirectory)
+    }
+
+    public func prune(
+        keeping referenced: Set<String>,
+        applicationId: String,
+        formId: String
+    ) async {
+        guard let formDirectory = try? formDirectoryURL(
+            applicationId: applicationId,
+            formId: formId,
+            create: false
+        ) else {
+            return
+        }
+        var storedIDs = Set(loadNames(in: formDirectory).keys)
+        if let contents = try? fileManager.contentsOfDirectory(
+            at: formDirectory,
+            includingPropertiesForKeys: nil
+        ) {
+            storedIDs.formUnion(
+                contents
+                    .map(\.lastPathComponent)
+                    .filter(Self.isAttachmentIdentifier)
+            )
+        }
+        let idsToRemove = storedIDs.subtracting(referenced)
+        await remove(
+            ids: idsToRemove,
+            applicationId: applicationId,
+            formId: formId
+        )
+    }
+
+    private func loadNames(in formDirectory: URL) -> [String: String] {
+        let namesURL = formDirectory.appendingPathComponent("names.json")
+        guard let data = try? Data(contentsOf: namesURL) else { return [:] }
+        return (try? JSONDecoder().decode([String: String].self, from: data)) ?? [:]
+    }
+
+    private func persistNames(_ names: [String: String], in formDirectory: URL) {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        guard let data = try? encoder.encode(names) else { return }
+        try? data.write(
+            to: formDirectory.appendingPathComponent("names.json"),
+            options: .atomic
+        )
+    }
+
     private func formDirectoryURL(
         applicationId: String,
         formId: String,
@@ -123,6 +193,10 @@ public actor FileApplyAttachmentStore: ApplyAttachmentStore {
             && value != ".."
             && !value.contains("/")
             && !value.contains("\\")
+    }
+
+    private static func isAttachmentIdentifier(_ value: String) -> Bool {
+        value.hasPrefix("demo-attachment-") && isSafePathComponent(value)
     }
 }
 
