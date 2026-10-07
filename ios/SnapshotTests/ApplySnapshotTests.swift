@@ -50,25 +50,28 @@ final class ApplySnapshotTests: XCTestCase {
         assertApplySnapshot(ApplyHomeView(viewModel: viewModel), named: "09_home_empty")
     }
 
-    func testFormClean() async {
-        let viewModel = await formViewModel(progressStore: InMemoryFormProgressStore())
+    func testFormClean() async throws {
+        let viewModel = try await realFormViewModel()
+        let model = try XCTUnwrap(viewModel.model)
+        let step = try XCTUnwrap(viewModel.currentFormStep)
+        viewModel.values = validValues(for: step, model: model, startingWith: viewModel.values)
+        _ = await viewModel.flushDraft()
         assertApplySnapshot(FormScreenView(viewModel: viewModel), named: "10_form_clean")
     }
 
-    func testFormEmailError() async {
-        let error = FieldError(
-            path: "/properties/email",
-            message: "Enter a valid email address, like name@organization.org"
-        )
-        let viewModel = FormScreenViewModel(
-            applicationId: "apply-demo",
-            formId: "sf424",
-            dataSource: ApplyReferenceDataSource(scenario: .inProgress),
-            progressStore: InMemoryFormProgressStore(),
-            validator: { _, _, _ in [error] }
-        )
-        await viewModel.load()
-        _ = await viewModel.continueTapped()
+    func testFormEmailError() async throws {
+        let viewModel = try await realFormViewModel()
+        let model = try XCTUnwrap(viewModel.model)
+        let step = try XCTUnwrap(viewModel.currentFormStep)
+        viewModel.values = validValues(for: step, model: model, startingWith: viewModel.values)
+        viewModel.values.setValue(.string("dana@bluefieldchc"), at: FieldPath(keys: ["email"]))
+        _ = await viewModel.flushDraft()
+        let outcome = await viewModel.continueTapped()
+        XCTAssertEqual(outcome, .stayed)
+        XCTAssertTrue(viewModel.errors.contains {
+            $0.path == "$.email"
+                && $0.message == "Enter a valid email address, like name@organization.org"
+        })
         assertApplySnapshot(FormScreenView(viewModel: viewModel), named: "10_form_email_error")
     }
 
@@ -120,17 +123,98 @@ final class ApplySnapshotTests: XCTestCase {
         return viewModel
     }
 
-    private func formViewModel(
-        progressStore: any FormProgressStore
-    ) async -> FormScreenViewModel {
+    private func realFormViewModel() async throws -> FormScreenViewModel {
         let viewModel = FormScreenViewModel(
             applicationId: "apply-demo",
             formId: "sf424",
-            dataSource: ApplyReferenceDataSource(scenario: .inProgress),
-            progressStore: progressStore
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: try FormPreviewSamples.sf424Definition()
+            ),
+            progressStore: InMemoryFormProgressStore(
+                completedSections: ["apply-demo/sf424": ["step-1"]]
+            )
         )
         await viewModel.load()
         return viewModel
+    }
+
+    private func validValues(
+        for step: FormStep,
+        model: FormModel,
+        startingWith initialValues: JSONValue
+    ) -> JSONValue {
+        let fields = step.sections.flatMap(\.fields)
+        var values = initialValues
+        for _ in 0...fields.count {
+            for field in fields {
+                guard field.isEditable,
+                      FormValidator.isRequired(field, in: values, model: model),
+                      !hasNonBlankValue(values.value(at: field.dataPath)) else {
+                    continue
+                }
+                values.setValue(sampleValue(for: field), at: field.dataPath)
+            }
+        }
+
+        for field in fields where field.isEditable {
+            switch field.path {
+            case "/properties/email":
+                values.setValue(.string("dana@bluefieldchc.org"), at: field.dataPath)
+            case "/properties/phone_number":
+                values.setValue(.string("(304) 555-0142"), at: field.dataPath)
+            case "/properties/applicant_type_code":
+                if let option = field.options.first {
+                    let value: JSONValue = field.kind == .multiSelect
+                        ? .array([option.value])
+                        : option.value
+                    values.setValue(value, at: field.dataPath)
+                }
+            default:
+                break
+            }
+        }
+        return values
+    }
+
+    private func sampleValue(for field: FormField) -> JSONValue {
+        if field.kind == .checkbox { return .bool(true) }
+        if let option = field.options.first {
+            return field.kind == .multiSelect ? .array([option.value]) : option.value
+        }
+        if field.textFormat == .date { return .string("2026-10-30") }
+        if [.integer, .number, .currency].contains(field.textFormat) {
+            return .number(1)
+        }
+        if field.kind == .fieldList { return .array([.object([:])]) }
+
+        let title = field.title.lowercased()
+        if title.contains("email") { return .string("dana@bluefieldchc.org") }
+        if title.contains("phone") || title.contains("telephone") {
+            return .string("(304) 555-0142")
+        }
+        if title.contains("zip") { return .string("22201") }
+        if title.contains("ein") { return .string("12-3456789") }
+        if title.contains("state") { return .string("VA") }
+        if title.contains("city") { return .string("Arlington") }
+        if title.contains("street") { return .string("123 Main Street") }
+        return .string("Sample value")
+    }
+
+    private func hasNonBlankValue(_ value: JSONValue?) -> Bool {
+        guard let value else { return false }
+        switch value {
+        case .null:
+            return false
+        case let .string(string):
+            return !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .array(values):
+            return !values.isEmpty
+        case let .object(values):
+            return !values.isEmpty
+        case .bool, .number:
+            return true
+        }
     }
 
     private func reviewViewModel(

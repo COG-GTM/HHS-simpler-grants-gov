@@ -27,7 +27,7 @@ public final class FormScreenViewModel {
     public private(set) var formDisplayName = ""
     public private(set) var shortName = ""
     public private(set) var model: FormModel?
-    public private(set) var sections: [FormSection] = []
+    public private(set) var steps: [FormStep] = []
     public var currentStep = 0
     public var values: JSONValue = .object([:]) {
         didSet {
@@ -38,6 +38,7 @@ public final class FormScreenViewModel {
         }
     }
     public private(set) var errors: [FieldError] = []
+    public private(set) var sectionErrors: [String: [FieldError]] = [:]
     public private(set) var saveStatus: FormSaveStatus = .idle
     public private(set) var bannerMessage: String?
     public private(set) var prefill: [String: String] = [:]
@@ -56,7 +57,7 @@ public final class FormScreenViewModel {
     private var progressInvalidationTask: Task<Void, Never>?
     private var suppressAutosave = false
     private var formCompleteInvalidated = false
-    private var invalidatedSectionIds: Set<String> = []
+    private var invalidatedStepIds: Set<String> = []
 
     public init(
         applicationId: String,
@@ -101,11 +102,17 @@ public final class FormScreenViewModel {
         )
     }
 
-    public var stepCount: Int { sections.count }
+    public var stepCount: Int { steps.count }
 
-    public var currentSection: FormSection? {
-        guard sections.indices.contains(currentStep) else { return nil }
-        return sections[currentStep]
+    public var currentFormStep: FormStep? {
+        guard steps.indices.contains(currentStep) else { return nil }
+        return steps[currentStep]
+    }
+
+    public var firstErrorSectionID: String? {
+        currentFormStep?.sections.first {
+            !(sectionErrors[$0.id] ?? []).isEmpty
+        }?.id
     }
 
     public func load() async {
@@ -131,9 +138,21 @@ public final class FormScreenViewModel {
                 shortName: definition.shortFormName,
                 formId: definition.formId
             )
+            let fallbackSection = FormSection(
+                id: "application",
+                title: loadedDisplayName,
+                fields: []
+            )
             let loadedSections = formModel.sections.isEmpty
-                ? [FormSection(id: "application", title: loadedDisplayName, fields: [])]
+                ? [fallbackSection]
                 : formModel.sections
+            let loadedSteps = formModel.steps.isEmpty || formModel.sections.isEmpty
+                ? [FormStep(
+                    id: "application",
+                    title: loadedDisplayName,
+                    sections: [fallbackSection]
+                )]
+                : formModel.steps
             let draft = try? await draftStore.loadDraft(
                 applicationId: applicationId,
                 formId: definition.formId
@@ -144,7 +163,7 @@ public final class FormScreenViewModel {
             var loadedPrefill: [String: String] = [:]
             var loadedPrefilledPaths: Set<String> = []
             if let entity {
-                for section in formModel.sections {
+                for section in loadedSections {
                     for field in section.fields {
                         guard let property = formPropertyName(from: field.path) else { continue }
                         let prefilledValue: String?
@@ -156,12 +175,17 @@ public final class FormScreenViewModel {
                         default:
                             prefilledValue = nil
                         }
-                        guard let prefilledValue, !prefilledValue.isEmpty,
-                              isMissingOrEmpty(loadedValues[property]) else {
+                        guard let prefilledValue, !prefilledValue.isEmpty else {
                             continue
                         }
-                        setTopLevelValue(prefilledValue, for: property, in: &loadedValues)
+                        let existingValue = loadedValues.value(at: field.dataPath)
+                        if isMissingOrEmpty(existingValue) {
+                            loadedValues.setValue(.string(prefilledValue), at: field.dataPath)
+                        } else if existingValue != .string(prefilledValue) {
+                            continue
+                        }
                         loadedPrefill[field.path] = prefilledValue
+                        loadedPrefill[field.dataPath.jsonPath] = prefilledValue
                         loadedPrefill[property] = prefilledValue
                         loadedPrefilledPaths.insert(field.path)
                     }
@@ -172,19 +196,20 @@ public final class FormScreenViewModel {
             formDisplayName = loadedDisplayName
             shortName = definition.shortFormName ?? definition.formId
             model = formModel
-            sections = loadedSections
+            steps = loadedSteps
             values = loadedValues
             prefill = loadedPrefill
             prefilledPaths = loadedPrefilledPaths
-            let completed = await progressStore.completedSections(
+            sectionErrors = [:]
+            let completedSteps = await progressStore.completedSections(
                 applicationId: applicationId,
                 formId: definition.formId
             )
-            currentStep = loadedSections.firstIndex { !completed.contains($0.id) } ?? 0
+            currentStep = loadedSteps.firstIndex { !completedSteps.contains($0.id) } ?? 0
             errors = []
             saveStatus = .idle
             formCompleteInvalidated = false
-            invalidatedSectionIds = []
+            invalidatedStepIds = []
             suppressAutosave = false
             phase = .loaded
         } catch {
@@ -283,43 +308,87 @@ public final class FormScreenViewModel {
     }
 
     public func continueTapped() async -> ContinueOutcome {
-        guard let section = currentSection, let model else { return .finished }
-        errors = validator(values, section, model)
+        guard let step = currentFormStep, let model else { return .finished }
+        setValidationErrors(validationErrors(in: step, model: model))
         guard errors.isEmpty else {
             focusToken += 1
             return .stayed
         }
+
+        let isLastStep = currentStep >= steps.count - 1
+        if isLastStep {
+            let allErrors = validationErrors(in: steps, model: model)
+            setValidationErrors(allErrors)
+            if !errors.isEmpty {
+                let invalidStepIndices = steps.indices.filter { index in
+                    steps[index].sections.contains {
+                        !(allErrors[$0.id] ?? []).isEmpty
+                    }
+                }
+                if let firstInvalidIndex = invalidStepIndices.first {
+                    currentStep = firstInvalidIndex
+                }
+                let invalidStepIds = Set(invalidStepIndices.map { steps[$0].id })
+                var completed = await progressStore.completedSections(
+                    applicationId: applicationId,
+                    formId: formId
+                )
+                completed.subtract(invalidStepIds)
+                await progressStore.setCompletedSections(
+                    completed,
+                    applicationId: applicationId,
+                    formId: formId
+                )
+                focusToken += 1
+                return .stayed
+            }
+        }
+
         guard await syncToServer() else { return .stayed }
 
         var completed = await progressStore.completedSections(
             applicationId: applicationId,
             formId: formId
         )
-        completed.insert(section.id)
+        completed.insert(step.id)
         await progressStore.setCompletedSections(
             completed,
             applicationId: applicationId,
             formId: formId
         )
-        invalidatedSectionIds.remove(section.id)
+        invalidatedStepIds.remove(step.id)
 
-        if currentStep >= sections.count - 1 {
-            let invalidSections = sections.enumerated().compactMap { index, section in
-                let sectionErrors = validator(values, section, model)
-                return sectionErrors.isEmpty ? nil : (index, sectionErrors)
-            }
-            if let firstInvalid = invalidSections.first {
-                currentStep = firstInvalid.0
-                errors = firstInvalid.1
-                focusToken += 1
-                return .stayed
-            }
+        if isLastStep {
             await progressStore.setFormComplete(true, applicationId: applicationId, formId: formId)
             return .finished
         }
         currentStep += 1
         errors = []
+        sectionErrors = [:]
         return .advanced
+    }
+
+    private func validationErrors(in step: FormStep, model: FormModel) -> [String: [FieldError]] {
+        Dictionary(
+            uniqueKeysWithValues: step.sections.map { section in
+                (section.id, validator(values, section, model))
+            }
+        )
+    }
+
+    private func validationErrors(in steps: [FormStep], model: FormModel) -> [String: [FieldError]] {
+        var result: [String: [FieldError]] = [:]
+        for step in steps {
+            result.merge(validationErrors(in: step, model: model)) { _, latest in latest }
+        }
+        return result
+    }
+
+    private func setValidationErrors(_ sectionErrors: [String: [FieldError]]) {
+        self.sectionErrors = sectionErrors
+        errors = steps.flatMap { step in
+            step.sections.flatMap { sectionErrors[$0.id] ?? [] }
+        }
     }
 
     public func saveDraftTapped() async -> Bool {
@@ -351,16 +420,16 @@ public final class FormScreenViewModel {
     }
 
     private func invalidateProgressForEdit() {
-        let sectionId = currentSection?.id
+        let stepId = currentFormStep?.id
         let shouldInvalidateForm = !formCompleteInvalidated
-        let shouldInvalidateSection = sectionId.map { !invalidatedSectionIds.contains($0) } ?? false
-        guard shouldInvalidateForm || shouldInvalidateSection else { return }
+        let shouldInvalidateStep = stepId.map { !invalidatedStepIds.contains($0) } ?? false
+        guard shouldInvalidateForm || shouldInvalidateStep else { return }
 
         if shouldInvalidateForm {
             formCompleteInvalidated = true
         }
-        if let sectionId, shouldInvalidateSection {
-            invalidatedSectionIds.insert(sectionId)
+        if let stepId, shouldInvalidateStep {
+            invalidatedStepIds.insert(stepId)
         }
 
         let previousTask = progressInvalidationTask
@@ -372,12 +441,12 @@ public final class FormScreenViewModel {
             if shouldInvalidateForm {
                 await progressStore.setFormComplete(false, applicationId: applicationId, formId: formId)
             }
-            guard shouldInvalidateSection, let sectionId else { return }
+            guard shouldInvalidateStep, let stepId else { return }
             var completed = await progressStore.completedSections(
                 applicationId: applicationId,
                 formId: formId
             )
-            completed.remove(sectionId)
+            completed.remove(stepId)
             await progressStore.setCompletedSections(
                 completed,
                 applicationId: applicationId,
@@ -414,15 +483,4 @@ private func isMissingOrEmpty(_ value: JSONValue?) -> Bool {
     default:
         return false
     }
-}
-
-private func setTopLevelValue(_ string: String, for key: String, in value: inout JSONValue) {
-    var object: [String: JSONValue]
-    if case let .object(existing) = value {
-        object = existing
-    } else {
-        object = [:]
-    }
-    object[key] = .string(string)
-    value = .object(object)
 }

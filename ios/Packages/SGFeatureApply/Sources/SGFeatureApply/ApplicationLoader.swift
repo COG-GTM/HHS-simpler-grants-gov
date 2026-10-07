@@ -46,13 +46,15 @@ enum ApplicationLoader {
         for form in application.applicationForms {
             let formId = form.formId
             let model = try? FormModel(definition: form.form)
-            let sectionIds = model?.sections.map(\.id) ?? []
-            let progressSectionIds = sectionIds.isEmpty ? ["application"] : sectionIds
+            let stepIds = model?.steps.map(\.id) ?? []
+            let progressStepIds = model?.sections.isEmpty == true || stepIds.isEmpty
+                ? ["application"]
+                : stepIds
             let draft = try? await draftStore.loadDraft(
                 applicationId: applicationId,
                 formId: formId
             )
-            let completedSections = await progressStore.completedSections(
+            let completedStepIds = await progressStore.completedSections(
                 applicationId: applicationId,
                 formId: formId
             )
@@ -75,8 +77,8 @@ enum ApplicationLoader {
                     response: form.applicationResponse,
                     hasDraft: draft != nil,
                     hasUnsyncedDraft: draft.map { $0 != form.applicationResponse } ?? false,
-                    completedSectionIds: completedSections,
-                    sectionIds: progressSectionIds,
+                    completedStepIds: completedStepIds,
+                    stepIds: progressStepIds,
                     locallyComplete: isComplete
                 )
             )

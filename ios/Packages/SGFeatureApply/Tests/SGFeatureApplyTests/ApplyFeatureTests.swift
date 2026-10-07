@@ -57,15 +57,15 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     func testPureFormStateAndDisplayNameHelpers() {
-        let sections = ["one", "two", "three"]
+        let steps = ["step-1", "step-2", "step-3"]
         XCTAssertEqual(
             ApplyFormStateLogic.state(
                 serverStatus: "COMPLETE",
                 response: .object([:]),
                 hasDraft: false,
                 hasUnsyncedDraft: false,
-                completedSectionIds: [],
-                sectionIds: sections,
+                completedStepIds: [],
+                stepIds: steps,
                 locallyComplete: false
             ),
             .complete
@@ -76,8 +76,8 @@ final class ApplyFeatureTests: XCTestCase {
                 response: .object([:]),
                 hasDraft: false,
                 hasUnsyncedDraft: false,
-                completedSectionIds: ["two", "unknown"],
-                sectionIds: sections,
+                completedStepIds: ["step-2", "unknown"],
+                stepIds: steps,
                 locallyComplete: false
             ),
             .inProgress(completedSections: 1, totalSections: 3)
@@ -88,8 +88,8 @@ final class ApplyFeatureTests: XCTestCase {
                 response: .object(["email": .string("person@example.org")]),
                 hasDraft: false,
                 hasUnsyncedDraft: false,
-                completedSectionIds: [],
-                sectionIds: sections,
+                completedStepIds: [],
+                stepIds: steps,
                 locallyComplete: false
             ),
             .inProgress(completedSections: 0, totalSections: 3)
@@ -100,8 +100,8 @@ final class ApplyFeatureTests: XCTestCase {
                 response: .object([:]),
                 hasDraft: true,
                 hasUnsyncedDraft: false,
-                completedSectionIds: [],
-                sectionIds: [],
+                completedStepIds: [],
+                stepIds: [],
                 locallyComplete: false
             ),
             .inProgress(completedSections: 0, totalSections: 1)
@@ -112,8 +112,8 @@ final class ApplyFeatureTests: XCTestCase {
                 response: .object([:]),
                 hasDraft: false,
                 hasUnsyncedDraft: false,
-                completedSectionIds: [],
-                sectionIds: [],
+                completedStepIds: [],
+                stepIds: [],
                 locallyComplete: false
             ),
             .notStarted
@@ -124,8 +124,8 @@ final class ApplyFeatureTests: XCTestCase {
                 response: .object(["email": .string("server@example.org")]),
                 hasDraft: true,
                 hasUnsyncedDraft: true,
-                completedSectionIds: [],
-                sectionIds: ["applicant"],
+                completedStepIds: [],
+                stepIds: ["step-1"],
                 locallyComplete: false
             ),
             .inProgress(completedSections: 0, totalSections: 1)
@@ -136,8 +136,8 @@ final class ApplyFeatureTests: XCTestCase {
                 response: .object(["email": .string("same@example.org")]),
                 hasDraft: true,
                 hasUnsyncedDraft: false,
-                completedSectionIds: [],
-                sectionIds: ["applicant"],
+                completedStepIds: [],
+                stepIds: ["step-1"],
                 locallyComplete: false
             ),
             .complete
@@ -298,7 +298,7 @@ final class ApplyFeatureTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(locallySaved, 1)
 
         let lastStepProgress = InMemoryFormProgressStore(
-            completedSections: ["apply-demo/sf424": ["applicant", "project", "contacts", "locations"]]
+            completedSections: ["apply-demo/sf424": ["step-1", "step-2", "step-3", "step-4"]]
         )
         let finishingSource = ApplyReferenceDataSource(scenario: .inProgress)
         let finishing = FormScreenViewModel(
@@ -321,10 +321,201 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     @MainActor
-    func testEditingCompletedFormClearsLocalCompletion() async {
-        let sectionIds: Set<String> = ["applicant", "project", "contacts", "locations", "certifications"]
+    func testContinueValidatesEverySectionInCurrentStep() async {
+        let firstError = FieldError(path: "$.first", message: "First section error")
+        let secondError = FieldError(path: "$.second", message: "Second section error")
+        let errorsBySection = [
+            "applicant_information": [firstError],
+            "applicant_contact": [secondError]
+        ]
         let progress = InMemoryFormProgressStore(
-            completedSections: ["apply-demo/sf424": sectionIds],
+            completedSections: ["apply-demo/sf424": ["step-1"]]
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: multiSectionStepDefinition()
+            ),
+            progressStore: progress,
+            validator: { _, section, _ in errorsBySection[section.id] ?? [] }
+        )
+
+        await viewModel.load()
+        XCTAssertEqual(viewModel.currentStep, 1)
+        XCTAssertEqual(viewModel.currentFormStep?.sections.map(\.id), [
+            "applicant_information",
+            "applicant_contact"
+        ])
+
+        let outcome = await viewModel.continueTapped()
+
+        XCTAssertEqual(outcome, .stayed)
+        XCTAssertEqual(viewModel.sectionErrors["applicant_information"], [firstError])
+        XCTAssertEqual(viewModel.sectionErrors["applicant_contact"], [secondError])
+        XCTAssertEqual(viewModel.errors, [firstError, secondError])
+        XCTAssertEqual(viewModel.firstErrorSectionID, "applicant_information")
+    }
+
+    @MainActor
+    func testResumeStartsAtFirstIncompleteStep() async throws {
+        let progress = InMemoryFormProgressStore(
+            completedSections: ["apply-demo/sf424": ["step-1", "step-2", "step-4"]]
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: try FormPreviewSamples.sf424Definition()
+            ),
+            progressStore: progress
+        )
+
+        await viewModel.load()
+
+        XCTAssertEqual(viewModel.steps.count, 5)
+        XCTAssertEqual(viewModel.currentStep, 2)
+        XCTAssertEqual(viewModel.currentFormStep?.id, "step-3")
+    }
+
+    @MainActor
+    func testRealSF424EmailValidationAndCorrection() async throws {
+        let progress = InMemoryFormProgressStore(
+            completedSections: ["apply-demo/sf424": ["step-1"]]
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: try FormPreviewSamples.sf424Definition()
+            ),
+            progressStore: progress
+        )
+
+        await viewModel.load()
+        let model = try XCTUnwrap(viewModel.model)
+        let step = try XCTUnwrap(viewModel.currentFormStep)
+        XCTAssertEqual(viewModel.currentStep, 1)
+        XCTAssertEqual(step.title, "Applicant information")
+        XCTAssertTrue(step.sections.flatMap(\.fields).contains { $0.path == "/properties/email" })
+        let fields = step.sections.flatMap(\.fields)
+        let legalNameField = try XCTUnwrap(
+            fields.first { $0.path == "/properties/organization_name" }
+        )
+        let ueiField = try XCTUnwrap(fields.first { $0.path == "/properties/sam_uei" })
+        XCTAssertTrue(ueiField.isReadOnly)
+        for field in [legalNameField, ueiField] {
+            let prefilledValue = try XCTUnwrap(viewModel.prefill[field.path])
+            XCTAssertEqual(viewModel.prefill[field.dataPath.jsonPath], prefilledValue)
+            XCTAssertEqual(viewModel.prefill[field.dataPath.lastKey ?? ""], prefilledValue)
+            XCTAssertEqual(
+                viewModel.values.value(at: field.dataPath),
+                .string(prefilledValue)
+            )
+        }
+
+        viewModel.values = validValues(
+            for: step,
+            model: model,
+            startingWith: viewModel.values
+        )
+        viewModel.values.setValue(.string("dana@bluefieldchc"), at: FieldPath(keys: ["email"]))
+        let invalidOutcome = await viewModel.continueTapped()
+
+        XCTAssertEqual(invalidOutcome, .stayed)
+        XCTAssertTrue(viewModel.errors.contains {
+            $0.path == "$.email"
+                && $0.message == "Enter a valid email address, like name@organization.org"
+        })
+        XCTAssertEqual(viewModel.currentStep, 1)
+
+        viewModel.values.setValue(.string("dana@bluefieldchc.org"), at: FieldPath(keys: ["email"]))
+        let validOutcome = await viewModel.continueTapped()
+
+        XCTAssertEqual(validOutcome, .advanced)
+        XCTAssertEqual(viewModel.currentStep, 2)
+    }
+
+    @MainActor
+    func testMatchingResponseValuesRemainVerifiedPrefill() async throws {
+        let definition = try FormPreviewSamples.sf424Definition()
+        let base = ApplyReferenceDataSource(
+            scenario: .inProgress,
+            sf424Definition: definition
+        )
+        let originalApplication = try await base.application(id: "apply-demo")
+        let originalForm = try XCTUnwrap(
+            originalApplication.applicationForms.first { $0.formId == "sf424" }
+        )
+        var response = originalForm.applicationResponse
+        response.setValue(
+            .string("Bluefield Community Health Center"),
+            at: FieldPath(keys: ["organization_name"])
+        )
+        response.setValue(
+            .string("K7LMN2QX4R91"),
+            at: FieldPath(keys: ["sam_uei"])
+        )
+        let forms = originalApplication.applicationForms.map { form in
+            guard form.formId == "sf424" else { return form }
+            return ApplicationForm(
+                applicationFormId: form.applicationFormId,
+                formId: form.formId,
+                form: form.form,
+                applicationResponse: response,
+                applicationFormStatus: form.applicationFormStatus,
+                isRequired: form.isRequired,
+                isIncludedInSubmission: form.isIncludedInSubmission,
+                applicationId: form.applicationId,
+                applicationName: form.applicationName
+            )
+        }
+        let application = Application(
+            applicationId: originalApplication.applicationId,
+            applicationName: originalApplication.applicationName,
+            applicationStatus: originalApplication.applicationStatus,
+            competition: originalApplication.competition,
+            organization: originalApplication.organization,
+            applicationForms: forms,
+            formValidationWarnings: originalApplication.formValidationWarnings,
+            intendsToAddOrganization: originalApplication.intendsToAddOrganization
+        )
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: OpportunityResolutionTestDataSource(
+                base: base,
+                application: application,
+                summaries: []
+            ),
+            progressStore: InMemoryFormProgressStore()
+        )
+
+        await viewModel.load()
+
+        let fields = viewModel.steps.flatMap(\.sections).flatMap(\.fields)
+        for (path, expectedValue) in [
+            ("/properties/organization_name", "Bluefield Community Health Center"),
+            ("/properties/sam_uei", "K7LMN2QX4R91")
+        ] {
+            let field = try XCTUnwrap(fields.first { $0.path == path })
+            XCTAssertEqual(viewModel.prefill[field.path], expectedValue)
+            XCTAssertTrue(viewModel.prefilledPaths.contains(field.path))
+            XCTAssertEqual(
+                viewModel.values.value(at: field.dataPath),
+                .string(expectedValue)
+            )
+        }
+    }
+
+    @MainActor
+    func testEditingCompletedFormClearsLocalCompletion() async {
+        let stepIds: Set<String> = ["step-1", "step-2", "step-3", "step-4", "step-5"]
+        let progress = InMemoryFormProgressStore(
+            completedSections: ["apply-demo/sf424": stepIds],
             completeForms: ["apply-demo/sf424"]
         )
         let viewModel = FormScreenViewModel(
@@ -342,11 +533,11 @@ final class ApplyFeatureTests: XCTestCase {
         let isComplete = await progress.isFormComplete(applicationId: "apply-demo", formId: "sf424")
         let completedSections = await progress.completedSections(applicationId: "apply-demo", formId: "sf424")
         XCTAssertFalse(isComplete)
-        XCTAssertFalse(completedSections.contains("applicant"))
+        XCTAssertFalse(completedSections.contains("step-1"))
     }
 
     @MainActor
-    func testEditingNextCompletedSectionClearsOnlyThatSectionProgress() async throws {
+    func testEditingNextCompletedStepClearsOnlyThatStepProgress() async throws {
         let base = ApplyReferenceDataSource(scenario: .inProgress)
         let originalApplication = try await base.application(id: "apply-demo")
         let originalForm = try XCTUnwrap(
@@ -405,7 +596,7 @@ final class ApplyFeatureTests: XCTestCase {
             summaries: []
         )
         let progress = InMemoryFormProgressStore(
-            completedSections: ["apply-demo/sf424": ["section-one", "section-two"]],
+            completedSections: ["apply-demo/sf424": ["step-1", "step-2"]],
             completeForms: ["apply-demo/sf424"]
         )
         let viewModel = FormScreenViewModel(
@@ -419,7 +610,7 @@ final class ApplyFeatureTests: XCTestCase {
 
         await viewModel.load()
         XCTAssertEqual(viewModel.currentStep, 0)
-        XCTAssertEqual(viewModel.currentSection?.id, "section-one")
+        XCTAssertEqual(viewModel.currentFormStep?.sections.first?.id, "section-one")
 
         viewModel.values = .object(["first": .string("edited")])
         let firstOutcome = await viewModel.continueTapped()
@@ -433,8 +624,8 @@ final class ApplyFeatureTests: XCTestCase {
             applicationId: "apply-demo",
             formId: "sf424"
         )
-        XCTAssertTrue(completedSections.contains("section-one"))
-        XCTAssertFalse(completedSections.contains("section-two"))
+        XCTAssertTrue(completedSections.contains("step-1"))
+        XCTAssertFalse(completedSections.contains("step-2"))
     }
 
     @MainActor
@@ -669,7 +860,7 @@ final class ApplyFeatureTests: XCTestCase {
         let source = PreviewDataSource()
         let formId = "08e6603f-d197-4a60-98cd-d49acb1fc1fd"
         let progress = InMemoryFormProgressStore(
-            completedSections: ["sample-application-in-progress/\(formId)": ["application"]]
+            completedSections: ["sample-application-in-progress/\(formId)": ["step-1"]]
         )
         let workspace = WorkspaceViewModel(
             applicationId: "sample-application-in-progress",
@@ -694,7 +885,7 @@ final class ApplyFeatureTests: XCTestCase {
         await viewModel.load()
 
         XCTAssertEqual(viewModel.phase, .loaded)
-        XCTAssertEqual(viewModel.currentSection?.id, "application")
+        XCTAssertEqual(viewModel.currentFormStep?.sections.first?.id, "application")
         let outcome = await viewModel.continueTapped()
         XCTAssertEqual(outcome, .finished)
         let isComplete = await progress.isFormComplete(
@@ -702,6 +893,112 @@ final class ApplyFeatureTests: XCTestCase {
             formId: formId
         )
         XCTAssertTrue(isComplete)
+    }
+
+    private func multiSectionStepDefinition() -> FormDefinition {
+        func section(_ id: String) -> JSONValue {
+            .object([
+                "type": .string("section"),
+                "name": .string(id),
+                "label": .string(id),
+                "children": .array([])
+            ])
+        }
+        return FormDefinition(
+            formId: "sf424",
+            formName: "SF-424",
+            shortFormName: "SF424_4_0",
+            formJsonSchema: .object([
+                "type": .string("object"),
+                "properties": .object([:])
+            ]),
+            formUiSchema: .array([
+                section("submission_type"),
+                section("applicant_information"),
+                section("applicant_contact"),
+                section("federal_agency"),
+                section("areas_affected"),
+                section("state_review")
+            ])
+        )
+    }
+
+    private func validValues(
+        for step: FormStep,
+        model: FormModel,
+        startingWith initialValues: JSONValue
+    ) -> JSONValue {
+        let fields = step.sections.flatMap(\.fields)
+        var values = initialValues
+        for _ in 0...fields.count {
+            for field in fields {
+                guard field.isEditable,
+                      FormValidator.isRequired(field, in: values, model: model),
+                      !hasNonBlankValue(values.value(at: field.dataPath)) else {
+                    continue
+                }
+                values.setValue(sampleValue(for: field), at: field.dataPath)
+            }
+        }
+
+        for field in fields where field.isEditable {
+            switch field.path {
+            case "/properties/email":
+                values.setValue(.string("dana@bluefieldchc.org"), at: field.dataPath)
+            case "/properties/phone_number":
+                values.setValue(.string("(304) 555-0142"), at: field.dataPath)
+            case "/properties/applicant_type_code":
+                if let option = field.options.first {
+                    let value: JSONValue = field.kind == .multiSelect
+                        ? .array([option.value])
+                        : option.value
+                    values.setValue(value, at: field.dataPath)
+                }
+            default:
+                break
+            }
+        }
+        return values
+    }
+
+    private func sampleValue(for field: FormField) -> JSONValue {
+        if field.kind == .checkbox { return .bool(true) }
+        if let option = field.options.first {
+            return field.kind == .multiSelect ? .array([option.value]) : option.value
+        }
+        if field.textFormat == .date { return .string("2026-10-30") }
+        if [.integer, .number, .currency].contains(field.textFormat) {
+            return .number(1)
+        }
+        if field.kind == .fieldList { return .array([.object([:])]) }
+
+        let title = field.title.lowercased()
+        if title.contains("email") { return .string("dana@bluefieldchc.org") }
+        if title.contains("phone") || title.contains("telephone") {
+            return .string("(304) 555-0142")
+        }
+        if title.contains("zip") { return .string("22201") }
+        if title.contains("ein") { return .string("12-3456789") }
+        if title.contains("state") { return .string("VA") }
+        if title.contains("city") { return .string("Arlington") }
+        if title.contains("street") { return .string("123 Main Street") }
+        return .string("Sample value")
+    }
+
+    private func hasNonBlankValue(_ value: JSONValue?) -> Bool {
+        guard let value else { return false }
+        switch value {
+        case .null:
+            return false
+        case let .string(string):
+            return !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .array(values):
+            return !values.isEmpty
+        case let .object(values):
+            return !values.isEmpty
+        case .bool, .number:
+            return true
+        }
     }
 
     private var timeZone: TimeZone {

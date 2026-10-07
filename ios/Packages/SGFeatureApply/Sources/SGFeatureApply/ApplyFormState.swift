@@ -41,16 +41,16 @@ public enum ApplyFormStateLogic {
         response: JSONValue,
         hasDraft: Bool,
         hasUnsyncedDraft: Bool,
-        completedSectionIds: Set<String>,
-        sectionIds: [String],
+        completedStepIds: Set<String>,
+        stepIds: [String],
         locallyComplete: Bool
     ) -> ApplyFormState {
         let serverComplete = serverStatus.caseInsensitiveCompare("complete") == .orderedSame
         if locallyComplete || (serverComplete && !hasUnsyncedDraft) {
             return .complete
         }
-        let total = max(sectionIds.count, 1)
-        let done = completedSectionIds.intersection(sectionIds).count
+        let total = max(stepIds.count, 1)
+        let done = completedStepIds.intersection(stepIds).count
         if done > 0 || hasDraft || isNonEmptyObject(response) {
             return .inProgress(completedSections: done, totalSections: total)
         }

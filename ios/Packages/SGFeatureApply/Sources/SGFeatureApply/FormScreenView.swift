@@ -14,7 +14,6 @@ public struct FormScreenView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: FormScreenViewModel?
     @AccessibilityFocusState private var errorSummaryFocused: Bool
-    @ScaledMetric(relativeTo: .body) private var monoFontSize: CGFloat = 16
 
     public init(applicationId: String, formId: String) {
         self.applicationId = applicationId
@@ -125,7 +124,11 @@ public struct FormScreenView: View {
 
     @ViewBuilder
     private func formContent(_ viewModel: FormScreenViewModel) -> some View {
-        if let section = viewModel.currentSection {
+        if let step = viewModel.currentFormStep {
+            let values = Binding(
+                get: { viewModel.values },
+                set: { viewModel.values = $0 }
+            )
             VStack(spacing: 0) {
                 ScrollViewReader { proxy in
                     ScrollView {
@@ -133,29 +136,29 @@ public struct FormScreenView: View {
                             Text(viewModel.formDisplayName)
                                 .font(ApplyTheme.F.sans(13))
                                 .foregroundStyle(ApplyTheme.C.muted)
-                            Text(section.title)
+                            Text(step.title)
                                 .font(ApplyTheme.F.serif(26))
                                 .foregroundStyle(ApplyTheme.C.ink)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .accessibilityAddTraits(.isHeader)
                                 .padding(.top, 6)
 
-                            if section.fields.contains(where: { viewModel.prefilledPaths.contains($0.path) }) {
-                                Text("apply.form.prefill_helper".localized(bundle: .module))
+                            if let description = step.sections.first?.description, !description.isEmpty {
+                                Text(description)
                                     .font(ApplyTheme.F.sans(14))
                                     .foregroundStyle(ApplyTheme.C.muted)
                                     .fixedSize(horizontal: false, vertical: true)
                                     .padding(.top, 8)
                             }
 
-                            ForEach(
-                                section.fields.filter {
-                                    viewModel.prefilledPaths.contains($0.path) && isPrefilledUEI($0)
-                                },
-                                id: \.path
-                            ) { field in
-                                verifiedUEI(field.title, value: viewModel.prefill[field.path] ?? "")
-                                    .padding(.top, 16)
+                            if step.sections.flatMap(\.fields).contains(where: {
+                                viewModel.prefilledPaths.contains($0.path)
+                            }) {
+                                Text("apply.form.prefill_helper".localized(bundle: .module))
+                                    .font(ApplyTheme.F.sans(14))
+                                    .foregroundStyle(ApplyTheme.C.muted)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.top, 8)
                             }
 
                             if !viewModel.errors.isEmpty {
@@ -172,16 +175,20 @@ public struct FormScreenView: View {
                                 .padding(.top, 16)
                             }
 
-                            FormSectionView(
-                                section: section,
-                                values: Binding(
-                                    get: { viewModel.values },
-                                    set: { viewModel.values = $0 }
-                                ),
-                                errors: viewModel.errors,
-                                prefill: viewModel.prefill
-                            )
-                            .padding(.horizontal, -16)
+                            VStack(alignment: .leading, spacing: 24) {
+                                ForEach(step.sections) { section in
+                                    let sectionErrors = viewModel.firstErrorSectionID == section.id
+                                        ? viewModel.sectionErrors[section.id] ?? []
+                                        : []
+                                    FormSectionView(
+                                        section: section,
+                                        values: values,
+                                        errors: sectionErrors,
+                                        prefill: viewModel.prefill,
+                                        showsTitle: step.sections.count > 1
+                                    )
+                                }
+                            }
                             .padding(.top, 12)
                         }
                         .padding(.horizontal, ApplyTheme.S.margin)
@@ -225,41 +232,6 @@ public struct FormScreenView: View {
                 viewModel.stepCount
             )
         )
-    }
-
-    private func verifiedUEI(_ title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(ApplyTheme.F.sans(14, .semibold))
-                .foregroundStyle(ApplyTheme.C.ink)
-            HStack(spacing: 8) {
-                Text(value)
-                    .font(.system(size: monoFontSize, weight: .regular, design: .monospaced))
-                    .foregroundStyle(ApplyTheme.C.muted)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                Spacer(minLength: 8)
-                Label {
-                    Text("apply.form.verified".localized(bundle: .module))
-                } icon: {
-                    Image(systemName: "checkmark.seal.fill")
-                }
-                .font(ApplyTheme.F.sans(12, .semibold))
-                .foregroundStyle(ApplyTheme.C.openFg)
-            }
-            .padding(.horizontal, 14)
-            .frame(minHeight: 48)
-            .background(ApplyTheme.C.canvas, in: RoundedRectangle(cornerRadius: ApplyTheme.R.input))
-            .overlay {
-                RoundedRectangle(cornerRadius: ApplyTheme.R.input)
-                    .stroke(ApplyTheme.C.line, lineWidth: 1)
-            }
-        }
-    }
-
-    private func isPrefilledUEI(_ field: FormField) -> Bool {
-        guard let property = applyFormProperty(from: field.path) else { return false }
-        return ["sam_uei", "uei"].contains(property)
     }
 
     private func errorSummary(_ errors: [FieldError]) -> some View {
@@ -369,13 +341,4 @@ func validationSummaryMessage(fieldCount: Int) -> String {
         "apply.form.validation_summary".localized(bundle: .module),
         fieldCount
     )
-}
-
-private func applyFormProperty(from path: String) -> String? {
-    let components = path.split(separator: "/").map(String.init)
-    guard let index = components.firstIndex(of: "properties"),
-          components.indices.contains(index + 1) else {
-        return components.last
-    }
-    return components[index + 1]
 }

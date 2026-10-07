@@ -1,4 +1,5 @@
 import Foundation
+import SGForms
 import SGModels
 
 /// Fictional sample data for previews, snapshots and demo deep links.
@@ -22,30 +23,31 @@ public actor ApplyReferenceDataSource: GrantsDataSource {
     public init(
         scenario: Scenario,
         saveFailure: GrantsError? = nil,
-        submitFailure: GrantsError? = nil
+        submitFailure: GrantsError? = nil,
+        sf424Definition: FormDefinition? = nil
     ) {
         self.scenario = scenario
         self.saveFailure = saveFailure
         self.submitFailure = submitFailure
-        applicationFixture = Self.makeApplication(scenario: scenario)
+        applicationFixture = Self.makeApplication(scenario: scenario, sf424Definition: sf424Definition)
     }
 
     public static func progressStore(for scenario: Scenario) -> InMemoryFormProgressStore {
-        let initialSections: [String: Set<String>]
+        let initialSteps: [String: Set<String>]
         let completeForms: Set<String>
         switch scenario {
         case .inProgress:
-            initialSections = ["apply-demo/sf424": ["applicant", "project"]]
+            initialSteps = ["apply-demo/sf424": ["step-1", "step-2"]]
             completeForms = []
         case .allComplete:
-            initialSections = [:]
+            initialSteps = [:]
             completeForms = Set(Self.formIds)
         case .empty:
-            initialSections = [:]
+            initialSteps = [:]
             completeForms = []
         }
         return InMemoryFormProgressStore(
-            completedSections: initialSections,
+            completedSections: initialSteps,
             completeForms: completeForms
         )
     }
@@ -251,9 +253,29 @@ public actor ApplyReferenceDataSource: GrantsDataSource {
         ])
     }
 
-    private static func makeApplication(scenario: Scenario) -> Application {
+    private static func makeApplication(
+        scenario: Scenario,
+        sf424Definition: FormDefinition? = nil
+    ) -> Application {
         let allComplete = scenario == .allComplete
-        let applicationForms = forms.enumerated().map { index, form in
+        let applicationForms = forms.enumerated().map { index, storedForm in
+            let form: FormDefinition
+            if index == 0, let sf424Definition {
+                form = FormDefinition(
+                    formId: storedForm.formId,
+                    formName: sf424Definition.formName,
+                    shortFormName: sf424Definition.shortFormName,
+                    formVersion: sf424Definition.formVersion,
+                    formType: sf424Definition.formType,
+                    formJsonSchema: sf424Definition.formJsonSchema,
+                    formUiSchema: sf424Definition.formUiSchema,
+                    formRuleSchema: sf424Definition.formRuleSchema,
+                    agencyCode: sf424Definition.agencyCode,
+                    ombNumber: sf424Definition.ombNumber
+                )
+            } else {
+                form = storedForm
+            }
             let complete = allComplete || [1, 2, 4].contains(index)
             let response: JSONValue = index == 0
                 ? .object([
