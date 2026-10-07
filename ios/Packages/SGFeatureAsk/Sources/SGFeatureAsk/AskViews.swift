@@ -195,13 +195,20 @@ public struct AskHomeView: View {
     }
 
     private var suggestions: some View {
-        VStack(spacing: 0) {
-            ForEach(0..<4, id: \.self) { index in
+        let localizedSuggestions = [
+            "ask.home.suggestion.0".localized(bundle: .module),
+            "ask.home.suggestion.1".localized(bundle: .module),
+            "ask.home.suggestion.2".localized(bundle: .module),
+            "ask.home.suggestion.3".localized(bundle: .module)
+        ]
+
+        return VStack(spacing: 0) {
+            ForEach(Array(localizedSuggestions.enumerated()), id: \.offset) { index, suggestion in
                 Button {
-                    sendQuestion("ask.home.suggestion.\(index)".localized(bundle: .module))
+                    sendQuestion(suggestion)
                 } label: {
                     HStack(spacing: 12) {
-                        Text(verbatim: "ask.home.suggestion.\(index)".localized(bundle: .module))
+                        Text(verbatim: suggestion)
                             .font(SG.F.sans(16))
                             .foregroundStyle(SG.C.ink)
                             .multilineTextAlignment(.leading)
