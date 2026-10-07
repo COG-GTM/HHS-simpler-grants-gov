@@ -16,6 +16,10 @@ let package = Package(
             name: "SGFeatureSearch",
             dependencies: ["SGModels", "SGDesign", "SGCore"],
             resources: [.process("Resources/Localization")]
+        ),
+        .testTarget(
+            name: "SGFeatureSearchTests",
+            dependencies: ["SGFeatureSearch", "SGModels"]
         )
     ],
     swiftLanguageVersions: [.v5]
