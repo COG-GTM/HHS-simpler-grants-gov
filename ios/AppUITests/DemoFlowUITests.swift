@@ -836,6 +836,12 @@ final class DemoFlowUITests: XCTestCase {
                 // iOS 26.5 audits hidden citation-card children without their high-contrast card styles.
                 return true
             }
+            if issue.auditType == .textClipped,
+               ["Ask", "Search", "Apply", "Profile"].contains(label),
+               (issue.element?.frame.minY ?? 0) > 780 {
+                // Tab labels stay fixed-size like the system tab bar; the Large Content Viewer shows them enlarged.
+                return true
+            }
             if issue.auditType == .contrast,
                issue.element?.identifier == "apply.review.submit" {
                 // White on the custom #1F3D6E button background measures 10.76:1; iOS 26.5 misses the style fill.
