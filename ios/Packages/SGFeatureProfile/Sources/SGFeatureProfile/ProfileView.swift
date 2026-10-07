@@ -7,6 +7,7 @@ public struct ProfileView: View {
     @Environment(SessionStore.self) private var session
     @Environment(AppRouter.self) private var router
     @Environment(\.grantsDataSource) private var dataSource
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     private let appEnvironment = AppEnvironment()
     @State private var model: ProfileModel
     @AppStorage("sg.profile.notifications.deadlines") private var deadlinesEnabled = true
@@ -101,14 +102,7 @@ public struct ProfileView: View {
                             .font(SG.F.serif(17))
                             .foregroundStyle(SG.C.ink)
                             .fixedSize(horizontal: false, vertical: true)
-                        HStack(alignment: .top, spacing: SG.S.l) {
-                            fact(
-                                title: "profile.organization.uei",
-                                value: model.organization?.samGovEntity?.uei ?? "profile.value_unavailable".localized(bundle: .module),
-                                monospaced: true
-                            )
-                            samStatus
-                        }
+                        organizationIdentifiers
                     }
                 }
             }
@@ -210,13 +204,31 @@ public struct ProfileView: View {
                     Text(status.localizedText)
                         .font(SG.F.sans(13, .semibold))
                         .foregroundStyle(status.tintColor)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.6)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
+        }
+    }
+
+    @ViewBuilder
+    private var organizationIdentifiers: some View {
+        let uei = fact(
+            title: "profile.organization.uei",
+            value: model.organization?.samGovEntity?.uei ?? "profile.value_unavailable".localized(bundle: .module),
+            monospaced: true
+        )
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: SG.S.m) {
+                uei
+                samStatus
+            }
+        } else {
+            HStack(alignment: .top, spacing: SG.S.l) {
+                uei
+                samStatus
+            }
         }
     }
 

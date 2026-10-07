@@ -9,8 +9,7 @@ let package = Package(
     dependencies: [
         .package(path: "../SGModels"),
         .package(path: "../SGDesign"),
-        .package(path: "../SGCore"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.17.6")
+        .package(path: "../SGCore")
     ],
     targets: [
         .target(
@@ -24,8 +23,7 @@ let package = Package(
                 "SGFeatureOnboarding",
                 "SGModels",
                 "SGCore",
-                "SGDesign",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+                "SGDesign"
             ]
         )
     ],

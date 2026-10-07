@@ -1,6 +1,7 @@
 #if canImport(UIKit)
 import SGCore
 import SGDesign
+import SGFeatureOnboarding
 @testable import SGFeatureProfile
 import SGModels
 import SnapshotTesting
@@ -9,7 +10,7 @@ import UIKit
 import XCTest
 
 @MainActor
-final class ProfileRoadmapSnapshotTests: XCTestCase {
+final class OnboardingProfileSnapshotTests: XCTestCase {
     private static var fontsRegistered = false
     private static let recordSnapshots = false
 
@@ -20,13 +21,57 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
         Self.fontsRegistered = true
     }
 
+    func testWelcome() {
+        assertView(WelcomeView(), named: "welcome")
+    }
+
+    func testSignInIdle() {
+        let view = SignInView(
+            model: OnboardingFlowModel(isSignInPresented: true),
+            onFinish: { _ in }
+        )
+        .environment(SessionStore(authenticator: PreviewAuthenticator()))
+        assertView(view, named: "sign-in-idle")
+    }
+
+    func testSignInLoading() {
+        let model = OnboardingFlowModel(
+            isSignInPresented: true,
+            phase: .loading(pivRequired: false)
+        )
+        let view = SignInView(model: model, onFinish: { _ in })
+            .environment(SessionStore(authenticator: PreviewAuthenticator()))
+        assertView(view, named: "sign-in-loading")
+    }
+
+    func testSignInError() {
+        let model = OnboardingFlowModel(
+            isSignInPresented: true,
+            phase: .failed(.unauthorized)
+        )
+        let view = SignInView(model: model, onFinish: { _ in })
+            .environment(SessionStore(authenticator: PreviewAuthenticator()))
+        assertView(view, named: "sign-in-error")
+    }
+
+    func testSignInIdleAtXXXL() {
+        let view = SignInView(
+            model: OnboardingFlowModel(isSignInPresented: true),
+            onFinish: { _ in }
+        )
+        .environment(SessionStore(authenticator: PreviewAuthenticator()))
+        let traits = UITraitCollection(
+            preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
+        )
+        assertView(view, named: "sign-in-idle-xxxl", traits: traits)
+    }
+
     func testProfileSignedIn() async {
         let dataSource = ProfileSnapshotDataSource()
         let model = ProfileModel()
         await model.load(from: dataSource, userId: "sample-dana-reyes")
         let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
         await session.signIn(pivRequired: false)
-
         assertView(
             profileView(model: model, session: session, dataSource: dataSource),
             named: "profile-signed-in"
@@ -38,7 +83,6 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
         let model = ProfileModel()
         let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
         session.continueAsGuest()
-
         assertView(
             profileView(model: model, session: session, dataSource: dataSource),
             named: "profile-guest"
@@ -51,16 +95,47 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
         await model.load(from: dataSource, userId: "sample-dana-reyes")
         let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
         await session.signIn(pivRequired: false)
-
         assertView(
             profileView(model: model, session: session, dataSource: dataSource),
             named: "profile-expiring-sam"
         )
     }
 
+    func testProfileExpiringSAMAtXXXL() async {
+        let dataSource = ProfileSnapshotDataSource(expirationDate: "2026-11-06")
+        let model = ProfileModel()
+        await model.load(from: dataSource, userId: "sample-dana-reyes")
+        let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
+        await session.signIn(pivRequired: false)
+        let traits = UITraitCollection(
+            preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
+        )
+        assertView(
+            profileView(model: model, session: session, dataSource: dataSource),
+            named: "profile-expiring-sam-xxxl",
+            traits: traits
+        )
+    }
+
+    func testProfileSignedInAtXXXL() async {
+        let dataSource = ProfileSnapshotDataSource()
+        let model = ProfileModel()
+        await model.load(from: dataSource, userId: "sample-dana-reyes")
+        let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
+        await session.signIn(pivRequired: false)
+        let traits = UITraitCollection(
+            preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
+        )
+        assertView(
+            profileView(model: model, session: session, dataSource: dataSource),
+            named: "profile-signed-in-xxxl",
+            traits: traits
+        )
+    }
+
     func testRoadmap() throws {
         let content = try RoadmapContent.loadBundled()
-        let suiteName = "ProfileRoadmapSnapshotTests.\(UUID().uuidString)"
+        let suiteName = "OnboardingProfileSnapshotTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
         defer { defaults.removePersistentDomain(forName: suiteName) }
         let view = RoadmapView(
@@ -72,7 +147,7 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
 
     func testRoadmapAtXXXL() throws {
         let content = try RoadmapContent.loadBundled()
-        let suiteName = "ProfileRoadmapSnapshotTests.\(UUID().uuidString)"
+        let suiteName = "OnboardingProfileSnapshotTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
         defer { defaults.removePersistentDomain(forName: suiteName) }
         let traits = UITraitCollection(
@@ -87,21 +162,19 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
         assertView(view, named: "roadmap-xxxl", traits: traits)
     }
 
-    func testProfileSignedInAtXXXL() async {
-        let dataSource = ProfileSnapshotDataSource()
-        let model = ProfileModel()
-        await model.load(from: dataSource, userId: "sample-dana-reyes")
-        let session = SessionStore(authenticator: ProfileSnapshotAuthenticator())
-        await session.signIn(pivRequired: false)
+    func testRoadmapAtXXXLTop() throws {
+        let content = try RoadmapContent.loadBundled()
+        let suiteName = "OnboardingProfileSnapshotTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
         let traits = UITraitCollection(
             preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
         )
-
-        assertView(
-            profileView(model: model, session: session, dataSource: dataSource),
-            named: "profile-signed-in-xxxl",
-            traits: traits
+        let view = RoadmapView(
+            content: content,
+            voteStore: RoadmapVoteStore(defaults: defaults)
         )
+        assertView(view, named: "roadmap-xxxl-top", traits: traits)
     }
 
     private func profileView(
