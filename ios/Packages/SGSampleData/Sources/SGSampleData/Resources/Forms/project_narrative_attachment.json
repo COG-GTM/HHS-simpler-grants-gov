@@ -1,0 +1,53 @@
+{
+  "agency_code": "SGG",
+  "form_id": "32165da2-354d-42c0-a986-cf4f2f350039",
+  "form_json_schema": {
+    "properties": {
+      "attachments": {
+        "description": "At least one file must be attached",
+        "items": {
+          "allOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            }
+          ]
+        },
+        "maxItems": 100,
+        "minItems": 1,
+        "title": "Project Narrative Files",
+        "type": "array"
+      }
+    },
+    "required": [
+      "attachments"
+    ],
+    "type": "object"
+  },
+  "form_name": "Project Narrative Attachment Form",
+  "form_rule_schema": {
+    "attachments": {
+      "gg_validation": {
+        "rule": "attachment"
+      }
+    }
+  },
+  "form_type": "ProjectNarrativeAttachment",
+  "form_ui_schema": [
+    {
+      "children": [
+        {
+          "definition": "/properties/attachments",
+          "type": "field",
+          "widget": "AttachmentArray"
+        }
+      ],
+      "label": "1. Project Narrative File(s)",
+      "name": "projectNarrativeFiles",
+      "type": "section"
+    }
+  ],
+  "form_version": "1.2",
+  "omb_number": null,
+  "short_form_name": "ProjectNarrativeAttachments_1_2"
+}

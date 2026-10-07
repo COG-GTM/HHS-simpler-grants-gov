@@ -37,7 +37,16 @@
         <false/>
     </dict>
     <key>UILaunchScreen</key>
-    <dict/>
+    <dict>
+        <key>UIColorName</key>
+        <string>LaunchBackground</string>
+        <key>UIImageName</key>
+        <string>LaunchBackgroundWordmark</string>
+        <key>UIImageRespectsSafeAreaInsets</key>
+        <true/>
+    </dict>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>UIUserInterfaceStyle</key>
     <string>Light</string>
     <key>UISupportedInterfaceOrientations</key>
