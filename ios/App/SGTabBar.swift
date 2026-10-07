@@ -36,13 +36,13 @@ struct SGTabBar: View {
             VStack(spacing: 2) {
                 Image(systemName: symbol)
                     .symbolVariant(.none)
-                    .font(.system(size: tabIconSize, weight: .regular))
+                    .font(.system(size: min(tabIconSize, 30), weight: .regular))
                     .frame(minHeight: 25)
                     .accessibilityHidden(true)
                 Text(title)
-                    .font(.custom("PublicSans-Medium", size: tabLabelSize))
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .font(.custom("PublicSans-Medium", size: min(tabLabelSize, 14)))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                     .accessibilityHidden(true)
             }
             .foregroundStyle(isSelected ? selectedColor : unselectedColor)
@@ -52,6 +52,10 @@ struct SGTabBar: View {
             .accessibilityElement(children: .ignore)
         }
         .buttonStyle(.plain)
+        .accessibilityShowsLargeContentViewer {
+            Image(systemName: symbol)
+            Text(title)
+        }
         .accessibilityLabel(title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityIdentifier("shell.tab.\(identifier)")
