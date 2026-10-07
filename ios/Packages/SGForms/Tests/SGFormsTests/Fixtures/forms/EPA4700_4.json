@@ -1,0 +1,594 @@
+{
+  "agency_code": "SGG",
+  "form_id": "4f0b0974-9a16-490b-a0f2-d03dfdc26ecd",
+  "form_json_schema": {
+    "$defs": {
+      "civil_rights_lawsuit_question": {
+        "maxLength": 4000,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "properties": {
+      "applicant_address": {
+        "properties": {
+          "address": {
+            "maxLength": 110,
+            "minLength": 1,
+            "title": "Address",
+            "type": "string"
+          },
+          "city": {
+            "allOf": [
+              {
+                "description": "Enter the city.",
+                "maxLength": 35,
+                "minLength": 1,
+                "title": "City",
+                "type": "string"
+              }
+            ]
+          },
+          "state": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "description": "US State or Territory Code",
+                    "enum": [
+                      "AL: Alabama",
+                      "AK: Alaska",
+                      "AZ: Arizona",
+                      "AR: Arkansas",
+                      "CA: California",
+                      "CO: Colorado",
+                      "CT: Connecticut",
+                      "DE: Delaware",
+                      "DC: District of Columbia",
+                      "FL: Florida",
+                      "GA: Georgia",
+                      "HI: Hawaii",
+                      "ID: Idaho",
+                      "IL: Illinois",
+                      "IN: Indiana",
+                      "IA: Iowa",
+                      "KS: Kansas",
+                      "KY: Kentucky",
+                      "LA: Louisiana",
+                      "ME: Maine",
+                      "MD: Maryland",
+                      "MA: Massachusetts",
+                      "MI: Michigan",
+                      "MN: Minnesota",
+                      "MS: Mississippi",
+                      "MO: Missouri",
+                      "MT: Montana",
+                      "NE: Nebraska",
+                      "NV: Nevada",
+                      "NH: New Hampshire",
+                      "NJ: New Jersey",
+                      "NM: New Mexico",
+                      "NY: New York",
+                      "NC: North Carolina",
+                      "ND: North Dakota",
+                      "OH: Ohio",
+                      "OK: Oklahoma",
+                      "OR: Oregon",
+                      "PA: Pennsylvania",
+                      "RI: Rhode Island",
+                      "SC: South Carolina",
+                      "SD: South Dakota",
+                      "TN: Tennessee",
+                      "TX: Texas",
+                      "UT: Utah",
+                      "VT: Vermont",
+                      "VA: Virginia",
+                      "WA: Washington",
+                      "WV: West Virginia",
+                      "WI: Wisconsin",
+                      "WY: Wyoming",
+                      "AS: American Samoa",
+                      "FM: Federated States of Micronesia",
+                      "GU: Guam",
+                      "MH: Marshall Islands",
+                      "MP: Northern Mariana Islands",
+                      "PW: Palau",
+                      "PR: Puerto Rico",
+                      "VI: Virgin Islands",
+                      "FQ: Baker Island",
+                      "HQ: Howland Island",
+                      "DQ: Jarvis Island",
+                      "JQ: Johnston Atoll",
+                      "KQ: Kingman Reef",
+                      "MQ: Midway Islands",
+                      "BQ: Navassa Island",
+                      "LQ: Palmyra Atoll",
+                      "WQ: Wake Island",
+                      "AA: Armed Forces Americas (except Canada)",
+                      "AE: Armed Forces Europe, the Middle East, and Canada",
+                      "AP: Armed Forces Pacific"
+                    ],
+                    "title": "State",
+                    "type": "string"
+                  }
+                ],
+                "description": "Enter the state.",
+                "title": "State"
+              }
+            ]
+          },
+          "zip_code": {
+            "allOf": [
+              {
+                "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                "maxLength": 30,
+                "minLength": 1,
+                "title": "Zip / Postal Code",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "address",
+          "city",
+          "state",
+          "zip_code"
+        ],
+        "type": "object"
+      },
+      "applicant_name": {
+        "allOf": [
+          {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Organization Name",
+            "type": "string"
+          }
+        ],
+        "title": "Name"
+      },
+      "applicant_signature": {
+        "properties": {
+          "aor_signature": {
+            "allOf": [
+              {
+                "description": "Completed by Grants.gov upon submission.",
+                "maxLength": 144,
+                "minLength": 1,
+                "title": "Signature",
+                "type": "string"
+              }
+            ],
+            "title": "A. Signature of Authorized Official"
+          },
+          "aor_title": {
+            "allOf": [
+              {
+                "description": "Enter the position title.",
+                "maxLength": 45,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            ],
+            "title": "B. Title of Authorized Official"
+          },
+          "submitted_date": {
+            "allOf": [
+              {
+                "description": "Completed by Grants.gov upon submission.",
+                "format": "date",
+                "title": "Submitted Date",
+                "type": "string"
+              }
+            ],
+            "title": "C. Date"
+          }
+        },
+        "required": [
+          "aor_title"
+        ],
+        "type": "object"
+      },
+      "civil_rights_lawsuit_question1": {
+        "allOf": [
+          {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          }
+        ],
+        "title": "List all pending civil rights lawsuits and administrative complaints filed under federal law against the applicant/recipient that allege discrimination based on race, color, national origin, sex, age, or disability. (Do not include employment complaints not covered by 40 C.F.R. Parts 5 and 7.)"
+      },
+      "civil_rights_lawsuit_question2": {
+        "allOf": [
+          {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          }
+        ],
+        "title": "List all civil rights lawsuits and administrative complaints decided against the applicant/recipient within the last year that alleged discrimination based on race, color, national origin, sex, age, or disability and enclose a copy of all decisions. Please describe all corrective actions taken. (Do not include employment complaints not covered by 40 C.F.R. Parts 5 and 7.)"
+      },
+      "civil_rights_lawsuit_question3": {
+        "allOf": [
+          {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          }
+        ],
+        "title": "List all civil rights compliance reviews of the applicant/recipient conducted under federal nondiscrimination laws by any federal agency within the last two years and enclose a copy of the review and any decisions, orders, or agreements based on the review. Please describe any corrective action taken. (40 C.F.R. \u00a7 7.80(c)(3))"
+      },
+      "construction_federal_assistance": {
+        "title": "Is the applicant requesting EPA assistance for new construction? If no, proceed to VII; if yes, answer (a) and/or (b) below",
+        "type": "boolean"
+      },
+      "construction_new_facilities": {
+        "title": "a. If the grant is for new construction, will all new facilities or alterations to existing facilities be designed and constructed to be readily accessible to and usable by persons with disabilities? If yes, proceed to VII; if no, proceed to VI(b)",
+        "type": "boolean"
+      },
+      "construction_new_facilities_explanation": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "b. If the grant is for new construction and the new facilities or alterations to existing facilities will not be readily accessible to and usable by persons with disabilities, explain how a regulatory exception (40 C.F.R. 7.70) applies.",
+        "type": "string"
+      },
+      "demographic_data": {
+        "title": "Does the applicant/recipient maintain demographic data on the race, color, national origin, sex, age, or disability status of the population it serves? (40 C.F.R. 7.85(a))",
+        "type": "boolean"
+      },
+      "federal_financial_assistance": {
+        "title": "Is the applicant currently receiving EPA Assistance?",
+        "type": "boolean"
+      },
+      "notice1": {
+        "title": "Does the applicant/recipient provide initial and continuing notice that it does not discriminate on the basis of race, color, national origin, sex, age, or disability in its program or activities? (40 C.F.R 5.140 and 7.95)",
+        "type": "boolean"
+      },
+      "notice2": {
+        "title": "a. Do the methods of notice accommodate those with impaired vision or hearing?",
+        "type": "boolean"
+      },
+      "notice3": {
+        "title": "b. Is the notice posted in a prominent place in the applicant's/recipient's website, in the offices or facilities or, for education programs and activities, in appropriate periodicals and other written communications?",
+        "type": "boolean"
+      },
+      "notice4": {
+        "title": "c. Does the notice identify a designated civil rights coordinator?",
+        "type": "boolean"
+      },
+      "point_of_contact_email": {
+        "allOf": [
+          {
+            "format": "email",
+            "maxLength": 60,
+            "title": "Email",
+            "type": "string"
+          }
+        ],
+        "title": "Email"
+      },
+      "point_of_contact_name": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Name",
+        "type": "string"
+      },
+      "point_of_contact_phone_number": {
+        "allOf": [
+          {
+            "maxLength": 25,
+            "minLength": 1,
+            "type": "string"
+          }
+        ],
+        "title": "Phone"
+      },
+      "point_of_contact_title": {
+        "allOf": [
+          {
+            "description": "Enter the position title.",
+            "maxLength": 45,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        ],
+        "title": "Title"
+      },
+      "policy": {
+        "title": "Does the applicant/recipient have a policy/procedure for providing meaningful access to services for persons with limited English proficiency? (Title VI, 40 C.F.R. Part 7, Lau v Nichols 414 U.S. (1974))",
+        "type": "boolean"
+      },
+      "policy_explanation": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "title": "If the applicant is an education program or activity, or has 15 or more employees, has it designated an employee to coordinate its compliance with 40 C.F.R. Parts 5 and 7? Provide the name, title, position, mailing address, e-mail address, fax number, and telephone number of the designated coordinator.",
+        "type": "string"
+      },
+      "program_explanation": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "title": "If the applicant is an education program or activity, or has 15 or more employees, has it adopted grievance procedures that assure the prompt and fair resolution of complaints that allege a violation of 40 C.F.R. Parts 5 and 7? Provide a legal citation or applicant's/ recipient's website address for, or a copy of, the procedures.",
+        "type": "string"
+      },
+      "sam_uei": {
+        "allOf": [
+          {
+            "maxLength": 12,
+            "minLength": 12,
+            "title": "SAM UEI",
+            "type": "string"
+          }
+        ],
+        "title": "Unique Entity Identifier (UEI)"
+      }
+    },
+    "required": [
+      "applicant_name",
+      "applicant_address",
+      "sam_uei",
+      "point_of_contact_name",
+      "point_of_contact_phone_number",
+      "point_of_contact_email",
+      "point_of_contact_title",
+      "applicant_signature"
+    ],
+    "type": "object"
+  },
+  "form_name": "EPA Form 4700-4",
+  "form_rule_schema": {
+    "applicant_signature": {
+      "aor_signature": {
+        "gg_post_population": {
+          "rule": "signature"
+        }
+      },
+      "submitted_date": {
+        "gg_post_population": {
+          "rule": "current_date"
+        }
+      }
+    },
+    "sam_uei": {
+      "gg_pre_population": {
+        "rule": "uei"
+      }
+    }
+  },
+  "form_type": "EPAForm4700-4",
+  "form_ui_schema": [
+    {
+      "children": [],
+      "description": "General. Recipients of Federal financial assistance from the U.S. Environmental Protection Agency must comply with the following statutes and regulations.\n\nTitle VI of the Civil Rights Acts of 1964 provides that no person in the United States shall, on the grounds of race, color, or national origin, be excluded from participation in, be denied the benefits of, or be subjected to discrimination under any program or activity receiving Federal financial assistance. The Act goes on to explain that the statute shall not be construed to authorize action with respect to any employment practice of any employer, employment agency, or labor organization (except where the primary objective of the Federal financial assistance is to provide employment). Section 13 of the 1972 Amendments to the Federal Water Pollution Control Act provides that no person in the United States shall on the ground of sex, be excluded from participation in, be denied the benefits of, or be subjected to discrimination under the Federal Water Pollution Control Act, as amended. Employment discrimination on the basis of sex is prohibited in all such programs or activities. Section 504 of the Rehabilitation Act of 1973 provides that no otherwise qualified individual with a disability in the United States shall solely by reason of disability be excluded from participation in, be denied the benefits of, or be subjected to discrimination under any program or activity receiving Federal financial assistance. Employment discrimination on the basis of disability is prohibited in all such programs or activities. The Age Discrimination Act of 1975 provides that no person on the basis of age shall be excluded from participation under any program or activity receiving Federal financial assistance. Employment discrimination is not covered. Age discrimination in employment is prohibited by the Age Discrimination in Employment Act administered by the Equal Employment Opportunity Commission. Title IX of the Education Amendments of 1972 provides that no person in the United States on the basis of sex shall be excluded from participation in, be denied the benefits of, or be subjected to discrimination under any education program or activity receiving Federal financial assistance. Employment discrimination on the basis of sex is prohibited in all such education programs or activities. Note: an education program or activity is not limited to only those conducted by a formal institution. 40 C.F.R. Part 5 implements Title IX of the Education Amendments of 1972. 40 C.F.R. Part 7 implements Title VI of the Civil Rights Act of 1964, Section 13 of the 1972 Amendments to the Federal Water Pollution Control Act, and Section 504 of The Rehabilitation Act of 1973.\n\nItems \"Applicant\" means any entity that files an application or unsolicited proposal or otherwise requests EPA assistance. 40 C.F.R. \u00a7\u00a7 5.105, 7.25. \"Recipient\" means any State or its political subdivision, any instrumentality of a State or its political subdivision, any public or private agency, institution, organizations, or other entity, or any person to which Federal financial assistance is extended directly or through another recipient, including any successor, assignee, or transferee of a recipient, but excluding the ultimate beneficiary of the assistance. 40 C.F.R. \u00a7\u00a7 5.105, 7.25. \"Civil rights lawsuits and administrative complaints\" means any lawsuit or administrative complaint alleging discrimination on the basis of race, color, national origin, sex, age, or disability pending or decided against the applicant and/or entity which actually benefits from the grant, but excluding employment complaints not covered by 40 C.F.R. Parts 5 and 7. For example, if a city is the named applicant but the grant will actually benefit the Department of Sewage, civil rights lawsuits involving both the city and the Department of Sewage should be listed. \"Civil rights compliance review\" means: any federal agency-initiated investigation of a particular aspect of the applicant's and/or recipient's programs or activities to determine compliance with the federal non-discrimination laws. Submit this form with the original and required copies of applications, requests for extensions, requests for increase of funds, etc. Updates of information are all that are required after the initial application submission. If any item is not relevant to the project for which assistance is requested, write \"NA\" for \"Not Applicable.\" In the event applicant is uncertain about how to answer any questions, EPA program officials should be contacted for clarification.",
+      "label": "Instructions for EPA Form 4700-4 (Rev. 04/2021)",
+      "name": "instructions",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/applicant_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/applicant_address/properties/address",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/applicant_address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/applicant_address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/applicant_address/properties/zip_code",
+          "type": "field"
+        }
+      ],
+      "label": "I. A. Applicant/Recipient (Name, Address, City, State, Zip Code)",
+      "name": "applicant",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/sam_uei",
+          "type": "null"
+        }
+      ],
+      "label": "I. B. Unique Entity Identifier (UEI)",
+      "name": "uei",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/point_of_contact_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/point_of_contact_phone_number",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/point_of_contact_email",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/point_of_contact_title",
+          "type": "field"
+        }
+      ],
+      "label": "I. C. Applicant/Recipient Point of Contact",
+      "name": "poc",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/federal_financial_assistance",
+          "type": "field",
+          "widget": "Radio"
+        }
+      ],
+      "label": "II",
+      "name": "section ii",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/civil_rights_lawsuit_question1",
+          "type": "field"
+        }
+      ],
+      "label": "III",
+      "name": "section iii",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/civil_rights_lawsuit_question2",
+          "type": "field"
+        }
+      ],
+      "label": "IV",
+      "name": "section iv",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/civil_rights_lawsuit_question3",
+          "type": "field"
+        }
+      ],
+      "label": "V",
+      "name": "section v",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/construction_federal_assistance",
+          "type": "field",
+          "widget": "Radio"
+        },
+        {
+          "definition": "/properties/construction_new_facilities",
+          "type": "field",
+          "widget": "Radio"
+        },
+        {
+          "definition": "/properties/construction_new_facilities_explanation",
+          "type": "field"
+        }
+      ],
+      "label": "VI",
+      "name": "section vi",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/notice1",
+          "type": "field",
+          "widget": "Radio"
+        },
+        {
+          "definition": "/properties/notice2",
+          "type": "field",
+          "widget": "Radio"
+        },
+        {
+          "definition": "/properties/notice3",
+          "type": "field",
+          "widget": "Radio"
+        },
+        {
+          "definition": "/properties/notice4",
+          "type": "field",
+          "widget": "Radio"
+        }
+      ],
+      "label": "VII",
+      "name": "section vii",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/demographic_data",
+          "type": "field",
+          "widget": "Radio"
+        }
+      ],
+      "label": "VIII",
+      "name": "section viii",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/policy",
+          "type": "field",
+          "widget": "Radio"
+        }
+      ],
+      "label": "IX",
+      "name": "section ix",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/policy_explanation",
+          "type": "field"
+        }
+      ],
+      "label": "X",
+      "name": "section x",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/program_explanation",
+          "type": "field"
+        }
+      ],
+      "label": "XI",
+      "name": "section xi",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/applicant_signature/properties/aor_signature",
+          "type": "null"
+        },
+        {
+          "definition": "/properties/applicant_signature/properties/aor_title",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/applicant_signature/properties/submitted_date",
+          "type": "null"
+        }
+      ],
+      "description": "I certify that the statements I have made on this form and all attachments thereto are true, accurate and complete. I acknowledge that any knowingly false or misleading statement may be punishable by fine or imprisonment or both under applicable law. I assure that I will fully comply with all applicable civil rights statutes and EPA regulations.",
+      "label": "For the Applicant/Recipient",
+      "name": "signature",
+      "type": "section"
+    }
+  ],
+  "form_version": "5.0",
+  "omb_number": "2030-0020",
+  "short_form_name": "EPA4700_4"
+}

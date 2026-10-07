@@ -1,0 +1,99 @@
+{
+  "agency_code": "SGG",
+  "form_id": "bf683068-23a4-43fa-ac7a-0f046b83cb14",
+  "form_json_schema": {
+    "properties": {
+      "applicant_name": {
+        "allOf": [
+          {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Organization Name",
+            "type": "string"
+          }
+        ],
+        "description": "This should match the 'Legal Name' field from the SF-424 form",
+        "title": "Applicant Name"
+      },
+      "assistance_listing_number": {
+        "maxLength": 15,
+        "minLength": 1,
+        "title": "Assistance Listing Number",
+        "type": "string"
+      },
+      "funding_opportunity_number": {
+        "maxLength": 40,
+        "minLength": 1,
+        "title": "Funding Opportunity Number",
+        "type": "string"
+      },
+      "project_abstract": {
+        "maxLength": 4000,
+        "minLength": 1,
+        "title": "Project Abstract",
+        "type": "string"
+      },
+      "project_title": {
+        "description": "This should match the 'Project Title' field from the SF-424 form",
+        "maxLength": 250,
+        "minLength": 1,
+        "title": "Descriptive Title of Applicant's Project",
+        "type": "string"
+      }
+    },
+    "required": [
+      "funding_opportunity_number",
+      "applicant_name",
+      "project_title",
+      "project_abstract"
+    ],
+    "type": "object"
+  },
+  "form_name": "Project Abstract Summary",
+  "form_rule_schema": {
+    "assistance_listing_number": {
+      "gg_pre_population": {
+        "rule": "assistance_listing_number"
+      }
+    },
+    "funding_opportunity_number": {
+      "gg_pre_population": {
+        "rule": "opportunity_number"
+      }
+    }
+  },
+  "form_type": "ProjectAbstractSummary",
+  "form_ui_schema": [
+    {
+      "children": [
+        {
+          "definition": "/properties/funding_opportunity_number",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/assistance_listing_number",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/applicant_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_title",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_abstract",
+          "type": "field"
+        }
+      ],
+      "description": "This Project Abstract Summary form must be submitted or the application will be considered incomplete. Ensure the Project Abstract field succinctly describes the project in plain language that the public can understand and use without the full proposal. Use 4,000 characters or less. Do not include personally identifiable, sensitive or proprietary information. Refer to Agency instructions for any additional Project Abstract field requirements. If the application is funded, your project abstract information (as submitted) will be made available to public websites and/or databases including USAspending.gov.",
+      "label": "1. Project Abstract Summary",
+      "name": "projectAbstractSummary",
+      "type": "section"
+    }
+  ],
+  "form_version": "2.0",
+  "omb_number": "4040-0019",
+  "short_form_name": "Project_AbstractSummary_2_0"
+}
