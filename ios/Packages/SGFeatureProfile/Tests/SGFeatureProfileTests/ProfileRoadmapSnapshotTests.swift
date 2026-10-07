@@ -1,7 +1,7 @@
 #if canImport(UIKit)
 import SGCore
 import SGDesign
-import SGFeatureProfile
+@testable import SGFeatureProfile
 import SGModels
 import SnapshotTesting
 import SwiftUI
@@ -68,6 +68,23 @@ final class ProfileRoadmapSnapshotTests: XCTestCase {
             voteStore: RoadmapVoteStore(defaults: defaults)
         )
         assertView(view, named: "roadmap")
+    }
+
+    func testRoadmapAtXXXL() throws {
+        let content = try RoadmapContent.loadBundled()
+        let suiteName = "ProfileRoadmapSnapshotTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let traits = UITraitCollection(
+            preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
+        )
+        let targetID = try XCTUnwrap(content.sections.first?.items.first?.id)
+        let view = RoadmapView(
+            content: content,
+            voteStore: RoadmapVoteStore(defaults: defaults),
+            initialScrollTarget: targetID
+        )
+        assertView(view, named: "roadmap-xxxl", traits: traits)
     }
 
     func testProfileSignedInAtXXXL() async {

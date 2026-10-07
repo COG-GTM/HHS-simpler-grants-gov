@@ -53,6 +53,7 @@ struct PrimaryButton: ButtonStyle {
             .font(SG.F.button)
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity, minHeight: 52)
+            .fixedSize(horizontal: false, vertical: true)
             .background(
                 enabled ? (configuration.isPressed ? SG.C.navyPress : SG.C.navy) : SG.C.disabled,
                 in: RoundedRectangle(cornerRadius: SG.R.button, style: .continuous)

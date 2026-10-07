@@ -3,8 +3,10 @@ import SwiftUI
 
 public struct RoadmapView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.openURL) private var openURL
     private let content: RoadmapContent
+    private let initialScrollTarget: String?
     @State private var voteStore: RoadmapVoteStore
     @State private var feedbackMessage = ""
     @State private var feedbackOpened: Bool?
@@ -12,12 +14,22 @@ public struct RoadmapView: View {
     public init() {
         self.init(
             content: (try? RoadmapContent.loadBundled()) ?? RoadmapContent(sections: []),
-            voteStore: RoadmapVoteStore()
+            voteStore: RoadmapVoteStore(),
+            initialScrollTarget: nil
         )
     }
 
     public init(content: RoadmapContent, voteStore: RoadmapVoteStore) {
+        self.init(content: content, voteStore: voteStore, initialScrollTarget: nil)
+    }
+
+    init(
+        content: RoadmapContent,
+        voteStore: RoadmapVoteStore,
+        initialScrollTarget: String?
+    ) {
         self.content = content
+        self.initialScrollTarget = initialScrollTarget
         _voteStore = State(initialValue: voteStore)
     }
 
@@ -31,43 +43,49 @@ public struct RoadmapView: View {
             )
             .padding(.horizontal, SG.S.margin)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: SG.S.xl) {
-                    VStack(alignment: .leading, spacing: SG.S.s) {
-                        Text("roadmap.title".localized(bundle: .module))
-                            .font(SG.F.largeTitle)
-                            .foregroundStyle(SG.C.ink)
-                            .accessibilityAddTraits(.isHeader)
-                        Text("roadmap.intro".localized(bundle: .module))
-                            .font(SG.F.bodyText)
-                            .foregroundStyle(SG.C.muted)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text("roadmap.vote.caption".localized(bundle: .module))
-                            .font(SG.F.caption)
-                            .foregroundStyle(SG.C.muted)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-
-                    ForEach(content.sections) { section in
-                        VStack(alignment: .leading, spacing: SG.S.m) {
-                            Text(section.title)
-                                .font(SG.F.section)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: SG.S.xl) {
+                        VStack(alignment: .leading, spacing: SG.S.s) {
+                            Text("roadmap.title".localized(bundle: .module))
+                                .font(SG.F.largeTitle)
                                 .foregroundStyle(SG.C.ink)
                                 .accessibilityAddTraits(.isHeader)
-                                .accessibilityIdentifier("roadmap.section.\(section.id)")
-                            ForEach(section.items) { item in
-                                roadmapCard(item)
+                            Text("roadmap.intro".localized(bundle: .module))
+                                .font(SG.F.bodyText)
+                                .foregroundStyle(SG.C.muted)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text("roadmap.vote.caption".localized(bundle: .module))
+                                .font(SG.F.caption)
+                                .foregroundStyle(SG.C.muted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        ForEach(content.sections) { section in
+                            VStack(alignment: .leading, spacing: SG.S.m) {
+                                Text(section.title)
+                                    .font(SG.F.section)
+                                    .foregroundStyle(SG.C.ink)
+                                    .accessibilityAddTraits(.isHeader)
+                                    .accessibilityIdentifier("roadmap.section.\(section.id)")
+                                ForEach(section.items) { item in
+                                    roadmapCard(item)
+                                }
                             }
                         }
-                    }
 
-                    feedbackSection
+                        feedbackSection
+                    }
+                    .padding(.horizontal, SG.S.margin)
+                    .padding(.top, SG.S.s)
+                    .padding(.bottom, SG.S.xl)
                 }
-                .padding(.horizontal, SG.S.margin)
-                .padding(.top, SG.S.s)
-                .padding(.bottom, SG.S.xl)
+                .scrollBounceBehavior(.basedOnSize)
+                .onAppear {
+                    guard let initialScrollTarget else { return }
+                    proxy.scrollTo(initialScrollTarget, anchor: .top)
+                }
             }
-            .scrollBounceBehavior(.basedOnSize)
         }
         .background(SG.C.canvas.ignoresSafeArea())
         .sgHideNavigationBar()
@@ -101,6 +119,7 @@ public struct RoadmapView: View {
                 voteControl(for: item)
             }
         }
+        .id(item.id)
         .accessibilityIdentifier("roadmap.item.\(item.id)")
     }
 
@@ -115,8 +134,7 @@ public struct RoadmapView: View {
                         Image(systemName: "arrowtriangle.up.fill")
                             .font(SG.F.sans(11, .semibold))
                             .accessibilityHidden(true)
-                        Text(count, format: .number)
-                            .font(SG.F.sans(15, .semibold))
+                        voteCount(count)
                     }
                     .foregroundStyle(SG.C.navy)
                 }
@@ -135,6 +153,9 @@ public struct RoadmapView: View {
                 Text("roadmap.vote.released".localized(bundle: .module))
                     .font(SG.F.sans(15, .semibold))
                     .foregroundStyle(SG.C.subtle)
+                    .lineLimit(1)
+                    .fixedSize()
+                    .monospacedDigit()
             }
                 .accessibilityLabel("roadmap.vote.released_accessibility".localized(bundle: .module))
                 .accessibilityIdentifier("roadmap.vote.\(item.id)")
@@ -146,8 +167,8 @@ public struct RoadmapView: View {
         @ViewBuilder content: () -> Content
     ) -> some View {
         content()
-            .frame(width: 52)
-            .frame(minHeight: 52)
+            .padding(.horizontal, SG.S.s)
+            .frame(minWidth: 52, minHeight: 52)
             .background(
                 voted ? SG.C.navyTint : SG.C.surface,
                 in: RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -157,6 +178,19 @@ public struct RoadmapView: View {
                     .stroke(voted ? SG.C.navy : SG.C.control, lineWidth: voted ? 1.5 : 1)
             }
             .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    @ViewBuilder
+    private func voteCount(_ count: Int) -> some View {
+        let text = Text(count, format: .number)
+            .font(SG.F.sans(15, .semibold))
+            .lineLimit(1)
+            .fixedSize()
+        if dynamicTypeSize.isAccessibilitySize {
+            text.monospacedDigit()
+        } else {
+            text
+        }
     }
 
     private var feedbackSection: some View {

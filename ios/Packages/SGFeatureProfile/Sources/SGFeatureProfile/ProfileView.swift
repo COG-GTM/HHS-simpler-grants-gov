@@ -169,6 +169,9 @@ public struct ProfileView: View {
             Text(initials.isEmpty ? String(user.email.prefix(1)).uppercased() : initials.uppercased())
                 .font(SG.F.sans(20, .semibold))
                 .foregroundStyle(SG.C.navy)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                 .frame(width: 56, height: 56)
                 .background(SG.C.navyTint, in: Circle())
                 .accessibilityHidden(true)
@@ -197,6 +200,8 @@ public struct ProfileView: View {
                 Text("profile.organization.sam_gov".localized(bundle: .module))
                     .font(SG.F.sans(13))
                     .foregroundStyle(SG.C.subtle)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                 HStack(spacing: SG.S.xs) {
                     Image(systemName: status.iconName)
                         .font(SG.F.sans(12, .semibold))
@@ -205,6 +210,8 @@ public struct ProfileView: View {
                     Text(status.localizedText)
                         .font(SG.F.sans(13, .semibold))
                         .foregroundStyle(status.tintColor)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.6)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
