@@ -2,7 +2,7 @@
 import SGAsk
 import SGCore
 import SGDesign
-import SGFeatureAsk
+@testable import SGFeatureAsk
 import SGModels
 import SnapshotTesting
 import SwiftUI
@@ -61,8 +61,10 @@ final class AskSnapshotTests: XCTestCase {
     }
 
     func testAnswer() async throws {
+        let question = "We run a rural clinic and want to expand addiction treatment"
+        let answer = try await AskPreviewEngine(mode: .answer).answer(question, removing: [])
         let host = try await makeHost(
-            AnswerView(question: "We run a rural clinic and want to expand addiction treatment"),
+            AnswerView(question: question, preloaded: .answer(answer)),
             snapshotCase: #function,
             mode: .answer
         )
@@ -79,8 +81,10 @@ final class AskSnapshotTests: XCTestCase {
     }
 
     func testAnswerEmpty() async throws {
+        let question = "A question with no matching listings"
+        let answer = try await AskPreviewEngine(mode: .empty).answer(question, removing: [])
         let host = try await makeHost(
-            AnswerView(question: "A question with no matching listings"),
+            AnswerView(question: question, preloaded: .answer(answer)),
             snapshotCase: #function,
             mode: .empty
         )
@@ -89,7 +93,7 @@ final class AskSnapshotTests: XCTestCase {
 
     func testAnswerError() async throws {
         let host = try await makeHost(
-            AnswerView(question: "A question that cannot load"),
+            AnswerView(question: "A question that cannot load", preloaded: .failed),
             snapshotCase: #function,
             mode: .failure
         )
@@ -97,8 +101,10 @@ final class AskSnapshotTests: XCTestCase {
     }
 
     func testAnswerXXXL() async throws {
+        let question = "Rural clinic?"
+        let answer = try await AskPreviewEngine(mode: .answer).answer(question, removing: [])
         let host = try await makeHost(
-            AnswerView(question: "We run a rural clinic and want to expand addiction treatment"),
+            AnswerView(question: question, preloaded: .answer(answer)),
             snapshotCase: #function,
             mode: .answer,
             accessibilitySize: true

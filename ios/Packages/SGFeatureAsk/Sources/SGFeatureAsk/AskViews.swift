@@ -445,6 +445,11 @@ public struct AnswerView: View {
         case failed
     }
 
+    enum Preloaded {
+        case answer(AskAnswer)
+        case failed
+    }
+
     @Environment(AppRouter.self) private var router
     @Environment(\.askEngine) private var engine
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -453,15 +458,30 @@ public struct AnswerView: View {
     @AppStorage("sg.ask.eligibility") private var eligibilityRaw = EligibilityOption.nonprofit.rawValue
     @AppStorage("sg.ask.recentQuestions") private var recentQuestionsRaw = ""
     @State private var phase = Phase.loading
+    @State private var didSkipInitialLoad = false
     @State private var removedFilters: Set<InferredFilter> = []
     @State private var highlightedCitation: Int?
     @State private var followupText = ""
     @State private var reloadCounter = 0
     @FocusState private var followupFocused: Bool
     private let question: String
+    private let skipsInitialLoad: Bool
 
     public init(question: String) {
         self.question = question
+        self.skipsInitialLoad = false
+    }
+
+    init(question: String, preloaded: Preloaded) {
+        self.question = question
+        self.skipsInitialLoad = true
+
+        switch preloaded {
+        case let .answer(answer):
+            _phase = State(initialValue: .loaded(answer))
+        case .failed:
+            _phase = State(initialValue: .failed)
+        }
     }
 
     private var eligibility: EligibilityOption {
@@ -529,6 +549,10 @@ public struct AnswerView: View {
             followupComposer
         }
         .task(id: AnswerLoadKey(removedFilters: removedFilters, reloadCounter: reloadCounter)) {
+            if skipsInitialLoad && !didSkipInitialLoad {
+                didSkipInitialLoad = true
+                return
+            }
             await loadAnswer()
         }
         #if os(iOS)
