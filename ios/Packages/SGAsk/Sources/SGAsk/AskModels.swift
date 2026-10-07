@@ -39,6 +39,7 @@ public struct AskAnswer: Sendable, Hashable {
     public let citations: [Citation]
     public let totalMatches: Int
     public let droppedFilters: [InferredFilter]
+    public let droppedSearchQuery: Bool
 
     public init(
         question: String,
@@ -46,7 +47,8 @@ public struct AskAnswer: Sendable, Hashable {
         paragraphs: [AnswerParagraph],
         citations: [Citation],
         totalMatches: Int,
-        droppedFilters: [InferredFilter] = []
+        droppedFilters: [InferredFilter] = [],
+        droppedSearchQuery: Bool = false
     ) {
         self.question = question
         self.intent = intent
@@ -54,6 +56,7 @@ public struct AskAnswer: Sendable, Hashable {
         self.citations = citations
         self.totalMatches = totalMatches
         self.droppedFilters = droppedFilters
+        self.droppedSearchQuery = droppedSearchQuery
     }
 }
 

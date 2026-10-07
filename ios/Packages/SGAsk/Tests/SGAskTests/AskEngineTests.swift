@@ -137,6 +137,21 @@ final class AskEngineTests: XCTestCase {
         XCTAssertCitationInvariant(answer)
     }
 
+    func testEmptyQuerySkipsEquivalentORRequestBeforeR3() async throws {
+        let source = FakeGrantsDataSource(responses: [.empty, .empty])
+        let answer = try await engine(source).answer("grants for nonprofits")
+        let requests = await source.recordedRequests()
+
+        XCTAssertEqual(requests.count, 2)
+        XCTAssertNil(requests[0].query)
+        XCTAssertEqual(requests[0].queryOperator, "AND")
+        XCTAssertEqual(requests[0].filters.applicantType, ["nonprofits_non_higher_education_with_501c3"])
+        XCTAssertEqual(requests[1].queryOperator, "OR")
+        XCTAssertTrue(requests[1].filters.applicantType.isEmpty)
+        XCTAssertFalse(answer.droppedSearchQuery)
+        XCTAssertCitationInvariant(answer)
+    }
+
     func testSingleWordQuerySkipsEquivalentORRequest() async throws {
         let source = FakeGrantsDataSource(responses: [.empty, .response([sample(title: "Found result")], total: 1)])
         let answer = try await engine(source).answer("open housing")
@@ -146,6 +161,45 @@ final class AskEngineTests: XCTestCase {
         XCTAssertEqual(requests[0].query, "housing")
         XCTAssertEqual(requests[1].queryOperator, "OR")
         XCTAssertTrue(requests[1].filters.fundingCategory.isEmpty)
+        XCTAssertCitationInvariant(answer)
+    }
+
+    func testR4DropsQueryAndRestoresAllActiveFilters() async throws {
+        let result = sample(title: "Rural Treatment Program")
+        let source = FakeGrantsDataSource(responses: [.empty, .empty, .empty, .response([result], total: 1)])
+        let question = "We run a rural clinic and want to expand addiction treatment"
+        let answer = try await engine(source).answer(question)
+        let requests = await source.recordedRequests()
+
+        XCTAssertEqual(requests.count, 4)
+        XCTAssertEqual(requests[0].query, "rural clinic expand addiction treatment")
+        XCTAssertEqual(requests[3].queryOperator, "OR")
+        XCTAssertNil(requests[3].query)
+        XCTAssertEqual(requests[3].filters, requests[0].filters)
+        XCTAssertEqual(requests[3].filters.fundingCategory, ["agriculture", "health"])
+        XCTAssertEqual(requests[3].pagination.sortOrder.first?.orderBy, "post_date")
+        XCTAssertEqual(requests[3].pagination.sortOrder.first?.sortDirection, "descending")
+        XCTAssertTrue(answer.droppedSearchQuery)
+        XCTAssertTrue(answer.droppedFilters.isEmpty)
+        XCTAssertEqual(
+            answer.intent.inferredFilters.map(\.id),
+            ["fundingCategory:agriculture", "fundingCategory:health"]
+        )
+        XCTAssertCitationInvariant(answer)
+    }
+
+    func testR4IsNotAttemptedWithoutNonStatusFilters() async throws {
+        let source = FakeGrantsDataSource(responses: [.empty, .empty])
+        let answer = try await engine(source).answer("open clean water")
+        let requests = await source.recordedRequests()
+
+        XCTAssertEqual(requests.count, 2)
+        XCTAssertEqual(requests.map(\.queryOperator), ["AND", "OR"])
+        XCTAssertEqual(requests[0].query, "clean water")
+        XCTAssertEqual(requests[0].filters.opportunityStatus, ["posted"])
+        XCTAssertTrue(requests[0].filters.applicantType.isEmpty)
+        XCTAssertTrue(requests[0].filters.fundingCategory.isEmpty)
+        XCTAssertFalse(answer.droppedSearchQuery)
         XCTAssertCitationInvariant(answer)
     }
 
@@ -277,43 +331,48 @@ final class AskEngineTests: XCTestCase {
 
     func testGoldenTextRuralClinicScenario() async throws {
         let posted = sample(
-            title: "Rural Health Clinic Grant",
+            title: "Rural Communities Opioid Response Program – Implementation",
             code: "HHS-HRSA",
             status: .posted,
             summary: OpportunitySummary(
+                summaryDescription: "Expand access to medication-assisted treatment and recovery services in rural communities.",
                 closeDate: "2026-12-12",
                 awardCeiling: 1_000_000,
                 applicantTypes: ["nonprofits_non_higher_education_with_501c3", "county_governments"],
-                fundingCategories: ["health", "agriculture"]
+                fundingCategories: ["health"]
             )
         )
         let earlier = sample(
-            title: "Community Clinic Renewal",
-            code: "HHS-HRSA",
+            title: "Community Facilities Technical Assistance and Training",
+            code: "USDA",
             status: .posted,
             summary: OpportunitySummary(closeDate: "2026-10-30")
         )
         let forecast = sample(
-            title: "Rural Care Forecast",
-            code: "HHS-HRSA",
+            title: "Smart and Connected Communities",
+            code: "NSF",
             status: .forecasted,
             summary: OpportunitySummary(forecastedPostDate: "2027-03-01")
         )
         let source = FakeGrantsDataSource(responses: [.response([posted, earlier, forecast], total: 3)])
-        let answer = try await engine(source).answer("rural health clinic")
+        let answer = try await engine(source).answer("We run a rural clinic and want to expand addiction treatment")
         XCTAssertCitationInvariant(answer)
 
         XCTAssertEqual(render(answer), """
-        The closest match is HRSA's Rural Health Clinic Grant [1]. It's open to nonprofits and county governments and is listed under health and agriculture, with awards up to $1,000,000. Applications close December 12, 2026. [1]
+        The closest match is HRSA's Rural Communities Opioid Response Program – Implementation [1]. It's open to nonprofits and county governments and is listed under health, with awards up to $1,000,000. Applications close December 12, 2026. [1]
 
-        HRSA's Community Clinic Renewal [2] closes sooner, on October 30. [2] HRSA's Rural Care Forecast [3] is forecasted to open March 2027. [3]
+        USDA's Community Facilities Technical Assistance and Training [2] closes sooner, on October 30. [2] NSF's Smart and Connected Communities [3] is forecasted to open March 2027. [3]
         """)
     }
 
     func testGoldenTextSparseAndLargerAwards() async throws {
-        let sparse = sample(title: "Sparse match", code: "EPA", summary: OpportunitySummary(awardCeiling: 1_000_000))
+        let sparse = sample(
+            title: "Environmental Justice Community Change Grants",
+            code: "EPA",
+            summary: OpportunitySummary(awardCeiling: 1_000_000)
+        )
         let larger = sample(
-            title: "Larger award",
+            title: "Health Center Program – Service Expansion",
             code: "HHS",
             summary: OpportunitySummary(awardCeiling: 2_000_000)
         )
@@ -322,15 +381,15 @@ final class AskEngineTests: XCTestCase {
         XCTAssertCitationInvariant(answer)
 
         XCTAssertEqual(render(answer), """
-        The closest match is EPA's Sparse match [1]. Awards go up to $1,000,000. [1]
+        The closest match is EPA's Environmental Justice Community Change Grants [1]. Awards go up to $1,000,000. [1]
 
-        HHS's Larger award [2] offers larger awards, up to $2,000,000. [2]
+        HHS's Health Center Program – Service Expansion [2] offers larger awards, up to $2,000,000. [2]
         """)
     }
 
     func testGoldenTextClosingSoonResearch() async throws {
         let listing = sample(
-            title: "Research Award",
+            title: "Coastal Resilience Research Grants",
             code: "NOAA",
             status: .posted,
             summary: OpportunitySummary(
@@ -344,68 +403,8 @@ final class AskEngineTests: XCTestCase {
         XCTAssertCitationInvariant(answer)
 
         XCTAssertEqual(render(answer), """
-        The closest match is NOAA's Research Award [1]. It's listed under science and technology research, with awards up to $400,000. Applications close May 9, 2027. [1]
+        The closest match is NOAA's Coastal Resilience Research Grants [1]. It's listed under science and technology research, with awards up to $400,000. Applications close May 9, 2027. [1]
         """)
-    }
-
-    func testWritePreviewAnswerArtifactWhenRequested() async throws {
-        guard let artifactPath = ProcessInfo.processInfo.environment["SGASK_GOLDEN_ARTIFACT"] else { return }
-        let prompts = [
-            "Grants for a rural health clinic",
-            "Arts funding for a small nonprofit",
-            "Climate resilience projects for my city",
-            "Research funding for early-career scientists"
-        ]
-        let preview = PreviewDataSource()
-        var sections = ["# PreviewDataSource answers"]
-        for prompt in prompts {
-            let answer = try await AskEngine(dataSource: preview, locale: locale, reranker: nil).answer(prompt)
-            let answerText = render(answer)
-            let result = answerText.isEmpty
-                ? "_No matches in PreviewDataSource (\(answer.totalMatches) total); answer has no paragraphs or citations._"
-                : answerText
-            sections.append("## \(prompt)\n\n\(result)")
-            XCTAssertCitationInvariant(answer)
-        }
-        let first = sample(
-            title: "Artifact rural clinic",
-            code: "HHS-HRSA",
-            status: .posted,
-            summary: OpportunitySummary(closeDate: "2026-12-12", awardCeiling: 1_000_000)
-        )
-        let sooner = sample(title: "Artifact earlier clinic", code: "HRSA", summary: OpportunitySummary(closeDate: "2026-10-30"))
-        let forecast = sample(
-            title: "Artifact forecast clinic",
-            code: "EPA",
-            status: .forecasted,
-            summary: OpportunitySummary(forecastedPostDate: "2027-03-01")
-        )
-        let sparse = sample(title: "Artifact sparse", code: "EPA", summary: OpportunitySummary(awardCeiling: 1_000_000))
-        let larger = sample(title: "Artifact larger", code: "HHS", summary: OpportunitySummary(awardCeiling: 2_000_000))
-        let closingResearch = sample(
-            title: "Artifact research",
-            code: "NOAA",
-            summary: OpportunitySummary(
-                closeDate: "2027-05-09",
-                awardCeiling: 400_000,
-                fundingCategories: ["science_technology_and_other_research_and_development"]
-            )
-        )
-        let goldenScenarios: [(String, [Opportunity])] = [
-            ("Rural clinic", [first, sooner, forecast]),
-            ("Sparse top and larger second award", [sparse, larger]),
-            ("Closing soon research", [closingResearch])
-        ]
-        for (title, listings) in goldenScenarios {
-            let scripted = FakeGrantsDataSource(responses: [.response(listings, total: listings.count)])
-            let answer = try await engine(scripted).answer(title == "Closing soon research" ? "closing soon research" : "rural health clinic")
-            sections.append("## \(title)\n\n\(render(answer))")
-        }
-        try FileManager.default.createDirectory(
-            at: URL(fileURLWithPath: artifactPath).deletingLastPathComponent(),
-            withIntermediateDirectories: true
-        )
-        try sections.joined(separator: "\n\n").write(toFile: artifactPath, atomically: true, encoding: .utf8)
     }
 
     private func engine(_ source: FakeGrantsDataSource) -> AskEngine {

@@ -52,6 +52,7 @@ public struct AskEngine: AskAnswering {
         var response: SearchResponse?
         var successfulFilters = activeFilters
         var droppedFilters: [InferredFilter] = []
+        var droppedSearchQuery = false
 
         for (index, request) in requests.enumerated() {
             if tried.contains(where: { equivalent($0, request, singleTokenQuery: requestParts.query) }) {
@@ -95,6 +96,28 @@ public struct AskEngine: AskAnswering {
             }
         }
 
+        if response == nil,
+           requestParts.query != nil,
+           activeFilters.contains(where: { $0.kind == .applicantType || $0.kind == .fundingCategory }) {
+            let querylessRequest = makeRequest(
+                parts: SearchRequestParts(
+                    query: nil,
+                    filters: makeFilters(activeFilters, defaultStatus: defaultStatus)
+                ),
+                queryOperator: "OR",
+                sortByCloseDate: sortByCloseDate
+            )
+            if !tried.contains(where: { equivalent($0, querylessRequest, singleTokenQuery: requestParts.query) }) {
+                tried.append(querylessRequest)
+                let result = try await dataSource.searchOpportunities(querylessRequest)
+                if !result.data.isEmpty {
+                    response = result
+                    successfulFilters = activeFilters
+                    droppedSearchQuery = true
+                }
+            }
+        }
+
         guard let response else {
             return AskAnswer(
                 question: question,
@@ -132,7 +155,8 @@ public struct AskEngine: AskAnswering {
             paragraphs: paragraphs,
             citations: citations,
             totalMatches: response.paginationInfo.totalRecords ?? response.data.count,
-            droppedFilters: droppedFilters
+            droppedFilters: droppedFilters,
+            droppedSearchQuery: droppedSearchQuery
         )
     }
 
@@ -181,7 +205,11 @@ public struct AskEngine: AskAnswering {
     ) -> Bool {
         if lhs == rhs { return true }
         guard let singleTokenQuery,
-              singleTokenQuery.split(whereSeparator: \.isWhitespace).count == 1 else { return false }
+              singleTokenQuery.split(whereSeparator: \.isWhitespace).count <= 1 else {
+            return lhs.query == nil && rhs.query == nil
+                && lhs.filters == rhs.filters
+                && lhs.pagination == rhs.pagination
+        }
         return lhs.query == rhs.query
             && lhs.filters == rhs.filters
             && lhs.pagination == rhs.pagination
