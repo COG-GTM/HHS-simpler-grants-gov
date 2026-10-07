@@ -12,9 +12,9 @@
 "onboarding.sign_in.loading" = "Signing in…";
 "onboarding.sign_in.piv" = "Agency staff: sign in with PIV/CAC";
 "onboarding.sign_in.title" = "Sign in to Simpler.Grants.gov";
-"onboarding.welcome.body" = "Search every opportunity on Grants.gov, see if you're eligible, and apply for your organization in one place.";
+"onboarding.welcome.body" = "Explore sample grant opportunities, check eligibility, and walk through an application. This demo uses fictional listings and never submits to Grants.gov.";
 "onboarding.welcome.disclaimer" = "Demo app · not affiliated with or endorsed by Grants.gov";
 "onboarding.welcome.guest" = "Continue without an account";
-"onboarding.welcome.heading" = "Find federal funding by asking a question.";
+"onboarding.welcome.heading" = "Find and apply for federal grants — demo";
 "onboarding.welcome.overline" = "SIMPLER.GRANTS.GOV";
 "onboarding.welcome.sign_in" = "Sign in with Login.gov";
