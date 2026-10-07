@@ -1,0 +1,5 @@
+app_identifier("ai.cognition.demo.simplergrants")
+
+# There is no Apple Developer team yet; these are supplied only when available.
+team_id(ENV["FASTLANE_TEAM_ID"]) if ENV["FASTLANE_TEAM_ID"]
+apple_id(ENV["FASTLANE_APPLE_ID"]) if ENV["FASTLANE_APPLE_ID"]

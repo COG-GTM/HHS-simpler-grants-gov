@@ -96,8 +96,12 @@ class AuthHandler(
 
     # --- login.gov state ---
 
-    def create_login_gov_state(self, state_id: uuid.UUID, nonce: uuid.UUID) -> LoginGovState:
-        login_gov_state = LoginGovState(login_gov_state_id=state_id, nonce=nonce)
+    def create_login_gov_state(
+        self, state_id: uuid.UUID, nonce: uuid.UUID, login_client: str | None = None
+    ) -> LoginGovState:
+        login_gov_state = LoginGovState(
+            login_gov_state_id=state_id, nonce=nonce, login_client=login_client
+        )
         self.db_session.add(login_gov_state)
         return login_gov_state
 
