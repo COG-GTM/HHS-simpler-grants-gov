@@ -120,7 +120,7 @@ struct RootView: View {
         hasCompletedOnboarding = true
         switch result {
         case .signedIn:
-            Task { await sessionStore.signIn(pivRequired: false) }
+            break
         case .guest:
             sessionStore.continueAsGuest()
         }
