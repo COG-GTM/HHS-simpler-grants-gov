@@ -163,7 +163,7 @@ final class SearchSnapshotTests: XCTestCase {
             of: UIHostingController(rootView: view),
             as: .image(on: config, precision: 0.98, perceptualPrecision: 0.98),
             named: "results-loaded-xxxl",
-            record: true
+            record: false
         )
     }
 
@@ -177,7 +177,7 @@ final class SearchSnapshotTests: XCTestCase {
             of: UIHostingController(rootView: view),
             as: .image(on: config, precision: 0.98, perceptualPrecision: 0.98),
             named: name,
-            record: true
+            record: false
         )
     }
 }
