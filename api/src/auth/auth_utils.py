@@ -7,10 +7,13 @@ import flask
 from apiflask.exceptions import HTTPError
 
 from src.adapters.oauth.login_gov.login_gov_jwt import (
+    LoginClient,
+    MobileLoginNotConfiguredError,
     get_final_logout_redirect_uri,
     get_final_redirect_uri,
 )
 from src.api import response
+from src.api.route_utils import raise_flask_error
 
 logger = logging.getLogger(__name__)
 
@@ -26,12 +29,48 @@ def get_app_security_scheme() -> dict[str, Any]:
     }
 
 
+def set_request_login_client(login_client: LoginClient | None) -> None:
+    """Remember which client started the login flow for the rest of this request"""
+    if flask.has_app_context():
+        flask.g.login_client = login_client
+
+
+def get_request_login_client() -> LoginClient | None:
+    if not flask.has_app_context():
+        return None
+    return flask.g.get("login_client", None)
+
+
+def _login_error_redirect(
+    message: str | None, login_piv_required_error: str | None = None
+) -> flask.Response:
+    try:
+        redirect_uri = get_final_redirect_uri(
+            "error",
+            error_description=message,
+            login_piv_required_error=login_piv_required_error,
+            login_client=get_request_login_client(),
+        )
+    except MobileLoginNotConfiguredError:
+        # Never fall back to the web destination for a mobile client
+        logger.warning("Login flow failed for a mobile client without a mobile destination")
+        raise_flask_error(400, "Mobile login is not configured")
+
+    return response.redirect_response(redirect_uri)
+
+
 def with_login_redirect_error_handler() -> Callable[..., Callable[P, flask.Response]]:
     """Wrapper function to handle catching errors and redirecting
 
     Because several of our login functions don't have standard 2xx returns
     and instead redirect the user, we also redirect in the case of errors
     so that they stay on the frontend, but we pass errors along.
+
+    The error redirect goes to the destination of the client that started the flow
+    (see set_request_login_client). Errors raised before that client is known, such as
+    an unknown or invalid state on the callback, go to the web destination.
+    If the client is a mobile client without a configured destination, a 400 is
+    returned instead of a redirect.
 
     Usage::
 
@@ -51,6 +90,9 @@ def with_login_redirect_error_handler() -> Callable[..., Callable[P, flask.Respo
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> flask.Response:
             try:
                 return f(*args, **kwargs)
+            except MobileLoginNotConfiguredError:
+                logger.warning("Login flow started by a mobile client without a mobile destination")
+                raise_flask_error(400, "Mobile login is not configured")
             except HTTPError as e:
                 # HTTPError is what raise_flask_error raises
                 # and should encompass our "expected" errors
@@ -66,20 +108,15 @@ def with_login_redirect_error_handler() -> Callable[..., Callable[P, flask.Respo
                         extra={"error.message": e.message},
                     )
 
-                return response.redirect_response(
-                    get_final_redirect_uri(
-                        "error",
-                        error_description=message,
-                        login_piv_required_error=e.extra_data.get("login_piv_required_error", None),
-                    )
+                return _login_error_redirect(
+                    message,
+                    login_piv_required_error=e.extra_data.get("login_piv_required_error", None),
                 )
             except Exception:
                 # Any other exception, we'll just use a generic error message to be safe
                 # but this means an unexpected error occurred and we should log an error
                 logger.exception("Unexpected error occurred in login flow")
-                return response.redirect_response(
-                    get_final_redirect_uri("error", error_description=INTERNAL_ERROR)
-                )
+                return _login_error_redirect(INTERNAL_ERROR)
 
         return wrapper
 

@@ -77,6 +77,10 @@ class BaseLoginGovState(Base):
     # https://openid.net/specs/openid-connect-core-1_0.html#NonceNotes
     nonce: Mapped[uuid.UUID]
 
+    # The client (eg. web, ios) that started the login flow, see LoginClient.
+    # Null for flows started before this column existed, treated as web.
+    login_client: Mapped[str | None]
+
 
 class BaseLinkExternalUser(Base):
     __abstract__ = True
