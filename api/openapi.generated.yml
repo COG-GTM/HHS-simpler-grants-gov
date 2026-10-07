@@ -181,6 +181,20 @@ paths:
           type: boolean
           nullable: true
         required: false
+      - in: query
+        name: client
+        description: The client starting the login, which picks the configured final
+          destination. Defaults to web.
+        schema:
+          example: web
+          enum:
+          - web
+          - ios
+          type:
+          - string
+          - 'null'
+          nullable: true
+        required: false
       responses:
         '422':
           content:
@@ -193,6 +207,12 @@ paths:
             application/json:
               schema: {}
           description: Found
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+          description: Bad Request
       tags:
       - User v1 - Internal Only
       summary: User Login
@@ -15065,4 +15085,3 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
-

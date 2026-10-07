@@ -102,7 +102,17 @@ targets:
       - path: SnapshotTests
     dependencies:
       - target: SimplerGrants
+      - package: SGModels
       - package: SGDesign
+      - package: SGCore
+      - package: SGAsk
+      - package: SGForms
+      - package: SGSampleData
+      - package: SGFeatureOnboarding
+      - package: SGFeatureAsk
+      - package: SGFeatureSearch
+      - package: SGFeatureApply
+      - package: SGFeatureProfile
       - package: SwiftSnapshotTesting
         product: SnapshotTesting
     settings:

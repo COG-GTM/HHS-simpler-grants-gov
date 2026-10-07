@@ -11,7 +11,7 @@ public struct ParsedIntent: Sendable, Hashable {
 }
 
 public struct InferredFilter: Sendable, Hashable, Identifiable {
-    public enum Kind: String, Sendable, Hashable {
+    public enum Kind: String, Codable, Sendable, Hashable {
         case applicantType
         case fundingCategory
         case status
@@ -38,19 +38,25 @@ public struct AskAnswer: Sendable, Hashable {
     public let paragraphs: [AnswerParagraph]
     public let citations: [Citation]
     public let totalMatches: Int
+    public let droppedFilters: [InferredFilter]
+    public let droppedSearchQuery: Bool
 
     public init(
         question: String,
         intent: ParsedIntent,
         paragraphs: [AnswerParagraph],
         citations: [Citation],
-        totalMatches: Int
+        totalMatches: Int,
+        droppedFilters: [InferredFilter] = [],
+        droppedSearchQuery: Bool = false
     ) {
         self.question = question
         self.intent = intent
         self.paragraphs = paragraphs
         self.citations = citations
         self.totalMatches = totalMatches
+        self.droppedFilters = droppedFilters
+        self.droppedSearchQuery = droppedSearchQuery
     }
 }
 
@@ -65,10 +71,12 @@ public struct AnswerParagraph: Sendable, Hashable {
 public struct AnswerSegment: Sendable, Hashable {
     public let text: String
     public let citationIndex: Int?
+    public let emphasizedText: String?
 
-    public init(text: String, citationIndex: Int? = nil) {
+    public init(text: String, citationIndex: Int? = nil, emphasizedText: String? = nil) {
         self.text = text
         self.citationIndex = citationIndex
+        self.emphasizedText = emphasizedText
     }
 }
 

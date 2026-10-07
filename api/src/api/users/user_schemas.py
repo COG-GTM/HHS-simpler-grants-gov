@@ -3,6 +3,7 @@ from typing import Any
 
 from marshmallow import pre_dump
 
+from src.adapters.oauth.login_gov.login_gov_jwt import LoginClient
 from src.api.opportunities_v1.opportunity_schemas import (
     OpportunitySearchRequestV1Schema,
     SavedOpportunityResponseV1Schema,
@@ -127,6 +128,14 @@ class UserLoginSchema(Schema):
     piv_required = fields.Boolean(
         allow_none=True,
         metadata={"description": "Whether the user is required to use a PIV to login"},
+    )
+    client = fields.Enum(
+        LoginClient,
+        allow_none=True,
+        metadata={
+            "description": "The client starting the login, which picks the configured final destination. Defaults to web.",
+            "example": LoginClient.WEB.value,
+        },
     )
 
 

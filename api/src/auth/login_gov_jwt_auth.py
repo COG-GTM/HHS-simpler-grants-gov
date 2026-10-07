@@ -52,7 +52,8 @@ def get_login_gov_redirect_uri(
     encoded_params = urllib.parse.urlencode(url_params)
 
     # Add the state to the DB
-    AuthHandler(db_session).create_login_gov_state(state, nonce)
+    login_client = redirect_params.client.value if redirect_params.client is not None else None
+    AuthHandler(db_session).create_login_gov_state(state, nonce, login_client=login_client)
 
     return f"{config.login_gov_auth_endpoint}?{encoded_params}"
 
