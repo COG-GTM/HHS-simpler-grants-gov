@@ -100,7 +100,8 @@ final class ApplySnapshotTests: XCTestCase {
         assertApplySnapshot(
             ApplicationWorkspaceView(viewModel: viewModel)
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge),
-            named: "09_workspace_in_progress_xxxl"
+            named: "09_workspace_in_progress_xxxl",
+            size: CGSize(width: 390, height: 2400)
         )
     }
 
@@ -148,20 +149,22 @@ final class ApplySnapshotTests: XCTestCase {
     private func assertApplySnapshot<V: View>(
         _ view: V,
         named name: String,
+        size: CGSize? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
         let now = fixedNow
+        let size = size ?? snapshotSize
         let root = ApplySnapshotHost {
             view
-                .frame(width: snapshotSize.width, height: snapshotSize.height)
+                .frame(width: size.width, height: size.height)
                 .environment(\.timeZone, timeZone)
                 .environment(\.applyNow, { now })
         }
         assertSnapshot(
             matching: root,
-            as: .image(layout: .fixed(width: snapshotSize.width, height: snapshotSize.height)),
+            as: .image(layout: .fixed(width: size.width, height: size.height)),
             named: name,
             file: file,
             testName: testName,

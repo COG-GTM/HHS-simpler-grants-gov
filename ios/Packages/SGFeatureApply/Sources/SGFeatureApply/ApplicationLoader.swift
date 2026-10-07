@@ -5,7 +5,7 @@ import SGModels
 
 struct LoadedApplication {
     let application: Application
-    let opportunityNumber: String
+    let opportunityNumber: String?
     let opportunityTitle: String
     let agencyName: String?
     let organizationName: String
@@ -22,8 +22,18 @@ enum ApplicationLoader {
         progressStore: any FormProgressStore
     ) async throws -> LoadedApplication {
         let application = try await dataSource.application(id: applicationId)
+        let matchingSummary: ApplicationSummary?
+        if let summary, summary.applicationId == applicationId {
+            matchingSummary = summary
+        } else if application.competition.opportunityId == nil {
+            let summaries = try? await dataSource.applications()
+            matchingSummary = summaries?.first { $0.applicationId == applicationId }
+        } else {
+            matchingSummary = nil
+        }
+        let summaryOpportunity = matchingSummary?.competition.opportunity
         let opportunityId = application.competition.opportunityId
-            ?? summary?.competition.opportunity.opportunityId
+            ?? summaryOpportunity?.opportunityId
         let opportunity: OpportunityDetail?
         if let opportunityId {
             opportunity = try? await dataSource.opportunity(id: opportunityId)
@@ -75,24 +85,16 @@ enum ApplicationLoader {
             }
         }
 
-        let summaryOpportunity = summary?.competition.opportunity
         let title = [
             opportunity?.opportunityTitle,
             summaryOpportunity?.opportunityTitle,
             application.competition.competitionTitle,
-            summary?.competition.competitionTitle,
+            matchingSummary?.competition.competitionTitle,
             application.applicationName
         ]
         .compactMap { $0 }
         .first { !$0.isEmpty } ?? ""
-        let number = [
-            opportunity?.opportunityNumber,
-            summaryOpportunity?.opportunityId,
-            opportunityId,
-            Optional(application.competition.competitionId)
-        ]
-        .compactMap { $0 }
-        .first { !$0.isEmpty } ?? ""
+        let number = opportunity?.opportunityNumber.flatMap { $0.isEmpty ? nil : $0 }
         let agency = opportunity?.agencyName
             ?? opportunity?.topLevelAgencyName
             ?? summaryOpportunity?.agencyName
@@ -102,7 +104,7 @@ enum ApplicationLoader {
             opportunityTitle: title,
             agencyName: agency,
             organizationName: application.organization?.samGovEntity?.legalBusinessName
-                ?? summary?.organization?.samGovEntity?.legalBusinessName
+                ?? matchingSummary?.organization?.samGovEntity?.legalBusinessName
                 ?? "",
             requiredRows: required,
             optionalRows: optional

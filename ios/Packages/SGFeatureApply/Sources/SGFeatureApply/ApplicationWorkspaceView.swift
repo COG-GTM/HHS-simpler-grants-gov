@@ -102,10 +102,16 @@ extension View {
 private struct ApplyToolbarVisibilityModifier: ViewModifier {
     let hideTabBar: Bool
 
+    @ViewBuilder
     func body(content: Content) -> some View {
-        content
-            .toolbar(.hidden, for: .navigationBar)
-            .toolbar(hideTabBar ? .hidden : .visible, for: .tabBar)
+        if hideTabBar {
+            content
+                .toolbar(.hidden, for: .navigationBar)
+                .toolbar(.hidden, for: .tabBar)
+        } else {
+            content
+                .toolbar(.hidden, for: .navigationBar)
+        }
     }
 }
 #endif

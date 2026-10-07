@@ -24,10 +24,19 @@ public struct ApplyHomeView: View {
             if let viewModel {
                 switch viewModel.phase {
                 case .loaded:
-                    WorkspaceContent(
-                        viewModel: viewModel,
-                        applicationId: viewModel.loadedApplicationId ?? ""
-                    )
+                    VStack(spacing: 0) {
+                        Text("apply.home.title".localized(bundle: .module))
+                            .font(ApplyTheme.F.serif(34))
+                            .foregroundStyle(ApplyTheme.C.ink)
+                            .accessibilityAddTraits(.isHeader)
+                            .padding(.horizontal, ApplyTheme.S.margin)
+                            .padding(.top, 8)
+                            .padding(.bottom, 10)
+                        WorkspaceContent(
+                            viewModel: viewModel,
+                            applicationId: viewModel.loadedApplicationId ?? ""
+                        )
+                    }
                 case .empty:
                     EmptyStateView(
                         title: "apply.home.empty_title".localized(bundle: .module),

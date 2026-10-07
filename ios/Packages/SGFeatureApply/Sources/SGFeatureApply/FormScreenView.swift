@@ -161,7 +161,7 @@ public struct FormScreenView: View {
                                 },
                                 id: \.path
                             ) { field in
-                                verifiedUEI(viewModel.prefill[field.path] ?? "")
+                                verifiedUEI(field.title, value: viewModel.prefill[field.path] ?? "")
                                     .padding(.top, 16)
                             }
 
@@ -234,9 +234,9 @@ public struct FormScreenView: View {
         )
     }
 
-    private func verifiedUEI(_ value: String) -> some View {
+    private func verifiedUEI(_ title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("apply.form.uei_label".localized(bundle: .module))
+            Text(title)
                 .font(ApplyTheme.F.sans(14, .semibold))
                 .foregroundStyle(ApplyTheme.C.ink)
             HStack(spacing: 8) {
@@ -271,14 +271,9 @@ public struct FormScreenView: View {
 
     private func errorSummary(_ errors: [FieldError]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(
-                String.localizedStringWithFormat(
-                    "apply.form.validation_summary".localized(bundle: .module),
-                    errors.count
-                )
-            )
-            .font(ApplyTheme.F.sans(14, .semibold))
-            .foregroundStyle(ApplyTheme.C.soonFg)
+            Text(validationSummaryMessage(fieldCount: errors.count))
+                .font(ApplyTheme.F.sans(14, .semibold))
+                .foregroundStyle(ApplyTheme.C.soonFg)
             ForEach(Array(errors.enumerated()), id: \.offset) { _, error in
                 Text(error.message)
                     .font(ApplyTheme.F.sans(13))
@@ -339,9 +334,10 @@ public struct FormScreenView: View {
                 Text("apply.form.save_draft".localized(bundle: .module))
                     .lineLimit(1)
                     .fixedSize()
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, 16)
             }
             .buttonStyle(SecondaryButton())
+            .fixedSize(horizontal: true, vertical: false)
             .frame(minHeight: 52)
             .accessibilityIdentifier("apply.form.save_draft")
 
@@ -361,6 +357,7 @@ public struct FormScreenView: View {
                 }
             }
             .buttonStyle(ApplyPrimaryButtonStyle(isEnabled: !viewModel.isSyncing))
+            .frame(maxWidth: .infinity)
             .disabled(viewModel.isSyncing)
             .accessibilityIdentifier("apply.form.continue")
         }
@@ -372,6 +369,13 @@ public struct FormScreenView: View {
             Rectangle().fill(ApplyTheme.C.line).frame(height: 1)
         }
     }
+}
+
+func validationSummaryMessage(fieldCount: Int) -> String {
+    String.localizedStringWithFormat(
+        "apply.form.validation_summary".localized(bundle: .module),
+        fieldCount
+    )
 }
 
 private func applyFormProperty(from path: String) -> String? {

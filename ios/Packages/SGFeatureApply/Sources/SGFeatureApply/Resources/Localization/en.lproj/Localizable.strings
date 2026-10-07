@@ -13,8 +13,6 @@
 "apply.form.step_accessibility" = "Step %1$d of %2$d";
 "apply.form.step_count" = "%1$d of %2$d";
 "apply.form.sync_failed" = "We couldn't save to Simpler.Grants.gov. Your answers are still saved on this iPhone.";
-"apply.form.uei_label" = "UEI";
-"apply.form.validation_summary" = "Fix %d field(s) before you continue.";
 "apply.form.verified" = "Verified";
 "apply.home.empty_message" = "Start an application from any open opportunity.";
 "apply.home.empty_title" = "No applications yet";
@@ -69,9 +67,7 @@
 "apply.workspace.authorized_representative" = "Only your organization's Authorized Representative can submit.";
 "apply.workspace.back" = "Apply";
 "apply.workspace.complete_required" = "Complete all required forms to review and submit.";
-"apply.workspace.due_days" = "Due %@ · %d days";
 "apply.workspace.form_accessibility" = "%@, %@";
-"apply.workspace.forms_complete" = "%d of %d forms complete";
 "apply.workspace.nav_title" = "Application";
 "apply.workspace.open_form_hint" = "Opens this form";
 "apply.workspace.optional_forms" = "Optional forms";

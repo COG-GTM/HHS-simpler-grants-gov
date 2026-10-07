@@ -1,6 +1,6 @@
 import Foundation
 import SGCore
-import SGFeatureApply
+@testable import SGFeatureApply
 import SGForms
 import SGModels
 import XCTest
@@ -125,6 +125,76 @@ final class ApplyFeatureTests: XCTestCase {
             "Project Narrative"
         )
         XCTAssertEqual(ApplyFormStateLogic.displayName(formName: nil, shortName: nil), "")
+        XCTAssertEqual(
+            workspaceStateDescription(.inProgress(completedSections: 0, totalSections: 1)),
+            "In progress"
+        )
+        XCTAssertEqual(
+            workspaceStateDescription(.inProgress(completedSections: 2, totalSections: 5)),
+            "In progress · 2 of 5 sections"
+        )
+        XCTAssertEqual(validationSummaryMessage(fieldCount: 1), "Fix 1 field before you continue.")
+        XCTAssertEqual(validationSummaryMessage(fieldCount: 2), "Fix 2 fields before you continue.")
+        XCTAssertEqual(workspaceFormsCompleteText(completedCount: 1, requiredCount: 1), "1 of 1 form complete")
+        XCTAssertEqual(workspaceFormsCompleteText(completedCount: 3, requiredCount: 6), "3 of 6 forms complete")
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let dueDate = calendar.date(from: DateComponents(year: 2026, month: 12, day: 12))!
+        XCTAssertEqual(
+            workspaceDueLabel(date: dueDate, days: 1, timeZone: timeZone),
+            "Due Dec 12 · 1 day"
+        )
+        XCTAssertEqual(
+            workspaceDueLabel(date: dueDate, days: 67, timeZone: timeZone),
+            "Due Dec 12 · 67 days"
+        )
+    }
+
+    @MainActor
+    func testWorkspaceResolvesOpportunityFromMatchingSummaryAndHidesMissingNumber() async throws {
+        let base = ApplyReferenceDataSource(scenario: .inProgress)
+        let now = fixedDate()
+        let original = try await base.application(id: "apply-demo")
+        let application = applicationWithoutOpportunityId(original)
+        let summaries = try await base.applications()
+        let fallbackSource = OpportunityResolutionTestDataSource(
+            base: base,
+            application: application,
+            summaries: summaries
+        )
+        let fallback = WorkspaceViewModel(
+            applicationId: "apply-demo",
+            dataSource: fallbackSource,
+            progressStore: ApplyReferenceDataSource.progressStore(for: .inProgress),
+            now: { now },
+            timeZone: timeZone
+        )
+
+        await fallback.load()
+
+        XCTAssertEqual(fallback.opportunityNumber, "HRSA-27-014")
+        let fallbackOpportunityIds = await fallbackSource.requestedOpportunityIds
+        XCTAssertEqual(fallbackOpportunityIds, ["hrsa"])
+
+        let missingSource = OpportunityResolutionTestDataSource(
+            base: base,
+            application: application,
+            summaries: []
+        )
+        let missing = WorkspaceViewModel(
+            applicationId: "apply-demo",
+            dataSource: missingSource,
+            progressStore: ApplyReferenceDataSource.progressStore(for: .inProgress),
+            now: { now },
+            timeZone: timeZone
+        )
+
+        await missing.load()
+
+        XCTAssertEqual(missing.phase, .loaded)
+        XCTAssertNil(missing.opportunityNumber)
+        let missingOpportunityIds = await missingSource.requestedOpportunityIds
+        XCTAssertEqual(missingOpportunityIds, [])
     }
 
     @MainActor
@@ -356,6 +426,7 @@ final class ApplyFeatureTests: XCTestCase {
         calendar.timeZone = timeZone
         return calendar.date(from: DateComponents(year: 2026, month: 10, day: 6, hour: 9, minute: 41))!
     }
+
 }
 
 private actor SpyDraftStore: DraftStore {
@@ -379,5 +450,101 @@ private struct StubAuthorizer: SubmissionAuthorizing {
 
     func authorize(reason: String) async -> SubmissionAuthorization {
         result
+    }
+}
+
+private func applicationWithoutOpportunityId(_ application: Application) -> Application {
+    let original = application.competition
+    let competition = Competition(
+        competitionId: original.competitionId,
+        competitionTitle: original.competitionTitle,
+        openingDate: original.openingDate,
+        closingDate: original.closingDate,
+        isOpen: original.isOpen,
+        isSimplerGrantsEnabled: original.isSimplerGrantsEnabled,
+        openToApplicants: original.openToApplicants,
+        competitionForms: original.competitionForms,
+        publicCompetitionId: original.publicCompetitionId,
+        contactInfo: original.contactInfo,
+        gracePeriod: original.gracePeriod,
+        opportunityAssistanceListing: original.opportunityAssistanceListing,
+        competitionInstructions: original.competitionInstructions
+    )
+    return Application(
+        applicationId: application.applicationId,
+        applicationName: application.applicationName,
+        applicationStatus: application.applicationStatus,
+        competition: competition,
+        organization: application.organization,
+        applicationForms: application.applicationForms,
+        formValidationWarnings: application.formValidationWarnings,
+        intendsToAddOrganization: application.intendsToAddOrganization
+    )
+}
+
+private actor OpportunityResolutionTestDataSource: GrantsDataSource {
+    private let base: ApplyReferenceDataSource
+    private let applicationFixture: Application
+    private let summaries: [ApplicationSummary]
+    private(set) var requestedOpportunityIds: [String] = []
+
+    init(base: ApplyReferenceDataSource, application: Application, summaries: [ApplicationSummary]) {
+        self.base = base
+        applicationFixture = application
+        self.summaries = summaries
+    }
+
+    func searchOpportunities(_ request: SearchRequest) async throws -> SearchResponse {
+        try await base.searchOpportunities(request)
+    }
+
+    func opportunity(id: String) async throws -> OpportunityDetail {
+        requestedOpportunityIds.append(id)
+        return try await base.opportunity(id: id)
+    }
+
+    func currentUser() async throws -> UserProfile {
+        try await base.currentUser()
+    }
+
+    func organizations() async throws -> [Organization] {
+        try await base.organizations()
+    }
+
+    func applications() async throws -> [ApplicationSummary] {
+        summaries
+    }
+
+    func startApplication(competitionId: String, name: String, organizationId: String?) async throws -> String {
+        try await base.startApplication(
+            competitionId: competitionId,
+            name: name,
+            organizationId: organizationId
+        )
+    }
+
+    func application(id: String) async throws -> Application {
+        guard id == applicationFixture.applicationId else { throw GrantsError.notFound }
+        return applicationFixture
+    }
+
+    func form(id: String) async throws -> FormDefinition {
+        try await base.form(id: id)
+    }
+
+    func saveForm(applicationId: String, formId: String, response: JSONValue) async throws -> FormSaveResult {
+        try await base.saveForm(applicationId: applicationId, formId: formId, response: response)
+    }
+
+    func submit(applicationId: String) async throws -> SubmissionResult {
+        try await base.submit(applicationId: applicationId)
+    }
+
+    func savedOpportunityIds() async throws -> Set<String> {
+        try await base.savedOpportunityIds()
+    }
+
+    func setSaved(_ saved: Bool, opportunityId: String) async throws {
+        try await base.setSaved(saved, opportunityId: opportunityId)
     }
 }

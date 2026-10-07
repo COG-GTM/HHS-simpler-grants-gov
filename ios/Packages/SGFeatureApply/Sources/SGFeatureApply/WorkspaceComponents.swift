@@ -6,6 +6,7 @@ import SwiftUI
 struct WorkspaceContent: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.timeZone) private var timeZone
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ScaledMetric(relativeTo: .caption) private var opportunityNumberFontSize: CGFloat = 12
 
     let viewModel: WorkspaceViewModel
@@ -14,12 +15,6 @@ struct WorkspaceContent: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                Text("apply.home.title".localized(bundle: .module))
-                    .font(ApplyTheme.F.serif(34))
-                    .foregroundStyle(ApplyTheme.C.ink)
-                    .accessibilityAddTraits(.isHeader)
-                    .padding(.bottom, 18)
-
                 summaryCard
                 sectionHeading("apply.workspace.required_forms", trailing: "apply.workspace.saved_automatically")
                     .padding(.top, 26)
@@ -113,14 +108,16 @@ struct WorkspaceContent: View {
 
     private var summaryCard: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(viewModel.opportunityNumber)
-                .font(.system(size: opportunityNumberFontSize, weight: .medium, design: .monospaced))
-                .foregroundStyle(ApplyTheme.C.subtle)
+            if let opportunityNumber = viewModel.opportunityNumber {
+                Text(opportunityNumber)
+                    .font(.system(size: opportunityNumberFontSize, weight: .medium, design: .monospaced))
+                    .foregroundStyle(ApplyTheme.C.subtle)
+            }
             Text(viewModel.opportunityTitle)
                 .font(ApplyTheme.F.serif(19))
                 .foregroundStyle(ApplyTheme.C.ink)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 6)
+                .padding(.top, viewModel.opportunityNumber == nil ? 0 : 6)
             Text(
                 String(
                     format: "apply.workspace.applying_as".localized(bundle: .module),
@@ -151,32 +148,49 @@ struct WorkspaceContent: View {
                 )
             )
 
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(
-                    String.localizedStringWithFormat(
-                        "apply.workspace.forms_complete".localized(bundle: .module),
-                        viewModel.completedRequiredCount,
-                        viewModel.requiredCount
-                    )
-                )
-                .font(ApplyTheme.F.sans(13, .semibold))
-                .foregroundStyle(ApplyTheme.C.ink)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                Spacer(minLength: 0)
-                if let dueDate = viewModel.dueDate, let days = viewModel.daysRemaining {
-                    Text(dueLabel(date: dueDate, days: days))
-                        .font(ApplyTheme.F.sans(13, .semibold))
-                        .foregroundStyle(viewModel.isDueSoon ? ApplyTheme.C.red : ApplyTheme.C.muted)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .accessibilityLabel(dueLabel(date: dueDate, days: days))
-                }
-            }
-            .padding(.top, 8)
+            progressAndDueRow
+                .padding(.top, 8)
         }
         .padding(16)
         .applyCard()
+    }
+
+    @ViewBuilder
+    private var progressAndDueRow: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 4) {
+                completedFormsLabel
+                if let dueDate = viewModel.dueDate, let days = viewModel.daysRemaining {
+                    dueDateLabel(date: dueDate, days: days)
+                }
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                completedFormsLabel
+                Spacer(minLength: 0)
+                if let dueDate = viewModel.dueDate, let days = viewModel.daysRemaining {
+                    dueDateLabel(date: dueDate, days: days)
+                }
+            }
+        }
+    }
+
+    private var completedFormsLabel: some View {
+        Text(workspaceFormsCompleteText(
+            completedCount: viewModel.completedRequiredCount,
+            requiredCount: viewModel.requiredCount
+        ))
+        .font(ApplyTheme.F.sans(13, .semibold))
+        .foregroundStyle(ApplyTheme.C.ink)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func dueDateLabel(date: Date, days: Int) -> some View {
+        Text(workspaceDueLabel(date: date, days: days, timeZone: timeZone))
+            .font(ApplyTheme.F.sans(13, .semibold))
+            .foregroundStyle(viewModel.isDueSoon ? ApplyTheme.C.red : ApplyTheme.C.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityLabel(workspaceDueLabel(date: date, days: days, timeZone: timeZone))
     }
 
     @ViewBuilder
@@ -211,7 +225,7 @@ struct WorkspaceContent: View {
                     String(
                         format: "apply.workspace.form_accessibility".localized(bundle: .module),
                         row.displayName,
-                        stateDescription(row.state)
+                        workspaceStateDescription(row.state)
                     )
                 )
                 .accessibilityHint("apply.workspace.open_form_hint".localized(bundle: .module))
@@ -229,35 +243,47 @@ struct WorkspaceContent: View {
         .applyCard()
     }
 
-    private func stateDescription(_ state: ApplyFormState) -> String {
-        switch state {
-        case .complete:
-            return "apply.workspace.state_complete".localized(bundle: .module)
-        case let .inProgress(completed, total):
-            return String(
-                format: "apply.workspace.state_in_progress".localized(bundle: .module),
-                completed,
-                total
-            )
-        case .notStarted:
-            return "apply.workspace.state_not_started".localized(bundle: .module)
-        }
-    }
+}
 
-    private func dueLabel(date: Date, days: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.timeZone = timeZone
-        formatter.dateFormat = "MMM d"
-        let dateString = formatter.string(from: date)
-        if days < 0 {
-            return String(format: "apply.workspace.past_due".localized(bundle: .module), dateString)
+func workspaceFormsCompleteText(completedCount: Int, requiredCount: Int) -> String {
+    String.localizedStringWithFormat(
+        "apply.workspace.forms_complete".localized(bundle: .module),
+        completedCount,
+        requiredCount
+    )
+}
+
+func workspaceDueLabel(date: Date, days: Int, timeZone: TimeZone) -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_US")
+    formatter.timeZone = timeZone
+    formatter.dateFormat = "MMM d"
+    let dateString = formatter.string(from: date)
+    if days < 0 {
+        return String(format: "apply.workspace.past_due".localized(bundle: .module), dateString)
+    }
+    return String.localizedStringWithFormat(
+        "apply.workspace.due_days".localized(bundle: .module),
+        dateString,
+        days
+    )
+}
+
+func workspaceStateDescription(_ state: ApplyFormState) -> String {
+    switch state {
+    case .complete:
+        return "apply.workspace.state_complete".localized(bundle: .module)
+    case let .inProgress(completed, total):
+        guard total > 1 else {
+            return "apply.workspace.short_in_progress".localized(bundle: .module)
         }
         return String.localizedStringWithFormat(
-            "apply.workspace.due_days".localized(bundle: .module),
-            dateString,
-            days
+            "apply.workspace.state_in_progress".localized(bundle: .module),
+            completed,
+            total
         )
+    case .notStarted:
+        return "apply.workspace.state_not_started".localized(bundle: .module)
     }
 }
 
@@ -292,18 +318,7 @@ struct WorkspaceFormRow: View {
     }
 
     private var stateDescription: String {
-        switch row.state {
-        case .complete:
-            return "apply.workspace.state_complete".localized(bundle: .module)
-        case let .inProgress(completed, total):
-            return String(
-                format: "apply.workspace.state_in_progress".localized(bundle: .module),
-                completed,
-                total
-            )
-        case .notStarted:
-            return "apply.workspace.state_not_started".localized(bundle: .module)
-        }
+        workspaceStateDescription(row.state)
     }
 
     private var stateColor: Color {

@@ -16,7 +16,7 @@ public final class WorkspaceViewModel {
     public let applicationId: String?
     public private(set) var loadedApplicationId: String?
     public private(set) var phase: ApplyLoadPhase = .loading
-    public private(set) var opportunityNumber = ""
+    public private(set) var opportunityNumber: String?
     public private(set) var opportunityTitle = ""
     public private(set) var agencyName: String?
     public private(set) var organizationName = ""
@@ -138,7 +138,7 @@ public final class WorkspaceViewModel {
     }
 
     private func clearLoadedApplication() {
-        opportunityNumber = ""
+        opportunityNumber = nil
         opportunityTitle = ""
         agencyName = nil
         organizationName = ""
