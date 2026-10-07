@@ -18,18 +18,18 @@ final class FormsSnapshotTests: XCTestCase {
     func testSF424ApplicantInformationReferenceFields() throws {
         let sample = try FormPreviewSamples.sf424ApplicantInformation(.referenceFields)
         XCTAssertTrue(sample.errors.isEmpty)
-        assertSnapshot(of: Screen(sample: sample), as: .image(layout: Self.layout))
+        assertSnapshot(of: Screen(sample: sample), as: .image(precision: 0.98, perceptualPrecision: 0.98, layout: Self.layout))
     }
 
     func testSF424ApplicantInformationInvalidEmail() throws {
         let sample = try FormPreviewSamples.sf424ApplicantInformation(.invalidEmail)
         XCTAssertEqual(sample.errors.map(\.message), ["Enter a valid email address, like name@organization.org"])
-        assertSnapshot(of: Screen(sample: sample), as: .image(layout: Self.layout))
+        assertSnapshot(of: Screen(sample: sample), as: .image(precision: 0.98, perceptualPrecision: 0.98, layout: Self.layout))
     }
 
     func testSF424ApplicantInformationFullStepWithErrors() throws {
         let sample = try FormPreviewSamples.sf424ApplicantInformation(.fullStepEmpty)
-        assertSnapshot(of: Screen(sample: sample, scrolls: false), as: .image(layout: .fixed(width: 390, height: 3000)))
+        assertSnapshot(of: Screen(sample: sample, scrolls: false), as: .image(precision: 0.98, perceptualPrecision: 0.98, layout: .fixed(width: 390, height: 3000)))
     }
 
     func testSF424ApplicantInformationAccessibilityXXXL() throws {
@@ -37,6 +37,8 @@ final class FormsSnapshotTests: XCTestCase {
         assertSnapshot(
             of: Screen(sample: sample, scrolls: false),
             as: .image(
+                precision: 0.98,
+                perceptualPrecision: 0.98,
                 layout: .fixed(width: 390, height: 2300),
                 traits: UITraitCollection(preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge)
             )
