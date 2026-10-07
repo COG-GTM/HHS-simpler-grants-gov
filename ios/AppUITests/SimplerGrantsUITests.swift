@@ -6,7 +6,7 @@ final class SimplerGrantsUITests: XCTestCase {
         app.launchArguments = ["-SGSkipOnboarding", "YES"]
         app.launch()
 
-        XCTAssertTrue(app.tabBars.buttons["Ask"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["shell.tab.ask"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Demo · sample data"].exists)
     }
 }
