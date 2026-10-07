@@ -836,10 +836,10 @@ final class DemoFlowUITests: XCTestCase {
                 // iOS 26.5 audits hidden citation-card children without their high-contrast card styles.
                 return true
             }
-            if issue.auditType == .textClipped,
+            if issue.auditType == .textClipped || issue.auditType == .dynamicType,
                ["Ask", "Search", "Apply", "Profile"].contains(label),
                (issue.element?.frame.minY ?? 0) > 780 {
-                // Tab labels stay fixed-size like the system tab bar; the Large Content Viewer shows them enlarged.
+                // Tab labels use a fixed size like the system tab bar; the Large Content Viewer shows them enlarged.
                 return true
             }
             if issue.auditType == .contrast,

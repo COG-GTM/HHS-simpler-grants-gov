@@ -40,7 +40,7 @@ struct SGTabBar: View {
                     .frame(minHeight: 25)
                     .accessibilityHidden(true)
                 Text(title)
-                    .font(.custom("PublicSans-Medium", size: min(tabLabelSize, 14)))
+                    .font(.custom("PublicSans-Medium", fixedSize: min(tabLabelSize, 14)))
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                     .accessibilityHidden(true)
