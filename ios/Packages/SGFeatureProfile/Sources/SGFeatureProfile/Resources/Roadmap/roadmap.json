@@ -1,0 +1,114 @@
+{
+  "sections": [
+    {
+      "id": "working_on",
+      "title": "What we're working on",
+      "items": [
+        {
+          "id": "prototype-application-process",
+          "status": "in_progress",
+          "title": "Simpler application process for all agencies",
+          "summary": "",
+          "baseVotes": 412
+        },
+        {
+          "id": "prototype-saved-search-alerts",
+          "status": "planned",
+          "title": "Email and push alerts for saved searches",
+          "summary": "",
+          "baseVotes": 288
+        },
+        {
+          "id": "prototype-shared-workspaces",
+          "status": "planned",
+          "title": "Shared workspaces for application teams",
+          "summary": "",
+          "baseVotes": 173
+        },
+        {
+          "id": "progress-smarter-budget-forms",
+          "status": "planned",
+          "title": "Piloting smarter, easier budget forms",
+          "summary": "In collaboration with users from the Simpler.Grants.gov Co-Design Group, we're prototyping a smarter, easier-to-use budget form to directly address the most common challenges applicants face. The redesigned form will incorporate clearer instructions, simplified user flow, and auto-calculation of fields to reduce confusion and errors.",
+          "baseVotes": 58
+        },
+        {
+          "id": "progress-competitive-opportunities",
+          "status": "planned",
+          "title": "Improve users' confidence in choosing competitive, relevant opportunities",
+          "summary": "We're excited to help you find and get opportunities you need. We are developing user-requested enhancements to Simpler Search, and we're also developing a new set of initiatives to help organizations find opportunities that are better tailored to their needs. This will result in reducing the time and effort required to discover opportunities, determine whether they're a strong fit, and align as a team to pursue them.",
+          "baseVotes": 43
+        },
+        {
+          "id": "progress-opportunity-coverage",
+          "status": "planned",
+          "title": "Scale opportunity coverage and form creation",
+          "summary": "Simpler's new, streamlined application experience will support enough forms to cover 35% of competitions on Grants.gov, enabling opportunities to be supported from more grantor agencies. This will be made possible with the addition of internal tools that reduce the manual effort needed to launch opportunities between different environments.",
+          "baseVotes": 31
+        },
+        {
+          "id": "progress-community-improvements",
+          "status": "planned",
+          "title": "Community-prioritized improvements & open source involvement",
+          "summary": "We remain committed to open, participatory software development. We have deepened our collaboration with the Co-Design Group by establishing routine check-ins and workshops that directly involved them in the agile delivery process. We selected a key agile deliverable to pilot our co-planning methodology and successfully advanced community-prioritized improvements by delivering two highly voted items from the public voting board (known as our Fider board). We will continue to host co-planning and working sessions, and increase community engagement.",
+          "baseVotes": 24
+        },
+        {
+          "id": "progress-starting-applications",
+          "status": "planned",
+          "title": "Reducing burden of starting an application",
+          "summary": "We're making it easier for you to find the right opportunity and start an application. Each opportunity page will contain more information to help you decide if it meets your needs, and guide you through the process of starting an application when you're ready to apply. Usability testing will continue improving our forms so they're approachable and easy to follow. Our workflow will make it faster and easier to fill out applications, with improved navigation, helpful guidance, and clear status indicators.",
+          "baseVotes": 19
+        }
+      ]
+    },
+    {
+      "id": "recently_shipped",
+      "title": "Recently shipped",
+      "items": [
+        {
+          "id": "prototype-keyword-matches",
+          "status": "released",
+          "title": "New search with closer keyword matches",
+          "summary": "",
+          "baseVotes": null
+        },
+        {
+          "id": "milestone-release-notes",
+          "status": "released",
+          "title": "Launched Release Notes",
+          "summary": "We proudly announced the launch of release notes for Simpler.Grants.Gov! Our goal for these updates is to regularly showcase new features, important bug fixes, improvements to enhance your experience, and more. Read the latest release notes on our public wiki.",
+          "baseVotes": null
+        },
+        {
+          "id": "milestone-application-workflow",
+          "status": "released",
+          "title": "Improving the application workflow",
+          "summary": "We built on lessons learned from our 'Apply' workflow pilot, launching two opportunities for application through Simpler.Grants.gov while adding features based on direct user feedback and testing. We prepared to scale up to support more agencies. And we added an activity history that improves collaborating on applications.",
+          "baseVotes": null
+        },
+        {
+          "id": "milestone-form-development",
+          "status": "released",
+          "title": "Accelerating form development",
+          "summary": "We scaled our form repository to 15 commonly used forms, unlocking additional agency partnership opportunities for applications in the future. Using a shared JSON schema, our tool now instantly renders the form, letting developers and program staff build and preview forms in real time. This also allows Simpler data to map to the CommonGrants Protocol.",
+          "baseVotes": null
+        },
+        {
+          "id": "milestone-user-permissions",
+          "status": "released",
+          "title": "Simplifying user permissions",
+          "summary": "Grants.gov user roles and permissions can be cumbersome and may not align with how organizations work. We co-designed a new experience with applicants and grantors to simplify onboarding, improve visibility into organizational access, and make collaboration easier and more intuitive.",
+          "baseVotes": null
+        },
+        {
+          "id": "milestone-workspace-dashboard",
+          "status": "released",
+          "title": "Launched new changes to the Workspace Dashboard",
+          "summary": "The Simpler.Grants.gov team has created a hub that allows users to quickly access saved searches and applications. To solve for the key pain point of finding active grants and managing work, this Workspace Dashboard centralizes where users can manage their work and track their progress.",
+          "baseVotes": null
+        }
+      ]
+    }
+  ]
+}
