@@ -92,20 +92,113 @@ final class AskHomeLogicTests: XCTestCase {
             label: "Health",
             matchedTerm: "clinic"
         )
+        let secondCategory = InferredFilter(
+            kind: .fundingCategory,
+            value: "agriculture",
+            label: "Agriculture",
+            matchedTerm: "farm"
+        )
+        let removedCategory = InferredFilter(
+            kind: .fundingCategory,
+            value: "research",
+            label: "Research",
+            matchedTerm: "research"
+        )
         let status = InferredFilter(
             kind: .status,
             value: "posted",
             label: "Open",
             matchedTerm: "open"
         )
-        let intent = ParsedIntent(searchQuery: "rural health", inferredFilters: [applicant, category, status])
+        let answer = makeAnswer(
+            searchQuery: "rural health",
+            filters: [applicant, applicant, category, secondCategory, category, removedCategory, status, status]
+        )
+        let sameIDRemoval = InferredFilter(
+            kind: .fundingCategory,
+            value: "research",
+            label: "Different label",
+            matchedTerm: "different term"
+        )
 
-        let request = AnswerSearchRequest.make(intent: intent, removing: [category])
+        let request = AnswerSearchRequest.make(answer: answer, removing: [sameIDRemoval])
 
         XCTAssertEqual(request.query, "rural health")
+        XCTAssertEqual(request.queryOperator, "AND")
+        XCTAssertEqual(request.filters.applicantType, ["nonprofit"])
+        XCTAssertEqual(request.filters.fundingCategory, ["health", "agriculture"])
+        XCTAssertEqual(request.filters.opportunityStatus, ["posted"])
+    }
+
+    func testAnswerSearchRequestExcludesDroppedFilters() {
+        let applicant = InferredFilter(
+            kind: .applicantType,
+            value: "nonprofit",
+            label: "Nonprofits",
+            matchedTerm: "nonprofit"
+        )
+        let droppedCategory = InferredFilter(
+            kind: .fundingCategory,
+            value: "health",
+            label: "Health",
+            matchedTerm: "clinic"
+        )
+        let droppedCategoryMetadata = InferredFilter(
+            kind: .fundingCategory,
+            value: "health",
+            label: "Dropped health filter",
+            matchedTerm: "different term"
+        )
+        let answer = makeAnswer(
+            searchQuery: "rural health",
+            filters: [applicant, droppedCategory],
+            droppedFilters: [droppedCategoryMetadata]
+        )
+
+        let request = AnswerSearchRequest.make(answer: answer, removing: [])
+
         XCTAssertEqual(request.filters.applicantType, ["nonprofit"])
         XCTAssertEqual(request.filters.fundingCategory, [])
-        XCTAssertEqual(request.filters.opportunityStatus, ["posted"])
+    }
+
+    func testAnswerSearchRequestOmitsDroppedOrWhitespaceOnlyQuery() {
+        let droppedQuery = makeAnswer(
+            searchQuery: "rural clinic",
+            filters: [],
+            droppedSearchQuery: true
+        )
+        let whitespaceQuery = makeAnswer(searchQuery: " \n ", filters: [])
+
+        XCTAssertNil(AnswerSearchRequest.make(answer: droppedQuery, removing: []).query)
+        XCTAssertNil(AnswerSearchRequest.make(answer: whitespaceQuery, removing: []).query)
+    }
+
+    func testAnswerSearchRequestUsesDefaultStatusesWithoutInferredStatus() {
+        let applicant = InferredFilter(
+            kind: .applicantType,
+            value: "nonprofit",
+            label: "Nonprofits",
+            matchedTerm: "nonprofit"
+        )
+        let answer = makeAnswer(searchQuery: "rural clinic", filters: [applicant])
+
+        let request = AnswerSearchRequest.make(answer: answer, removing: [])
+
+        XCTAssertEqual(request.filters.opportunityStatus, ["posted", "forecasted"])
+    }
+
+    func testAnswerSearchRequestUsesInferredStatusesInsteadOfDefaults() {
+        let status = InferredFilter(
+            kind: .status,
+            value: "forecasted",
+            label: "Forecasted",
+            matchedTerm: "upcoming"
+        )
+        let answer = makeAnswer(searchQuery: "rural clinic", filters: [status])
+
+        let request = AnswerSearchRequest.make(answer: answer, removing: [])
+
+        XCTAssertEqual(request.filters.opportunityStatus, ["forecasted"])
     }
 
     func testSpokenParagraphIncludesCitationSource() {
@@ -138,6 +231,23 @@ final class AskHomeLogicTests: XCTestCase {
             agencyName: agencyName,
             opportunityStatus: status,
             summary: summary
+        )
+    }
+
+    private func makeAnswer(
+        searchQuery: String,
+        filters: [InferredFilter],
+        droppedFilters: [InferredFilter] = [],
+        droppedSearchQuery: Bool = false
+    ) -> AskAnswer {
+        AskAnswer(
+            question: searchQuery,
+            intent: ParsedIntent(searchQuery: searchQuery, inferredFilters: filters),
+            paragraphs: [],
+            citations: [],
+            totalMatches: 1,
+            droppedFilters: droppedFilters,
+            droppedSearchQuery: droppedSearchQuery
         )
     }
 }

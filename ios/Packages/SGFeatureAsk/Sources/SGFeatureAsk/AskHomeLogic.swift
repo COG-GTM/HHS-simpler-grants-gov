@@ -144,19 +144,28 @@ enum CitationMeta {
 }
 
 enum AnswerSearchRequest {
-    static func make(intent: ParsedIntent, removing: Set<InferredFilter>) -> SearchRequest {
-        var filters = SearchFilters()
-        for filter in intent.inferredFilters where !removing.contains(filter) {
-            switch filter.kind {
-            case .applicantType:
-                filters.applicantType.append(filter.value)
-            case .fundingCategory:
-                filters.fundingCategory.append(filter.value)
-            case .status:
-                filters.opportunityStatus.append(filter.value)
-            }
+    static func make(answer: AskAnswer, removing: Set<InferredFilter>) -> SearchRequest {
+        let excludedIDs = Set(removing.map(\.id)).union(answer.droppedFilters.map(\.id))
+        let activeFilters = answer.intent.inferredFilters.filter { !excludedIDs.contains($0.id) }
+        let statuses = uniqueValues(for: .status, in: activeFilters)
+        let trimmedSearchQuery = answer.intent.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let query = answer.droppedSearchQuery || trimmedSearchQuery.isEmpty
+            ? nil
+            : answer.intent.searchQuery
+        let filters = SearchFilters(
+            opportunityStatus: statuses.isEmpty ? ["posted", "forecasted"] : statuses,
+            applicantType: uniqueValues(for: .applicantType, in: activeFilters),
+            fundingCategory: uniqueValues(for: .fundingCategory, in: activeFilters)
+        )
+        return SearchRequest(query: query, filters: filters)
+    }
+
+    private static func uniqueValues(for kind: InferredFilter.Kind, in filters: [InferredFilter]) -> [String] {
+        var seen = Set<String>()
+        return filters.compactMap { filter in
+            guard filter.kind == kind, seen.insert(filter.value).inserted else { return nil }
+            return filter.value
         }
-        return SearchRequest(query: intent.searchQuery, filters: filters)
     }
 }
 

@@ -731,7 +731,7 @@ public struct AnswerView: View {
         if answer.totalMatches > 0 {
             Button {
                 let request = AnswerSearchRequest.make(
-                    intent: answer.intent,
+                    answer: answer,
                     removing: removedFilters
                 )
                 router.push(.results(request), in: .search)
@@ -762,8 +762,7 @@ public struct AnswerView: View {
         let meta = CitationMeta.text(for: citation.opportunity, locale: Locale.current)
 
         return Button {
-            router.push(.opportunity(id: citation.opportunity.opportunityId), in: .search)
-            router.tab = .search
+            router.push(.opportunity(id: citation.opportunity.opportunityId), in: router.tab)
         } label: {
             HStack(alignment: .top, spacing: 12) {
                 Text(verbatim: "\(index)")
