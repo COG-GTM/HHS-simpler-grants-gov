@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "opportunity_id": "a5c54070-0059-44e7-8004-b4e8d758f3e4",
+      "opportunity_status": "forecasted",
+      "opportunity_title": "Rich-Barber 2020 award",
+      "saved_to_organizations": [],
+      "summary": {
+        "close_date": null,
+        "is_forecast": true,
+        "post_date": "2026-09-19"
+      }
+    }
+  ],
+  "message": "Success",
+  "status_code": 200,
+  "_captured_http_status": 200
+}
