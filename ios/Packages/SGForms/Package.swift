@@ -14,7 +14,12 @@ let package = Package(
         .target(
             name: "SGForms",
             dependencies: ["SGModels", "SGDesign"],
-            resources: [.process("Resources/Localization")]
+            resources: [.process("Resources/Localization"), .copy("Resources/Samples")]
+        ),
+        .testTarget(
+            name: "SGFormsTests",
+            dependencies: ["SGForms", "SGModels"],
+            resources: [.copy("Fixtures")]
         )
     ],
     swiftLanguageVersions: [.v5]

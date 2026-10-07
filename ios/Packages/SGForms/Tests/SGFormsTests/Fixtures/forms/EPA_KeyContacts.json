@@ -1,0 +1,2892 @@
+{
+  "agency_code": "SGG",
+  "form_id": "3c4d17c7-e10e-4087-b8ab-a5c1930d4221",
+  "form_json_schema": {
+    "$defs": {
+      "key_contact_person": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "country": {
+                          "const": "USA: UNITED STATES"
+                        }
+                      },
+                      "required": [
+                        "country"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "state",
+                        "zip_code"
+                      ]
+                    }
+                  }
+                ],
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "Country Code",
+                    "enum": [
+                      "AFG: AFGHANISTAN",
+                      "XQZ: AKROTIRI",
+                      "ALB: ALBANIA",
+                      "DZA: ALGERIA",
+                      "AND: ANDORRA",
+                      "AGO: ANGOLA",
+                      "AIA: ANGUILLA",
+                      "ATA: ANTARCTICA",
+                      "ATG: ANTIGUA AND BARBUDA",
+                      "ARG: ARGENTINA",
+                      "ARM: ARMENIA",
+                      "ABW: ARUBA",
+                      "XAC: ASHMORE AND CARTIER ISLANDS",
+                      "AUS: AUSTRALIA",
+                      "AUT: AUSTRIA",
+                      "AZE: AZERBAIJAN",
+                      "BHS: BAHAMAS, THE",
+                      "BHR: BAHRAIN",
+                      "BGD: BANGLADESH",
+                      "BRB: BARBADOS",
+                      "XBI: BASSAS DA INDIA",
+                      "BLR: BELARUS",
+                      "BEL: BELGIUM",
+                      "BLZ: BELIZE",
+                      "BEN: BENIN",
+                      "BMU: BERMUDA",
+                      "BTN: BHUTAN",
+                      "BOL: BOLIVIA",
+                      "BES: BONAIRE, SINT EUSTATIUS, AND SABA",
+                      "BIH: BOSNIA AND HERZEGOVINA",
+                      "BWA: BOTSWANA",
+                      "BVT: BOUVET ISLAND",
+                      "BRA: BRAZIL",
+                      "IOT: BRITISH INDIAN OCEAN TERRITORY",
+                      "BRN: BRUNEI",
+                      "BGR: BULGARIA",
+                      "BFA: BURKINA FASO",
+                      "MMR: BURMA",
+                      "BDI: BURUNDI",
+                      "CPV: CABO VERDE",
+                      "KHM: CAMBODIA",
+                      "CMR: CAMEROON",
+                      "CAN: CANADA",
+                      "CYM: CAYMAN ISLANDS",
+                      "CAF: CENTRAL AFRICAN REPUBLIC",
+                      "TCD: CHAD",
+                      "CHL: CHILE",
+                      "CHN: CHINA",
+                      "CXR: CHRISTMAS ISLAND",
+                      "CPT: CLIPPERTON ISLAND",
+                      "CCK: COCOS (KEELING) ISLANDS",
+                      "COL: COLOMBIA",
+                      "COM: COMOROS",
+                      "COG: CONGO (BRAZZAVILLE)",
+                      "COD: CONGO (KINSHASA)",
+                      "COK: COOK ISLANDS",
+                      "XCS: CORAL SEA ISLANDS",
+                      "CRI: COSTA RICA",
+                      "CIV: C\u00d4TE D'IVOIRE",
+                      "HRV: CROATIA",
+                      "CUB: CUBA",
+                      "CUW: CURA\u00c7AO",
+                      "CYP: CYPRUS",
+                      "CZE: CZECHIA",
+                      "DNK: DENMARK",
+                      "XXD: DHEKELIA",
+                      "DGA: DIEGO GARCIA",
+                      "DJI: DJIBOUTI",
+                      "DMA: DOMINICA",
+                      "DOM: DOMINICAN REPUBLIC",
+                      "ECU: ECUADOR",
+                      "EGY: EGYPT",
+                      "SLV: EL SALVADOR",
+                      "XAZ: ENTITY 1",
+                      "XCR: ENTITY 2",
+                      "XCY: ENTITY 3",
+                      "XKM: ENTITY 4",
+                      "XKN: ENTITY 5",
+                      "AX3: ENTITY 6",
+                      "GNQ: EQUATORIAL GUINEA",
+                      "ERI: ERITREA",
+                      "EST: ESTONIA",
+                      "SWZ: ESWATINI",
+                      "ETH: ETHIOPIA",
+                      "XEU: EUROPA ISLAND",
+                      "FLK: FALKLAND ISLANDS (ISLAS MALVINAS)",
+                      "FRO: FAROE ISLANDS",
+                      "FJI: FIJI",
+                      "FIN: FINLAND",
+                      "FRA: FRANCE",
+                      "GUF: FRENCH GUIANA",
+                      "PYF: FRENCH POLYNESIA",
+                      "ATF: FRENCH SOUTHERN AND ANTARCTIC LANDS",
+                      "GAB: GABON",
+                      "GMB: GAMBIA, THE",
+                      "XGZ: GAZA STRIP",
+                      "GEO: GEORGIA",
+                      "DEU: GERMANY",
+                      "GHA: GHANA",
+                      "GIB: GIBRALTAR",
+                      "XGL: GLORIOSO ISLANDS",
+                      "GRC: GREECE",
+                      "GRL: GREENLAND",
+                      "GRD: GRENADA",
+                      "GLP: GUADELOUPE",
+                      "GTM: GUATEMALA",
+                      "GGY: GUERNSEY",
+                      "GIN: GUINEA",
+                      "GNB: GUINEA-BISSAU",
+                      "GUY: GUYANA",
+                      "HTI: HAITI",
+                      "HMD: HEARD ISLAND AND MCDONALD ISLANDS",
+                      "HND: HONDURAS",
+                      "HKG: HONG KONG",
+                      "HUN: HUNGARY",
+                      "ISL: ICELAND",
+                      "IND: INDIA",
+                      "IDN: INDONESIA",
+                      "IRN: IRAN",
+                      "IRQ: IRAQ",
+                      "IRL: IRELAND",
+                      "IMN: ISLE OF MAN",
+                      "ISR: ISRAEL",
+                      "ITA: ITALY",
+                      "JAM: JAMAICA",
+                      "XJM: JAN MAYEN",
+                      "JPN: JAPAN",
+                      "JEY: JERSEY",
+                      "JOR: JORDAN",
+                      "XJN: JUAN DE NOVA ISLAND",
+                      "KAZ: KAZAKHSTAN",
+                      "KEN: KENYA",
+                      "KIR: KIRIBATI",
+                      "PRK: KOREA, NORTH",
+                      "KOR: KOREA, SOUTH",
+                      "XKS: KOSOVO",
+                      "KWT: KUWAIT",
+                      "KGZ: KYRGYZSTAN",
+                      "LAO: LAOS",
+                      "LVA: LATVIA",
+                      "LBN: LEBANON",
+                      "LSO: LESOTHO",
+                      "LBR: LIBERIA",
+                      "LBY: LIBYA",
+                      "LIE: LIECHTENSTEIN",
+                      "LTU: LITHUANIA",
+                      "LUX: LUXEMBOURG",
+                      "MAC: MACAU",
+                      "MDG: MADAGASCAR",
+                      "MWI: MALAWI",
+                      "MYS: MALAYSIA",
+                      "MDV: MALDIVES",
+                      "MLI: MALI",
+                      "MLT: MALTA",
+                      "MTQ: MARTINIQUE",
+                      "MRT: MAURITANIA",
+                      "MUS: MAURITIUS",
+                      "MYT: MAYOTTE",
+                      "MEX: MEXICO",
+                      "MDA: MOLDOVA",
+                      "MCO: MONACO",
+                      "MNG: MONGOLIA",
+                      "MNE: MONTENEGRO",
+                      "MSR: MONTSERRAT",
+                      "MAR: MOROCCO",
+                      "MOZ: MOZAMBIQUE",
+                      "NAM: NAMIBIA",
+                      "NRU: NAURU",
+                      "NPL: NEPAL",
+                      "NLD: NETHERLANDS",
+                      "NCL: NEW CALEDONIA",
+                      "NZL: NEW ZEALAND",
+                      "NIC: NICARAGUA",
+                      "NER: NIGER",
+                      "NGA: NIGERIA",
+                      "NIU: NIUE",
+                      "NFK: NORFOLK ISLAND",
+                      "MKD: NORTH MACEDONIA",
+                      "NOR: NORWAY",
+                      "OMN: OMAN",
+                      "PAK: PAKISTAN",
+                      "PAN: PANAMA",
+                      "PNG: PAPUA NEW GUINEA",
+                      "XPR: PARACEL ISLANDS",
+                      "PRY: PARAGUAY",
+                      "PER: PERU",
+                      "PHL: PHILIPPINES",
+                      "PCN: PITCAIRN ISLANDS",
+                      "POL: POLAND",
+                      "PRT: PORTUGAL",
+                      "QAT: QATAR",
+                      "REU: REUNION",
+                      "ROU: ROMANIA",
+                      "RUS: RUSSIA",
+                      "RWA: RWANDA",
+                      "BLM: SAINT BARTHELEMY",
+                      "SHN: SAINT HELENA, ASCENSION, AND TRISTAN DA CUNHA",
+                      "KNA: SAINT KITTS AND NEVIS",
+                      "LCA: SAINT LUCIA",
+                      "MAF: SAINT MARTIN",
+                      "SPM: SAINT PIERRE AND MIQUELON",
+                      "VCT: SAINT VINCENT AND THE GRENADINES",
+                      "WSM: SAMOA",
+                      "SMR: SAN MARINO",
+                      "STP: SAO TOME AND PRINCIPE",
+                      "SAU: SAUDI ARABIA",
+                      "SEN: SENEGAL",
+                      "SRB: SERBIA",
+                      "SYC: SEYCHELLES",
+                      "SLE: SIERRA LEONE",
+                      "SGP: SINGAPORE",
+                      "SXM: SINT MAARTEN",
+                      "SVK: SLOVAKIA",
+                      "SVN: SLOVENIA",
+                      "SLB: SOLOMON ISLANDS",
+                      "SOM: SOMALIA",
+                      "ZAF: SOUTH AFRICA",
+                      "SGS: SOUTH GEORGIA AND SOUTH SANDWICH ISLANDS",
+                      "SSD: SOUTH SUDAN",
+                      "ESP: SPAIN",
+                      "XSP: SPRATLY ISLANDS",
+                      "LKA: SRI LANKA",
+                      "SDN: SUDAN",
+                      "SUR: SURINAME",
+                      "XSV: SVALBARD",
+                      "SWE: SWEDEN",
+                      "CHE: SWITZERLAND",
+                      "SYR: SYRIA",
+                      "TWN: TAIWAN",
+                      "TJK: TAJIKISTAN",
+                      "TZA: TANZANIA",
+                      "THA: THAILAND",
+                      "TLS: TIMOR-LESTE",
+                      "TGO: TOGO",
+                      "TKL: TOKELAU",
+                      "TON: TONGA",
+                      "TTO: TRINIDAD AND TOBAGO",
+                      "XTR: TROMELIN ISLAND",
+                      "TUN: TUNISIA",
+                      "TUR: TURKEY",
+                      "TKM: TURKMENISTAN",
+                      "TCA: TURKS AND CAICOS ISLANDS",
+                      "TUV: TUVALU",
+                      "UGA: UGANDA",
+                      "UKR: UKRAINE",
+                      "ARE: UNITED ARAB EMIRATES",
+                      "GBR: UNITED KINGDOM",
+                      "USA: UNITED STATES",
+                      "URY: URUGUAY",
+                      "UZB: UZBEKISTAN",
+                      "VUT: VANUATU",
+                      "VAT: VATICAN CITY",
+                      "VEN: VENEZUELA",
+                      "VNM: VIETNAM",
+                      "VGB: VIRGIN ISLANDS, BRITISH",
+                      "WLF: WALLIS AND FUTUNA",
+                      "XWB: WEST BANK",
+                      "ESH: WESTERN SAHARA",
+                      "YEM: YEMEN",
+                      "ZMB: ZAMBIA",
+                      "ZWE: ZIMBABWE"
+                    ],
+                    "title": "Country",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city",
+                  "country"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "email": {
+            "allOf": [
+              {
+                "format": "email",
+                "maxLength": 60,
+                "title": "Email",
+                "type": "string"
+              }
+            ],
+            "title": "E-mail Address"
+          },
+          "fax": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Fax Number"
+          },
+          "name": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Phone Number"
+          },
+          "title": {
+            "allOf": [
+              {
+                "description": "Enter the position title.",
+                "maxLength": 45,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "phone"
+        ],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "administrative_contact": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "country": {
+                          "const": "USA: UNITED STATES"
+                        }
+                      },
+                      "required": [
+                        "country"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "state",
+                        "zip_code"
+                      ]
+                    }
+                  }
+                ],
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "Country Code",
+                    "enum": [
+                      "AFG: AFGHANISTAN",
+                      "XQZ: AKROTIRI",
+                      "ALB: ALBANIA",
+                      "DZA: ALGERIA",
+                      "AND: ANDORRA",
+                      "AGO: ANGOLA",
+                      "AIA: ANGUILLA",
+                      "ATA: ANTARCTICA",
+                      "ATG: ANTIGUA AND BARBUDA",
+                      "ARG: ARGENTINA",
+                      "ARM: ARMENIA",
+                      "ABW: ARUBA",
+                      "XAC: ASHMORE AND CARTIER ISLANDS",
+                      "AUS: AUSTRALIA",
+                      "AUT: AUSTRIA",
+                      "AZE: AZERBAIJAN",
+                      "BHS: BAHAMAS, THE",
+                      "BHR: BAHRAIN",
+                      "BGD: BANGLADESH",
+                      "BRB: BARBADOS",
+                      "XBI: BASSAS DA INDIA",
+                      "BLR: BELARUS",
+                      "BEL: BELGIUM",
+                      "BLZ: BELIZE",
+                      "BEN: BENIN",
+                      "BMU: BERMUDA",
+                      "BTN: BHUTAN",
+                      "BOL: BOLIVIA",
+                      "BES: BONAIRE, SINT EUSTATIUS, AND SABA",
+                      "BIH: BOSNIA AND HERZEGOVINA",
+                      "BWA: BOTSWANA",
+                      "BVT: BOUVET ISLAND",
+                      "BRA: BRAZIL",
+                      "IOT: BRITISH INDIAN OCEAN TERRITORY",
+                      "BRN: BRUNEI",
+                      "BGR: BULGARIA",
+                      "BFA: BURKINA FASO",
+                      "MMR: BURMA",
+                      "BDI: BURUNDI",
+                      "CPV: CABO VERDE",
+                      "KHM: CAMBODIA",
+                      "CMR: CAMEROON",
+                      "CAN: CANADA",
+                      "CYM: CAYMAN ISLANDS",
+                      "CAF: CENTRAL AFRICAN REPUBLIC",
+                      "TCD: CHAD",
+                      "CHL: CHILE",
+                      "CHN: CHINA",
+                      "CXR: CHRISTMAS ISLAND",
+                      "CPT: CLIPPERTON ISLAND",
+                      "CCK: COCOS (KEELING) ISLANDS",
+                      "COL: COLOMBIA",
+                      "COM: COMOROS",
+                      "COG: CONGO (BRAZZAVILLE)",
+                      "COD: CONGO (KINSHASA)",
+                      "COK: COOK ISLANDS",
+                      "XCS: CORAL SEA ISLANDS",
+                      "CRI: COSTA RICA",
+                      "CIV: C\u00d4TE D'IVOIRE",
+                      "HRV: CROATIA",
+                      "CUB: CUBA",
+                      "CUW: CURA\u00c7AO",
+                      "CYP: CYPRUS",
+                      "CZE: CZECHIA",
+                      "DNK: DENMARK",
+                      "XXD: DHEKELIA",
+                      "DGA: DIEGO GARCIA",
+                      "DJI: DJIBOUTI",
+                      "DMA: DOMINICA",
+                      "DOM: DOMINICAN REPUBLIC",
+                      "ECU: ECUADOR",
+                      "EGY: EGYPT",
+                      "SLV: EL SALVADOR",
+                      "XAZ: ENTITY 1",
+                      "XCR: ENTITY 2",
+                      "XCY: ENTITY 3",
+                      "XKM: ENTITY 4",
+                      "XKN: ENTITY 5",
+                      "AX3: ENTITY 6",
+                      "GNQ: EQUATORIAL GUINEA",
+                      "ERI: ERITREA",
+                      "EST: ESTONIA",
+                      "SWZ: ESWATINI",
+                      "ETH: ETHIOPIA",
+                      "XEU: EUROPA ISLAND",
+                      "FLK: FALKLAND ISLANDS (ISLAS MALVINAS)",
+                      "FRO: FAROE ISLANDS",
+                      "FJI: FIJI",
+                      "FIN: FINLAND",
+                      "FRA: FRANCE",
+                      "GUF: FRENCH GUIANA",
+                      "PYF: FRENCH POLYNESIA",
+                      "ATF: FRENCH SOUTHERN AND ANTARCTIC LANDS",
+                      "GAB: GABON",
+                      "GMB: GAMBIA, THE",
+                      "XGZ: GAZA STRIP",
+                      "GEO: GEORGIA",
+                      "DEU: GERMANY",
+                      "GHA: GHANA",
+                      "GIB: GIBRALTAR",
+                      "XGL: GLORIOSO ISLANDS",
+                      "GRC: GREECE",
+                      "GRL: GREENLAND",
+                      "GRD: GRENADA",
+                      "GLP: GUADELOUPE",
+                      "GTM: GUATEMALA",
+                      "GGY: GUERNSEY",
+                      "GIN: GUINEA",
+                      "GNB: GUINEA-BISSAU",
+                      "GUY: GUYANA",
+                      "HTI: HAITI",
+                      "HMD: HEARD ISLAND AND MCDONALD ISLANDS",
+                      "HND: HONDURAS",
+                      "HKG: HONG KONG",
+                      "HUN: HUNGARY",
+                      "ISL: ICELAND",
+                      "IND: INDIA",
+                      "IDN: INDONESIA",
+                      "IRN: IRAN",
+                      "IRQ: IRAQ",
+                      "IRL: IRELAND",
+                      "IMN: ISLE OF MAN",
+                      "ISR: ISRAEL",
+                      "ITA: ITALY",
+                      "JAM: JAMAICA",
+                      "XJM: JAN MAYEN",
+                      "JPN: JAPAN",
+                      "JEY: JERSEY",
+                      "JOR: JORDAN",
+                      "XJN: JUAN DE NOVA ISLAND",
+                      "KAZ: KAZAKHSTAN",
+                      "KEN: KENYA",
+                      "KIR: KIRIBATI",
+                      "PRK: KOREA, NORTH",
+                      "KOR: KOREA, SOUTH",
+                      "XKS: KOSOVO",
+                      "KWT: KUWAIT",
+                      "KGZ: KYRGYZSTAN",
+                      "LAO: LAOS",
+                      "LVA: LATVIA",
+                      "LBN: LEBANON",
+                      "LSO: LESOTHO",
+                      "LBR: LIBERIA",
+                      "LBY: LIBYA",
+                      "LIE: LIECHTENSTEIN",
+                      "LTU: LITHUANIA",
+                      "LUX: LUXEMBOURG",
+                      "MAC: MACAU",
+                      "MDG: MADAGASCAR",
+                      "MWI: MALAWI",
+                      "MYS: MALAYSIA",
+                      "MDV: MALDIVES",
+                      "MLI: MALI",
+                      "MLT: MALTA",
+                      "MTQ: MARTINIQUE",
+                      "MRT: MAURITANIA",
+                      "MUS: MAURITIUS",
+                      "MYT: MAYOTTE",
+                      "MEX: MEXICO",
+                      "MDA: MOLDOVA",
+                      "MCO: MONACO",
+                      "MNG: MONGOLIA",
+                      "MNE: MONTENEGRO",
+                      "MSR: MONTSERRAT",
+                      "MAR: MOROCCO",
+                      "MOZ: MOZAMBIQUE",
+                      "NAM: NAMIBIA",
+                      "NRU: NAURU",
+                      "NPL: NEPAL",
+                      "NLD: NETHERLANDS",
+                      "NCL: NEW CALEDONIA",
+                      "NZL: NEW ZEALAND",
+                      "NIC: NICARAGUA",
+                      "NER: NIGER",
+                      "NGA: NIGERIA",
+                      "NIU: NIUE",
+                      "NFK: NORFOLK ISLAND",
+                      "MKD: NORTH MACEDONIA",
+                      "NOR: NORWAY",
+                      "OMN: OMAN",
+                      "PAK: PAKISTAN",
+                      "PAN: PANAMA",
+                      "PNG: PAPUA NEW GUINEA",
+                      "XPR: PARACEL ISLANDS",
+                      "PRY: PARAGUAY",
+                      "PER: PERU",
+                      "PHL: PHILIPPINES",
+                      "PCN: PITCAIRN ISLANDS",
+                      "POL: POLAND",
+                      "PRT: PORTUGAL",
+                      "QAT: QATAR",
+                      "REU: REUNION",
+                      "ROU: ROMANIA",
+                      "RUS: RUSSIA",
+                      "RWA: RWANDA",
+                      "BLM: SAINT BARTHELEMY",
+                      "SHN: SAINT HELENA, ASCENSION, AND TRISTAN DA CUNHA",
+                      "KNA: SAINT KITTS AND NEVIS",
+                      "LCA: SAINT LUCIA",
+                      "MAF: SAINT MARTIN",
+                      "SPM: SAINT PIERRE AND MIQUELON",
+                      "VCT: SAINT VINCENT AND THE GRENADINES",
+                      "WSM: SAMOA",
+                      "SMR: SAN MARINO",
+                      "STP: SAO TOME AND PRINCIPE",
+                      "SAU: SAUDI ARABIA",
+                      "SEN: SENEGAL",
+                      "SRB: SERBIA",
+                      "SYC: SEYCHELLES",
+                      "SLE: SIERRA LEONE",
+                      "SGP: SINGAPORE",
+                      "SXM: SINT MAARTEN",
+                      "SVK: SLOVAKIA",
+                      "SVN: SLOVENIA",
+                      "SLB: SOLOMON ISLANDS",
+                      "SOM: SOMALIA",
+                      "ZAF: SOUTH AFRICA",
+                      "SGS: SOUTH GEORGIA AND SOUTH SANDWICH ISLANDS",
+                      "SSD: SOUTH SUDAN",
+                      "ESP: SPAIN",
+                      "XSP: SPRATLY ISLANDS",
+                      "LKA: SRI LANKA",
+                      "SDN: SUDAN",
+                      "SUR: SURINAME",
+                      "XSV: SVALBARD",
+                      "SWE: SWEDEN",
+                      "CHE: SWITZERLAND",
+                      "SYR: SYRIA",
+                      "TWN: TAIWAN",
+                      "TJK: TAJIKISTAN",
+                      "TZA: TANZANIA",
+                      "THA: THAILAND",
+                      "TLS: TIMOR-LESTE",
+                      "TGO: TOGO",
+                      "TKL: TOKELAU",
+                      "TON: TONGA",
+                      "TTO: TRINIDAD AND TOBAGO",
+                      "XTR: TROMELIN ISLAND",
+                      "TUN: TUNISIA",
+                      "TUR: TURKEY",
+                      "TKM: TURKMENISTAN",
+                      "TCA: TURKS AND CAICOS ISLANDS",
+                      "TUV: TUVALU",
+                      "UGA: UGANDA",
+                      "UKR: UKRAINE",
+                      "ARE: UNITED ARAB EMIRATES",
+                      "GBR: UNITED KINGDOM",
+                      "USA: UNITED STATES",
+                      "URY: URUGUAY",
+                      "UZB: UZBEKISTAN",
+                      "VUT: VANUATU",
+                      "VAT: VATICAN CITY",
+                      "VEN: VENEZUELA",
+                      "VNM: VIETNAM",
+                      "VGB: VIRGIN ISLANDS, BRITISH",
+                      "WLF: WALLIS AND FUTUNA",
+                      "XWB: WEST BANK",
+                      "ESH: WESTERN SAHARA",
+                      "YEM: YEMEN",
+                      "ZMB: ZAMBIA",
+                      "ZWE: ZIMBABWE"
+                    ],
+                    "title": "Country",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city",
+                  "country"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "email": {
+            "allOf": [
+              {
+                "format": "email",
+                "maxLength": 60,
+                "title": "Email",
+                "type": "string"
+              }
+            ],
+            "title": "E-mail Address"
+          },
+          "fax": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Fax Number"
+          },
+          "name": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Phone Number"
+          },
+          "title": {
+            "allOf": [
+              {
+                "description": "Enter the position title.",
+                "maxLength": 45,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "phone"
+        ],
+        "type": "object"
+      },
+      "authorized_representative": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "country": {
+                          "const": "USA: UNITED STATES"
+                        }
+                      },
+                      "required": [
+                        "country"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "state",
+                        "zip_code"
+                      ]
+                    }
+                  }
+                ],
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "Country Code",
+                    "enum": [
+                      "AFG: AFGHANISTAN",
+                      "XQZ: AKROTIRI",
+                      "ALB: ALBANIA",
+                      "DZA: ALGERIA",
+                      "AND: ANDORRA",
+                      "AGO: ANGOLA",
+                      "AIA: ANGUILLA",
+                      "ATA: ANTARCTICA",
+                      "ATG: ANTIGUA AND BARBUDA",
+                      "ARG: ARGENTINA",
+                      "ARM: ARMENIA",
+                      "ABW: ARUBA",
+                      "XAC: ASHMORE AND CARTIER ISLANDS",
+                      "AUS: AUSTRALIA",
+                      "AUT: AUSTRIA",
+                      "AZE: AZERBAIJAN",
+                      "BHS: BAHAMAS, THE",
+                      "BHR: BAHRAIN",
+                      "BGD: BANGLADESH",
+                      "BRB: BARBADOS",
+                      "XBI: BASSAS DA INDIA",
+                      "BLR: BELARUS",
+                      "BEL: BELGIUM",
+                      "BLZ: BELIZE",
+                      "BEN: BENIN",
+                      "BMU: BERMUDA",
+                      "BTN: BHUTAN",
+                      "BOL: BOLIVIA",
+                      "BES: BONAIRE, SINT EUSTATIUS, AND SABA",
+                      "BIH: BOSNIA AND HERZEGOVINA",
+                      "BWA: BOTSWANA",
+                      "BVT: BOUVET ISLAND",
+                      "BRA: BRAZIL",
+                      "IOT: BRITISH INDIAN OCEAN TERRITORY",
+                      "BRN: BRUNEI",
+                      "BGR: BULGARIA",
+                      "BFA: BURKINA FASO",
+                      "MMR: BURMA",
+                      "BDI: BURUNDI",
+                      "CPV: CABO VERDE",
+                      "KHM: CAMBODIA",
+                      "CMR: CAMEROON",
+                      "CAN: CANADA",
+                      "CYM: CAYMAN ISLANDS",
+                      "CAF: CENTRAL AFRICAN REPUBLIC",
+                      "TCD: CHAD",
+                      "CHL: CHILE",
+                      "CHN: CHINA",
+                      "CXR: CHRISTMAS ISLAND",
+                      "CPT: CLIPPERTON ISLAND",
+                      "CCK: COCOS (KEELING) ISLANDS",
+                      "COL: COLOMBIA",
+                      "COM: COMOROS",
+                      "COG: CONGO (BRAZZAVILLE)",
+                      "COD: CONGO (KINSHASA)",
+                      "COK: COOK ISLANDS",
+                      "XCS: CORAL SEA ISLANDS",
+                      "CRI: COSTA RICA",
+                      "CIV: C\u00d4TE D'IVOIRE",
+                      "HRV: CROATIA",
+                      "CUB: CUBA",
+                      "CUW: CURA\u00c7AO",
+                      "CYP: CYPRUS",
+                      "CZE: CZECHIA",
+                      "DNK: DENMARK",
+                      "XXD: DHEKELIA",
+                      "DGA: DIEGO GARCIA",
+                      "DJI: DJIBOUTI",
+                      "DMA: DOMINICA",
+                      "DOM: DOMINICAN REPUBLIC",
+                      "ECU: ECUADOR",
+                      "EGY: EGYPT",
+                      "SLV: EL SALVADOR",
+                      "XAZ: ENTITY 1",
+                      "XCR: ENTITY 2",
+                      "XCY: ENTITY 3",
+                      "XKM: ENTITY 4",
+                      "XKN: ENTITY 5",
+                      "AX3: ENTITY 6",
+                      "GNQ: EQUATORIAL GUINEA",
+                      "ERI: ERITREA",
+                      "EST: ESTONIA",
+                      "SWZ: ESWATINI",
+                      "ETH: ETHIOPIA",
+                      "XEU: EUROPA ISLAND",
+                      "FLK: FALKLAND ISLANDS (ISLAS MALVINAS)",
+                      "FRO: FAROE ISLANDS",
+                      "FJI: FIJI",
+                      "FIN: FINLAND",
+                      "FRA: FRANCE",
+                      "GUF: FRENCH GUIANA",
+                      "PYF: FRENCH POLYNESIA",
+                      "ATF: FRENCH SOUTHERN AND ANTARCTIC LANDS",
+                      "GAB: GABON",
+                      "GMB: GAMBIA, THE",
+                      "XGZ: GAZA STRIP",
+                      "GEO: GEORGIA",
+                      "DEU: GERMANY",
+                      "GHA: GHANA",
+                      "GIB: GIBRALTAR",
+                      "XGL: GLORIOSO ISLANDS",
+                      "GRC: GREECE",
+                      "GRL: GREENLAND",
+                      "GRD: GRENADA",
+                      "GLP: GUADELOUPE",
+                      "GTM: GUATEMALA",
+                      "GGY: GUERNSEY",
+                      "GIN: GUINEA",
+                      "GNB: GUINEA-BISSAU",
+                      "GUY: GUYANA",
+                      "HTI: HAITI",
+                      "HMD: HEARD ISLAND AND MCDONALD ISLANDS",
+                      "HND: HONDURAS",
+                      "HKG: HONG KONG",
+                      "HUN: HUNGARY",
+                      "ISL: ICELAND",
+                      "IND: INDIA",
+                      "IDN: INDONESIA",
+                      "IRN: IRAN",
+                      "IRQ: IRAQ",
+                      "IRL: IRELAND",
+                      "IMN: ISLE OF MAN",
+                      "ISR: ISRAEL",
+                      "ITA: ITALY",
+                      "JAM: JAMAICA",
+                      "XJM: JAN MAYEN",
+                      "JPN: JAPAN",
+                      "JEY: JERSEY",
+                      "JOR: JORDAN",
+                      "XJN: JUAN DE NOVA ISLAND",
+                      "KAZ: KAZAKHSTAN",
+                      "KEN: KENYA",
+                      "KIR: KIRIBATI",
+                      "PRK: KOREA, NORTH",
+                      "KOR: KOREA, SOUTH",
+                      "XKS: KOSOVO",
+                      "KWT: KUWAIT",
+                      "KGZ: KYRGYZSTAN",
+                      "LAO: LAOS",
+                      "LVA: LATVIA",
+                      "LBN: LEBANON",
+                      "LSO: LESOTHO",
+                      "LBR: LIBERIA",
+                      "LBY: LIBYA",
+                      "LIE: LIECHTENSTEIN",
+                      "LTU: LITHUANIA",
+                      "LUX: LUXEMBOURG",
+                      "MAC: MACAU",
+                      "MDG: MADAGASCAR",
+                      "MWI: MALAWI",
+                      "MYS: MALAYSIA",
+                      "MDV: MALDIVES",
+                      "MLI: MALI",
+                      "MLT: MALTA",
+                      "MTQ: MARTINIQUE",
+                      "MRT: MAURITANIA",
+                      "MUS: MAURITIUS",
+                      "MYT: MAYOTTE",
+                      "MEX: MEXICO",
+                      "MDA: MOLDOVA",
+                      "MCO: MONACO",
+                      "MNG: MONGOLIA",
+                      "MNE: MONTENEGRO",
+                      "MSR: MONTSERRAT",
+                      "MAR: MOROCCO",
+                      "MOZ: MOZAMBIQUE",
+                      "NAM: NAMIBIA",
+                      "NRU: NAURU",
+                      "NPL: NEPAL",
+                      "NLD: NETHERLANDS",
+                      "NCL: NEW CALEDONIA",
+                      "NZL: NEW ZEALAND",
+                      "NIC: NICARAGUA",
+                      "NER: NIGER",
+                      "NGA: NIGERIA",
+                      "NIU: NIUE",
+                      "NFK: NORFOLK ISLAND",
+                      "MKD: NORTH MACEDONIA",
+                      "NOR: NORWAY",
+                      "OMN: OMAN",
+                      "PAK: PAKISTAN",
+                      "PAN: PANAMA",
+                      "PNG: PAPUA NEW GUINEA",
+                      "XPR: PARACEL ISLANDS",
+                      "PRY: PARAGUAY",
+                      "PER: PERU",
+                      "PHL: PHILIPPINES",
+                      "PCN: PITCAIRN ISLANDS",
+                      "POL: POLAND",
+                      "PRT: PORTUGAL",
+                      "QAT: QATAR",
+                      "REU: REUNION",
+                      "ROU: ROMANIA",
+                      "RUS: RUSSIA",
+                      "RWA: RWANDA",
+                      "BLM: SAINT BARTHELEMY",
+                      "SHN: SAINT HELENA, ASCENSION, AND TRISTAN DA CUNHA",
+                      "KNA: SAINT KITTS AND NEVIS",
+                      "LCA: SAINT LUCIA",
+                      "MAF: SAINT MARTIN",
+                      "SPM: SAINT PIERRE AND MIQUELON",
+                      "VCT: SAINT VINCENT AND THE GRENADINES",
+                      "WSM: SAMOA",
+                      "SMR: SAN MARINO",
+                      "STP: SAO TOME AND PRINCIPE",
+                      "SAU: SAUDI ARABIA",
+                      "SEN: SENEGAL",
+                      "SRB: SERBIA",
+                      "SYC: SEYCHELLES",
+                      "SLE: SIERRA LEONE",
+                      "SGP: SINGAPORE",
+                      "SXM: SINT MAARTEN",
+                      "SVK: SLOVAKIA",
+                      "SVN: SLOVENIA",
+                      "SLB: SOLOMON ISLANDS",
+                      "SOM: SOMALIA",
+                      "ZAF: SOUTH AFRICA",
+                      "SGS: SOUTH GEORGIA AND SOUTH SANDWICH ISLANDS",
+                      "SSD: SOUTH SUDAN",
+                      "ESP: SPAIN",
+                      "XSP: SPRATLY ISLANDS",
+                      "LKA: SRI LANKA",
+                      "SDN: SUDAN",
+                      "SUR: SURINAME",
+                      "XSV: SVALBARD",
+                      "SWE: SWEDEN",
+                      "CHE: SWITZERLAND",
+                      "SYR: SYRIA",
+                      "TWN: TAIWAN",
+                      "TJK: TAJIKISTAN",
+                      "TZA: TANZANIA",
+                      "THA: THAILAND",
+                      "TLS: TIMOR-LESTE",
+                      "TGO: TOGO",
+                      "TKL: TOKELAU",
+                      "TON: TONGA",
+                      "TTO: TRINIDAD AND TOBAGO",
+                      "XTR: TROMELIN ISLAND",
+                      "TUN: TUNISIA",
+                      "TUR: TURKEY",
+                      "TKM: TURKMENISTAN",
+                      "TCA: TURKS AND CAICOS ISLANDS",
+                      "TUV: TUVALU",
+                      "UGA: UGANDA",
+                      "UKR: UKRAINE",
+                      "ARE: UNITED ARAB EMIRATES",
+                      "GBR: UNITED KINGDOM",
+                      "USA: UNITED STATES",
+                      "URY: URUGUAY",
+                      "UZB: UZBEKISTAN",
+                      "VUT: VANUATU",
+                      "VAT: VATICAN CITY",
+                      "VEN: VENEZUELA",
+                      "VNM: VIETNAM",
+                      "VGB: VIRGIN ISLANDS, BRITISH",
+                      "WLF: WALLIS AND FUTUNA",
+                      "XWB: WEST BANK",
+                      "ESH: WESTERN SAHARA",
+                      "YEM: YEMEN",
+                      "ZMB: ZAMBIA",
+                      "ZWE: ZIMBABWE"
+                    ],
+                    "title": "Country",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city",
+                  "country"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "email": {
+            "allOf": [
+              {
+                "format": "email",
+                "maxLength": 60,
+                "title": "Email",
+                "type": "string"
+              }
+            ],
+            "title": "E-mail Address"
+          },
+          "fax": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Fax Number"
+          },
+          "name": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Phone Number"
+          },
+          "title": {
+            "allOf": [
+              {
+                "description": "Enter the position title.",
+                "maxLength": 45,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "phone"
+        ],
+        "type": "object"
+      },
+      "payee": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "country": {
+                          "const": "USA: UNITED STATES"
+                        }
+                      },
+                      "required": [
+                        "country"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "state",
+                        "zip_code"
+                      ]
+                    }
+                  }
+                ],
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "Country Code",
+                    "enum": [
+                      "AFG: AFGHANISTAN",
+                      "XQZ: AKROTIRI",
+                      "ALB: ALBANIA",
+                      "DZA: ALGERIA",
+                      "AND: ANDORRA",
+                      "AGO: ANGOLA",
+                      "AIA: ANGUILLA",
+                      "ATA: ANTARCTICA",
+                      "ATG: ANTIGUA AND BARBUDA",
+                      "ARG: ARGENTINA",
+                      "ARM: ARMENIA",
+                      "ABW: ARUBA",
+                      "XAC: ASHMORE AND CARTIER ISLANDS",
+                      "AUS: AUSTRALIA",
+                      "AUT: AUSTRIA",
+                      "AZE: AZERBAIJAN",
+                      "BHS: BAHAMAS, THE",
+                      "BHR: BAHRAIN",
+                      "BGD: BANGLADESH",
+                      "BRB: BARBADOS",
+                      "XBI: BASSAS DA INDIA",
+                      "BLR: BELARUS",
+                      "BEL: BELGIUM",
+                      "BLZ: BELIZE",
+                      "BEN: BENIN",
+                      "BMU: BERMUDA",
+                      "BTN: BHUTAN",
+                      "BOL: BOLIVIA",
+                      "BES: BONAIRE, SINT EUSTATIUS, AND SABA",
+                      "BIH: BOSNIA AND HERZEGOVINA",
+                      "BWA: BOTSWANA",
+                      "BVT: BOUVET ISLAND",
+                      "BRA: BRAZIL",
+                      "IOT: BRITISH INDIAN OCEAN TERRITORY",
+                      "BRN: BRUNEI",
+                      "BGR: BULGARIA",
+                      "BFA: BURKINA FASO",
+                      "MMR: BURMA",
+                      "BDI: BURUNDI",
+                      "CPV: CABO VERDE",
+                      "KHM: CAMBODIA",
+                      "CMR: CAMEROON",
+                      "CAN: CANADA",
+                      "CYM: CAYMAN ISLANDS",
+                      "CAF: CENTRAL AFRICAN REPUBLIC",
+                      "TCD: CHAD",
+                      "CHL: CHILE",
+                      "CHN: CHINA",
+                      "CXR: CHRISTMAS ISLAND",
+                      "CPT: CLIPPERTON ISLAND",
+                      "CCK: COCOS (KEELING) ISLANDS",
+                      "COL: COLOMBIA",
+                      "COM: COMOROS",
+                      "COG: CONGO (BRAZZAVILLE)",
+                      "COD: CONGO (KINSHASA)",
+                      "COK: COOK ISLANDS",
+                      "XCS: CORAL SEA ISLANDS",
+                      "CRI: COSTA RICA",
+                      "CIV: C\u00d4TE D'IVOIRE",
+                      "HRV: CROATIA",
+                      "CUB: CUBA",
+                      "CUW: CURA\u00c7AO",
+                      "CYP: CYPRUS",
+                      "CZE: CZECHIA",
+                      "DNK: DENMARK",
+                      "XXD: DHEKELIA",
+                      "DGA: DIEGO GARCIA",
+                      "DJI: DJIBOUTI",
+                      "DMA: DOMINICA",
+                      "DOM: DOMINICAN REPUBLIC",
+                      "ECU: ECUADOR",
+                      "EGY: EGYPT",
+                      "SLV: EL SALVADOR",
+                      "XAZ: ENTITY 1",
+                      "XCR: ENTITY 2",
+                      "XCY: ENTITY 3",
+                      "XKM: ENTITY 4",
+                      "XKN: ENTITY 5",
+                      "AX3: ENTITY 6",
+                      "GNQ: EQUATORIAL GUINEA",
+                      "ERI: ERITREA",
+                      "EST: ESTONIA",
+                      "SWZ: ESWATINI",
+                      "ETH: ETHIOPIA",
+                      "XEU: EUROPA ISLAND",
+                      "FLK: FALKLAND ISLANDS (ISLAS MALVINAS)",
+                      "FRO: FAROE ISLANDS",
+                      "FJI: FIJI",
+                      "FIN: FINLAND",
+                      "FRA: FRANCE",
+                      "GUF: FRENCH GUIANA",
+                      "PYF: FRENCH POLYNESIA",
+                      "ATF: FRENCH SOUTHERN AND ANTARCTIC LANDS",
+                      "GAB: GABON",
+                      "GMB: GAMBIA, THE",
+                      "XGZ: GAZA STRIP",
+                      "GEO: GEORGIA",
+                      "DEU: GERMANY",
+                      "GHA: GHANA",
+                      "GIB: GIBRALTAR",
+                      "XGL: GLORIOSO ISLANDS",
+                      "GRC: GREECE",
+                      "GRL: GREENLAND",
+                      "GRD: GRENADA",
+                      "GLP: GUADELOUPE",
+                      "GTM: GUATEMALA",
+                      "GGY: GUERNSEY",
+                      "GIN: GUINEA",
+                      "GNB: GUINEA-BISSAU",
+                      "GUY: GUYANA",
+                      "HTI: HAITI",
+                      "HMD: HEARD ISLAND AND MCDONALD ISLANDS",
+                      "HND: HONDURAS",
+                      "HKG: HONG KONG",
+                      "HUN: HUNGARY",
+                      "ISL: ICELAND",
+                      "IND: INDIA",
+                      "IDN: INDONESIA",
+                      "IRN: IRAN",
+                      "IRQ: IRAQ",
+                      "IRL: IRELAND",
+                      "IMN: ISLE OF MAN",
+                      "ISR: ISRAEL",
+                      "ITA: ITALY",
+                      "JAM: JAMAICA",
+                      "XJM: JAN MAYEN",
+                      "JPN: JAPAN",
+                      "JEY: JERSEY",
+                      "JOR: JORDAN",
+                      "XJN: JUAN DE NOVA ISLAND",
+                      "KAZ: KAZAKHSTAN",
+                      "KEN: KENYA",
+                      "KIR: KIRIBATI",
+                      "PRK: KOREA, NORTH",
+                      "KOR: KOREA, SOUTH",
+                      "XKS: KOSOVO",
+                      "KWT: KUWAIT",
+                      "KGZ: KYRGYZSTAN",
+                      "LAO: LAOS",
+                      "LVA: LATVIA",
+                      "LBN: LEBANON",
+                      "LSO: LESOTHO",
+                      "LBR: LIBERIA",
+                      "LBY: LIBYA",
+                      "LIE: LIECHTENSTEIN",
+                      "LTU: LITHUANIA",
+                      "LUX: LUXEMBOURG",
+                      "MAC: MACAU",
+                      "MDG: MADAGASCAR",
+                      "MWI: MALAWI",
+                      "MYS: MALAYSIA",
+                      "MDV: MALDIVES",
+                      "MLI: MALI",
+                      "MLT: MALTA",
+                      "MTQ: MARTINIQUE",
+                      "MRT: MAURITANIA",
+                      "MUS: MAURITIUS",
+                      "MYT: MAYOTTE",
+                      "MEX: MEXICO",
+                      "MDA: MOLDOVA",
+                      "MCO: MONACO",
+                      "MNG: MONGOLIA",
+                      "MNE: MONTENEGRO",
+                      "MSR: MONTSERRAT",
+                      "MAR: MOROCCO",
+                      "MOZ: MOZAMBIQUE",
+                      "NAM: NAMIBIA",
+                      "NRU: NAURU",
+                      "NPL: NEPAL",
+                      "NLD: NETHERLANDS",
+                      "NCL: NEW CALEDONIA",
+                      "NZL: NEW ZEALAND",
+                      "NIC: NICARAGUA",
+                      "NER: NIGER",
+                      "NGA: NIGERIA",
+                      "NIU: NIUE",
+                      "NFK: NORFOLK ISLAND",
+                      "MKD: NORTH MACEDONIA",
+                      "NOR: NORWAY",
+                      "OMN: OMAN",
+                      "PAK: PAKISTAN",
+                      "PAN: PANAMA",
+                      "PNG: PAPUA NEW GUINEA",
+                      "XPR: PARACEL ISLANDS",
+                      "PRY: PARAGUAY",
+                      "PER: PERU",
+                      "PHL: PHILIPPINES",
+                      "PCN: PITCAIRN ISLANDS",
+                      "POL: POLAND",
+                      "PRT: PORTUGAL",
+                      "QAT: QATAR",
+                      "REU: REUNION",
+                      "ROU: ROMANIA",
+                      "RUS: RUSSIA",
+                      "RWA: RWANDA",
+                      "BLM: SAINT BARTHELEMY",
+                      "SHN: SAINT HELENA, ASCENSION, AND TRISTAN DA CUNHA",
+                      "KNA: SAINT KITTS AND NEVIS",
+                      "LCA: SAINT LUCIA",
+                      "MAF: SAINT MARTIN",
+                      "SPM: SAINT PIERRE AND MIQUELON",
+                      "VCT: SAINT VINCENT AND THE GRENADINES",
+                      "WSM: SAMOA",
+                      "SMR: SAN MARINO",
+                      "STP: SAO TOME AND PRINCIPE",
+                      "SAU: SAUDI ARABIA",
+                      "SEN: SENEGAL",
+                      "SRB: SERBIA",
+                      "SYC: SEYCHELLES",
+                      "SLE: SIERRA LEONE",
+                      "SGP: SINGAPORE",
+                      "SXM: SINT MAARTEN",
+                      "SVK: SLOVAKIA",
+                      "SVN: SLOVENIA",
+                      "SLB: SOLOMON ISLANDS",
+                      "SOM: SOMALIA",
+                      "ZAF: SOUTH AFRICA",
+                      "SGS: SOUTH GEORGIA AND SOUTH SANDWICH ISLANDS",
+                      "SSD: SOUTH SUDAN",
+                      "ESP: SPAIN",
+                      "XSP: SPRATLY ISLANDS",
+                      "LKA: SRI LANKA",
+                      "SDN: SUDAN",
+                      "SUR: SURINAME",
+                      "XSV: SVALBARD",
+                      "SWE: SWEDEN",
+                      "CHE: SWITZERLAND",
+                      "SYR: SYRIA",
+                      "TWN: TAIWAN",
+                      "TJK: TAJIKISTAN",
+                      "TZA: TANZANIA",
+                      "THA: THAILAND",
+                      "TLS: TIMOR-LESTE",
+                      "TGO: TOGO",
+                      "TKL: TOKELAU",
+                      "TON: TONGA",
+                      "TTO: TRINIDAD AND TOBAGO",
+                      "XTR: TROMELIN ISLAND",
+                      "TUN: TUNISIA",
+                      "TUR: TURKEY",
+                      "TKM: TURKMENISTAN",
+                      "TCA: TURKS AND CAICOS ISLANDS",
+                      "TUV: TUVALU",
+                      "UGA: UGANDA",
+                      "UKR: UKRAINE",
+                      "ARE: UNITED ARAB EMIRATES",
+                      "GBR: UNITED KINGDOM",
+                      "USA: UNITED STATES",
+                      "URY: URUGUAY",
+                      "UZB: UZBEKISTAN",
+                      "VUT: VANUATU",
+                      "VAT: VATICAN CITY",
+                      "VEN: VENEZUELA",
+                      "VNM: VIETNAM",
+                      "VGB: VIRGIN ISLANDS, BRITISH",
+                      "WLF: WALLIS AND FUTUNA",
+                      "XWB: WEST BANK",
+                      "ESH: WESTERN SAHARA",
+                      "YEM: YEMEN",
+                      "ZMB: ZAMBIA",
+                      "ZWE: ZIMBABWE"
+                    ],
+                    "title": "Country",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city",
+                  "country"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "email": {
+            "allOf": [
+              {
+                "format": "email",
+                "maxLength": 60,
+                "title": "Email",
+                "type": "string"
+              }
+            ],
+            "title": "E-mail Address"
+          },
+          "fax": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Fax Number"
+          },
+          "name": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Phone Number"
+          },
+          "title": {
+            "allOf": [
+              {
+                "description": "Enter the position title.",
+                "maxLength": 45,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "phone"
+        ],
+        "type": "object"
+      },
+      "project_manager": {
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "country": {
+                          "const": "USA: UNITED STATES"
+                        }
+                      },
+                      "required": [
+                        "country"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "state",
+                        "zip_code"
+                      ]
+                    }
+                  }
+                ],
+                "description": "Enter an address.",
+                "properties": {
+                  "city": {
+                    "description": "Enter the city.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "City",
+                    "type": "string"
+                  },
+                  "country": {
+                    "description": "Country Code",
+                    "enum": [
+                      "AFG: AFGHANISTAN",
+                      "XQZ: AKROTIRI",
+                      "ALB: ALBANIA",
+                      "DZA: ALGERIA",
+                      "AND: ANDORRA",
+                      "AGO: ANGOLA",
+                      "AIA: ANGUILLA",
+                      "ATA: ANTARCTICA",
+                      "ATG: ANTIGUA AND BARBUDA",
+                      "ARG: ARGENTINA",
+                      "ARM: ARMENIA",
+                      "ABW: ARUBA",
+                      "XAC: ASHMORE AND CARTIER ISLANDS",
+                      "AUS: AUSTRALIA",
+                      "AUT: AUSTRIA",
+                      "AZE: AZERBAIJAN",
+                      "BHS: BAHAMAS, THE",
+                      "BHR: BAHRAIN",
+                      "BGD: BANGLADESH",
+                      "BRB: BARBADOS",
+                      "XBI: BASSAS DA INDIA",
+                      "BLR: BELARUS",
+                      "BEL: BELGIUM",
+                      "BLZ: BELIZE",
+                      "BEN: BENIN",
+                      "BMU: BERMUDA",
+                      "BTN: BHUTAN",
+                      "BOL: BOLIVIA",
+                      "BES: BONAIRE, SINT EUSTATIUS, AND SABA",
+                      "BIH: BOSNIA AND HERZEGOVINA",
+                      "BWA: BOTSWANA",
+                      "BVT: BOUVET ISLAND",
+                      "BRA: BRAZIL",
+                      "IOT: BRITISH INDIAN OCEAN TERRITORY",
+                      "BRN: BRUNEI",
+                      "BGR: BULGARIA",
+                      "BFA: BURKINA FASO",
+                      "MMR: BURMA",
+                      "BDI: BURUNDI",
+                      "CPV: CABO VERDE",
+                      "KHM: CAMBODIA",
+                      "CMR: CAMEROON",
+                      "CAN: CANADA",
+                      "CYM: CAYMAN ISLANDS",
+                      "CAF: CENTRAL AFRICAN REPUBLIC",
+                      "TCD: CHAD",
+                      "CHL: CHILE",
+                      "CHN: CHINA",
+                      "CXR: CHRISTMAS ISLAND",
+                      "CPT: CLIPPERTON ISLAND",
+                      "CCK: COCOS (KEELING) ISLANDS",
+                      "COL: COLOMBIA",
+                      "COM: COMOROS",
+                      "COG: CONGO (BRAZZAVILLE)",
+                      "COD: CONGO (KINSHASA)",
+                      "COK: COOK ISLANDS",
+                      "XCS: CORAL SEA ISLANDS",
+                      "CRI: COSTA RICA",
+                      "CIV: C\u00d4TE D'IVOIRE",
+                      "HRV: CROATIA",
+                      "CUB: CUBA",
+                      "CUW: CURA\u00c7AO",
+                      "CYP: CYPRUS",
+                      "CZE: CZECHIA",
+                      "DNK: DENMARK",
+                      "XXD: DHEKELIA",
+                      "DGA: DIEGO GARCIA",
+                      "DJI: DJIBOUTI",
+                      "DMA: DOMINICA",
+                      "DOM: DOMINICAN REPUBLIC",
+                      "ECU: ECUADOR",
+                      "EGY: EGYPT",
+                      "SLV: EL SALVADOR",
+                      "XAZ: ENTITY 1",
+                      "XCR: ENTITY 2",
+                      "XCY: ENTITY 3",
+                      "XKM: ENTITY 4",
+                      "XKN: ENTITY 5",
+                      "AX3: ENTITY 6",
+                      "GNQ: EQUATORIAL GUINEA",
+                      "ERI: ERITREA",
+                      "EST: ESTONIA",
+                      "SWZ: ESWATINI",
+                      "ETH: ETHIOPIA",
+                      "XEU: EUROPA ISLAND",
+                      "FLK: FALKLAND ISLANDS (ISLAS MALVINAS)",
+                      "FRO: FAROE ISLANDS",
+                      "FJI: FIJI",
+                      "FIN: FINLAND",
+                      "FRA: FRANCE",
+                      "GUF: FRENCH GUIANA",
+                      "PYF: FRENCH POLYNESIA",
+                      "ATF: FRENCH SOUTHERN AND ANTARCTIC LANDS",
+                      "GAB: GABON",
+                      "GMB: GAMBIA, THE",
+                      "XGZ: GAZA STRIP",
+                      "GEO: GEORGIA",
+                      "DEU: GERMANY",
+                      "GHA: GHANA",
+                      "GIB: GIBRALTAR",
+                      "XGL: GLORIOSO ISLANDS",
+                      "GRC: GREECE",
+                      "GRL: GREENLAND",
+                      "GRD: GRENADA",
+                      "GLP: GUADELOUPE",
+                      "GTM: GUATEMALA",
+                      "GGY: GUERNSEY",
+                      "GIN: GUINEA",
+                      "GNB: GUINEA-BISSAU",
+                      "GUY: GUYANA",
+                      "HTI: HAITI",
+                      "HMD: HEARD ISLAND AND MCDONALD ISLANDS",
+                      "HND: HONDURAS",
+                      "HKG: HONG KONG",
+                      "HUN: HUNGARY",
+                      "ISL: ICELAND",
+                      "IND: INDIA",
+                      "IDN: INDONESIA",
+                      "IRN: IRAN",
+                      "IRQ: IRAQ",
+                      "IRL: IRELAND",
+                      "IMN: ISLE OF MAN",
+                      "ISR: ISRAEL",
+                      "ITA: ITALY",
+                      "JAM: JAMAICA",
+                      "XJM: JAN MAYEN",
+                      "JPN: JAPAN",
+                      "JEY: JERSEY",
+                      "JOR: JORDAN",
+                      "XJN: JUAN DE NOVA ISLAND",
+                      "KAZ: KAZAKHSTAN",
+                      "KEN: KENYA",
+                      "KIR: KIRIBATI",
+                      "PRK: KOREA, NORTH",
+                      "KOR: KOREA, SOUTH",
+                      "XKS: KOSOVO",
+                      "KWT: KUWAIT",
+                      "KGZ: KYRGYZSTAN",
+                      "LAO: LAOS",
+                      "LVA: LATVIA",
+                      "LBN: LEBANON",
+                      "LSO: LESOTHO",
+                      "LBR: LIBERIA",
+                      "LBY: LIBYA",
+                      "LIE: LIECHTENSTEIN",
+                      "LTU: LITHUANIA",
+                      "LUX: LUXEMBOURG",
+                      "MAC: MACAU",
+                      "MDG: MADAGASCAR",
+                      "MWI: MALAWI",
+                      "MYS: MALAYSIA",
+                      "MDV: MALDIVES",
+                      "MLI: MALI",
+                      "MLT: MALTA",
+                      "MTQ: MARTINIQUE",
+                      "MRT: MAURITANIA",
+                      "MUS: MAURITIUS",
+                      "MYT: MAYOTTE",
+                      "MEX: MEXICO",
+                      "MDA: MOLDOVA",
+                      "MCO: MONACO",
+                      "MNG: MONGOLIA",
+                      "MNE: MONTENEGRO",
+                      "MSR: MONTSERRAT",
+                      "MAR: MOROCCO",
+                      "MOZ: MOZAMBIQUE",
+                      "NAM: NAMIBIA",
+                      "NRU: NAURU",
+                      "NPL: NEPAL",
+                      "NLD: NETHERLANDS",
+                      "NCL: NEW CALEDONIA",
+                      "NZL: NEW ZEALAND",
+                      "NIC: NICARAGUA",
+                      "NER: NIGER",
+                      "NGA: NIGERIA",
+                      "NIU: NIUE",
+                      "NFK: NORFOLK ISLAND",
+                      "MKD: NORTH MACEDONIA",
+                      "NOR: NORWAY",
+                      "OMN: OMAN",
+                      "PAK: PAKISTAN",
+                      "PAN: PANAMA",
+                      "PNG: PAPUA NEW GUINEA",
+                      "XPR: PARACEL ISLANDS",
+                      "PRY: PARAGUAY",
+                      "PER: PERU",
+                      "PHL: PHILIPPINES",
+                      "PCN: PITCAIRN ISLANDS",
+                      "POL: POLAND",
+                      "PRT: PORTUGAL",
+                      "QAT: QATAR",
+                      "REU: REUNION",
+                      "ROU: ROMANIA",
+                      "RUS: RUSSIA",
+                      "RWA: RWANDA",
+                      "BLM: SAINT BARTHELEMY",
+                      "SHN: SAINT HELENA, ASCENSION, AND TRISTAN DA CUNHA",
+                      "KNA: SAINT KITTS AND NEVIS",
+                      "LCA: SAINT LUCIA",
+                      "MAF: SAINT MARTIN",
+                      "SPM: SAINT PIERRE AND MIQUELON",
+                      "VCT: SAINT VINCENT AND THE GRENADINES",
+                      "WSM: SAMOA",
+                      "SMR: SAN MARINO",
+                      "STP: SAO TOME AND PRINCIPE",
+                      "SAU: SAUDI ARABIA",
+                      "SEN: SENEGAL",
+                      "SRB: SERBIA",
+                      "SYC: SEYCHELLES",
+                      "SLE: SIERRA LEONE",
+                      "SGP: SINGAPORE",
+                      "SXM: SINT MAARTEN",
+                      "SVK: SLOVAKIA",
+                      "SVN: SLOVENIA",
+                      "SLB: SOLOMON ISLANDS",
+                      "SOM: SOMALIA",
+                      "ZAF: SOUTH AFRICA",
+                      "SGS: SOUTH GEORGIA AND SOUTH SANDWICH ISLANDS",
+                      "SSD: SOUTH SUDAN",
+                      "ESP: SPAIN",
+                      "XSP: SPRATLY ISLANDS",
+                      "LKA: SRI LANKA",
+                      "SDN: SUDAN",
+                      "SUR: SURINAME",
+                      "XSV: SVALBARD",
+                      "SWE: SWEDEN",
+                      "CHE: SWITZERLAND",
+                      "SYR: SYRIA",
+                      "TWN: TAIWAN",
+                      "TJK: TAJIKISTAN",
+                      "TZA: TANZANIA",
+                      "THA: THAILAND",
+                      "TLS: TIMOR-LESTE",
+                      "TGO: TOGO",
+                      "TKL: TOKELAU",
+                      "TON: TONGA",
+                      "TTO: TRINIDAD AND TOBAGO",
+                      "XTR: TROMELIN ISLAND",
+                      "TUN: TUNISIA",
+                      "TUR: TURKEY",
+                      "TKM: TURKMENISTAN",
+                      "TCA: TURKS AND CAICOS ISLANDS",
+                      "TUV: TUVALU",
+                      "UGA: UGANDA",
+                      "UKR: UKRAINE",
+                      "ARE: UNITED ARAB EMIRATES",
+                      "GBR: UNITED KINGDOM",
+                      "USA: UNITED STATES",
+                      "URY: URUGUAY",
+                      "UZB: UZBEKISTAN",
+                      "VUT: VANUATU",
+                      "VAT: VATICAN CITY",
+                      "VEN: VENEZUELA",
+                      "VNM: VIETNAM",
+                      "VGB: VIRGIN ISLANDS, BRITISH",
+                      "WLF: WALLIS AND FUTUNA",
+                      "XWB: WEST BANK",
+                      "ESH: WESTERN SAHARA",
+                      "YEM: YEMEN",
+                      "ZMB: ZAMBIA",
+                      "ZWE: ZIMBABWE"
+                    ],
+                    "title": "Country",
+                    "type": "string"
+                  },
+                  "state": {
+                    "allOf": [
+                      {
+                        "description": "US State or Territory Code",
+                        "enum": [
+                          "AL: Alabama",
+                          "AK: Alaska",
+                          "AZ: Arizona",
+                          "AR: Arkansas",
+                          "CA: California",
+                          "CO: Colorado",
+                          "CT: Connecticut",
+                          "DE: Delaware",
+                          "DC: District of Columbia",
+                          "FL: Florida",
+                          "GA: Georgia",
+                          "HI: Hawaii",
+                          "ID: Idaho",
+                          "IL: Illinois",
+                          "IN: Indiana",
+                          "IA: Iowa",
+                          "KS: Kansas",
+                          "KY: Kentucky",
+                          "LA: Louisiana",
+                          "ME: Maine",
+                          "MD: Maryland",
+                          "MA: Massachusetts",
+                          "MI: Michigan",
+                          "MN: Minnesota",
+                          "MS: Mississippi",
+                          "MO: Missouri",
+                          "MT: Montana",
+                          "NE: Nebraska",
+                          "NV: Nevada",
+                          "NH: New Hampshire",
+                          "NJ: New Jersey",
+                          "NM: New Mexico",
+                          "NY: New York",
+                          "NC: North Carolina",
+                          "ND: North Dakota",
+                          "OH: Ohio",
+                          "OK: Oklahoma",
+                          "OR: Oregon",
+                          "PA: Pennsylvania",
+                          "RI: Rhode Island",
+                          "SC: South Carolina",
+                          "SD: South Dakota",
+                          "TN: Tennessee",
+                          "TX: Texas",
+                          "UT: Utah",
+                          "VT: Vermont",
+                          "VA: Virginia",
+                          "WA: Washington",
+                          "WV: West Virginia",
+                          "WI: Wisconsin",
+                          "WY: Wyoming",
+                          "AS: American Samoa",
+                          "FM: Federated States of Micronesia",
+                          "GU: Guam",
+                          "MH: Marshall Islands",
+                          "MP: Northern Mariana Islands",
+                          "PW: Palau",
+                          "PR: Puerto Rico",
+                          "VI: Virgin Islands",
+                          "FQ: Baker Island",
+                          "HQ: Howland Island",
+                          "DQ: Jarvis Island",
+                          "JQ: Johnston Atoll",
+                          "KQ: Kingman Reef",
+                          "MQ: Midway Islands",
+                          "BQ: Navassa Island",
+                          "LQ: Palmyra Atoll",
+                          "WQ: Wake Island",
+                          "AA: Armed Forces Americas (except Canada)",
+                          "AE: Armed Forces Europe, the Middle East, and Canada",
+                          "AP: Armed Forces Pacific"
+                        ],
+                        "title": "State",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Enter the state.",
+                    "title": "State"
+                  },
+                  "street1": {
+                    "description": "Enter the first line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 1",
+                    "type": "string"
+                  },
+                  "street2": {
+                    "description": "Enter the second line of the Street Address.",
+                    "maxLength": 55,
+                    "minLength": 1,
+                    "title": "Street 2",
+                    "type": "string"
+                  },
+                  "zip_code": {
+                    "description": "Enter the nine-digit Postal Code (e.g., ZIP Code). This field is required if the Country is the United States.",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "title": "Zip / Postal Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "street1",
+                  "city",
+                  "country"
+                ],
+                "title": "Address",
+                "type": "object"
+              }
+            ]
+          },
+          "email": {
+            "allOf": [
+              {
+                "format": "email",
+                "maxLength": 60,
+                "title": "Email",
+                "type": "string"
+              }
+            ],
+            "title": "E-mail Address"
+          },
+          "fax": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Fax Number"
+          },
+          "name": {
+            "allOf": [
+              {
+                "description": "",
+                "properties": {
+                  "first_name": {
+                    "description": "Enter the first name.",
+                    "maxLength": 35,
+                    "minLength": 1,
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Enter the last name.",
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "middle_name": {
+                    "description": "Enter the middle name.",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "title": "Middle Name",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "description": "Enter the prefix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Prefix",
+                    "type": "string"
+                  },
+                  "suffix": {
+                    "description": "Enter the suffix.",
+                    "maxLength": 10,
+                    "minLength": 1,
+                    "title": "Suffix",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name"
+                ],
+                "title": "Name and Contact Information",
+                "type": "object"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "allOf": [
+              {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "title": "Phone Number"
+          },
+          "title": {
+            "allOf": [
+              {
+                "description": "Enter the position title.",
+                "maxLength": 45,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "phone"
+        ],
+        "type": "object"
+      }
+    },
+    "required": [],
+    "type": "object"
+  },
+  "form_name": "EPA KEY CONTACTS FORM",
+  "form_rule_schema": null,
+  "form_type": "EPAKeyContacts",
+  "form_ui_schema": [
+    {
+      "children": [
+        {
+          "definition": "/properties/authorized_representative/properties/name/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/name/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/name/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/name/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/name/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/title",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/address/properties/zip_code",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/address/properties/country",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/phone",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/fax",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/authorized_representative/properties/email",
+          "type": "field"
+        }
+      ],
+      "description": "Original awards and amendments will be sent to this individual for review and acceptance, unless otherwise indicated.",
+      "label": "Authorized Representative",
+      "name": "authorized_representative",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/payee/properties/name/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/name/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/name/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/name/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/name/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/title",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/address/properties/zip_code",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/address/properties/country",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/phone",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/fax",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/payee/properties/email",
+          "type": "field"
+        }
+      ],
+      "description": "Individual authorized to accept payments",
+      "label": "Payee",
+      "name": "payee",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/administrative_contact/properties/name/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/name/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/name/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/name/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/name/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/title",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/address/properties/zip_code",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/address/properties/country",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/phone",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/fax",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/administrative_contact/properties/email",
+          "type": "field"
+        }
+      ],
+      "description": "Individual from Sponsored Programs Office to contact concerning administrative matters (i.e., indirect cost computation, rebudgeting requests etc).",
+      "label": "Administrative Contact",
+      "name": "administrative_contact",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": "/properties/project_manager/properties/name/properties/prefix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/name/properties/first_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/name/properties/middle_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/name/properties/last_name",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/name/properties/suffix",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/title",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/address/properties/street1",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/address/properties/street2",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/address/properties/city",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/address/properties/state",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/address/properties/zip_code",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/address/properties/country",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/phone",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/fax",
+          "type": "field"
+        },
+        {
+          "definition": "/properties/project_manager/properties/email",
+          "type": "field"
+        }
+      ],
+      "description": "Individual responsible for the technical completion of the proposed work.",
+      "label": "Project Manager",
+      "name": "project_manager",
+      "type": "section"
+    }
+  ],
+  "form_version": "2.0",
+  "omb_number": "2030-0020",
+  "short_form_name": "EPA_KeyContacts"
+}
