@@ -1,0 +1,1559 @@
+{
+  "data": [
+    {
+      "agency": "HHS-CDC-NCCDPHP",
+      "agency_code": "HHS-CDC-NCCDPHP",
+      "agency_name": "Centers for Disease Control - NCCDPHP",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 1,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "64.154",
+          "program_title": "Butler PLC"
+        },
+        {
+          "assistance_listing_number": "61.747",
+          "program_title": "Kelly Ltd"
+        }
+      ],
+      "opportunity_id": "a5c54070-0059-44e7-8004-b4e8d758f3e4",
+      "opportunity_number": "AN-06-MDK-635",
+      "opportunity_status": "forecasted",
+      "opportunity_title": "Rich-Barber 2020 award",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "simpler.grants.gov",
+        "additional_info_url_description": "Division of Roberts Group",
+        "agency_contact_description": "Webmaster\nmelissamoyer@example.org",
+        "agency_email_address": "erincoleman@example.net",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Prepare have no standard you floor white. Can arm together himself more have trip water. Step rate represent imagine. Statement training interest. Type rich fine effort book value civil.",
+        "applicant_types": [
+          "county_governments",
+          "special_district_governments",
+          "for_profit_organizations_other_than_small_businesses"
+        ],
+        "archive_date": "2026-10-27",
+        "award_ceiling": 5620000,
+        "award_floor": 244347,
+        "close_date": null,
+        "close_date_description": null,
+        "created_at": "2021-12-08T22:24:34.570412-08:00",
+        "estimated_total_program_funding": 5620000,
+        "expected_number_of_awards": 23,
+        "fiscal_year": 2027,
+        "forecasted_award_date": "2027-04-10",
+        "forecasted_close_date": "2026-12-17",
+        "forecasted_close_date_description": "Material task get news poor.",
+        "forecasted_post_date": "2026-10-22",
+        "forecasted_project_start_date": "2027-10-04",
+        "funding_categories": [
+          "employment_labor_and_training",
+          "natural_resources"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant",
+          "other",
+          "procurement_contract"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": true,
+        "post_date": "2026-09-19",
+        "summary_description": "<div>Worry term improve open. Age follow return media treat area city. Single worker west help film eight easy. Manage especially alone during yard hope. Politics public reality sister face. Maintain full relationship far western difference contain. Attack cost how. Building picture seem training right nation develop. Return treat chair decade shoulder attack have get. Mission happen view identify trial difference. Sure southern may we us. Good some necessary common among task well. Leg rest although mind half. Goal agency Mr. Cultural radio help realize water Mrs. Catch example phone build population particularly. Support leader fly enjoy option my after again. Fish yourself especially PM international form table class. Organization cover record brother guy region son. <a href='google.com'>Five out let special resource plant clear.</a> To three town manage our. Right few per. How walk during impact. Trouble local second yes catch edge meet. Put different both toward almost indeed eye there. Scene attorney carry food less factor. Worry close consumer strategy oil stock news. To glass build end also rise television writer. Pass somebody whether general movement quality. Off throw them few word. Beyond scene of between argue fire night. Visit feeling recent current protect notice. Art arrive describe space wall media base. Suddenly particular share Congress evening. Full force human. Save culture should process. Boy surface leave suddenly. Painting value sing physical. Star capital start beat game receive. Know school short future go. Indeed half tonight discussion happen operation. Travel put just small million live early beautiful. Other low for. Financial ever what method rather fly. Own toward indeed administration teach husband political down. Thought data yet movement piece.</div> <div>Smile group south condition dream cup paper billion. Our time herself door man. Evidence various prepare to matter. Loss when professional represent leave. Color support friend day. Contain imagine trade so visit example want. Significant water first determine. Few argue rest amount. Father opportunity institution heavy hand. Middle manager service field true situation. Traditional style without owner. Food scene poor. Speak read should issue manager bring. Mrs reduce possible seem clearly perhaps. Mother area audience go at street near wonder. Find hotel let. Beat lawyer hour Republican know relate sport. Hand executive candidate behavior both high. Bad he science piece civil American. Board strong party simply watch area indeed defense. Number dog four environmental movement grow media. Draw glass according operation much rise. <a href='sam.gov'>Set ability industry born foot happen.</a> Special major sometimes follow bit center. Indeed race garden answer simply. South provide consumer prevent production. Receive send help candidate newspaper about. Class state civil people yard fire. Wish cover worry billion movement feeling forget visit. Room although all each its ever new weight. Painting thought woman authority certainly behavior wife. Score when successful manager. Subject four thus father. Seven two chance individual thousand significant reveal. Agree kitchen remember city ok relationship gas. Resource notice fire them write chance human. Some to treatment include catch sit he. Grow money rise whose television reality close appear. Matter rock whose commercial forget. Some once week prove. Challenge behavior idea north song first century evidence. Land building west yet party. Yard control yes point city event fine. Fund wish most movement race.</div>",
+        "updated_at": "2024-11-21T22:23:46.675730-08:00",
+        "version_number": 13
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "agency_name": "Bureau of Justice Assistance",
+      "category": "earmark",
+      "category_explanation": null,
+      "legacy_opportunity_id": 2,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "75.067",
+          "program_title": "Huff LLC"
+        },
+        {
+          "assistance_listing_number": "55.694",
+          "program_title": "Dixon-Campos"
+        },
+        {
+          "assistance_listing_number": "32.OFI",
+          "program_title": "Owens-Rodriguez"
+        }
+      ],
+      "opportunity_id": "917d056b-9fff-42c1-9c99-501324e59eed",
+      "opportunity_number": "DOD-AFRL-27-105",
+      "opportunity_status": "forecasted",
+      "opportunity_title": "Embassy program for Gaffer in Uzbekistan",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "simpler.grants.gov",
+        "additional_info_url_description": "Grants.gov",
+        "agency_contact_description": "James Jacobs\nFinancial risk analyst\n555-225-2744\nmonica69@example.org",
+        "agency_email_address": "hansonchristopher@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "small_businesses",
+          "special_district_governments",
+          "other"
+        ],
+        "archive_date": "2026-10-31",
+        "award_ceiling": 8465000,
+        "award_floor": 2116250,
+        "close_date": null,
+        "close_date_description": null,
+        "created_at": "2022-03-22T10:22:25.501688-07:00",
+        "estimated_total_program_funding": 8465000,
+        "expected_number_of_awards": 4,
+        "fiscal_year": 2027,
+        "forecasted_award_date": "2027-04-10",
+        "forecasted_close_date": "2026-12-17",
+        "forecasted_close_date_description": "Local item future include risk table.",
+        "forecasted_post_date": "2026-10-24",
+        "forecasted_project_start_date": "2027-07-31",
+        "funding_categories": [
+          "health",
+          "affordable_care_act"
+        ],
+        "funding_category_description": "Player sign technology act.",
+        "funding_instruments": [
+          "procurement_contract",
+          "cooperative_agreement",
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": true,
+        "post_date": "2026-09-19",
+        "summary_description": "<p>Property pretty turn manage we continue. Raise send also worker.</p><p><br></p><p>We campaign join get I town reflect. Box image local culture indicate. Product ahead open television voice smile rate.</p>",
+        "updated_at": "2023-07-14T08:20:49.090692-07:00",
+        "version_number": 8
+      },
+      "tagline": null,
+      "top_level_agency_code": "USDOJ",
+      "top_level_agency_name": "Department of Justice"
+    },
+    {
+      "agency": "HHS-IHS",
+      "agency_code": "HHS-IHS",
+      "agency_name": "Indian Health Service",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 3,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "51.LLZ",
+          "program_title": "Zimmerman-Fernandez"
+        },
+        {
+          "assistance_listing_number": "84.ILA",
+          "program_title": "Porter PLC"
+        },
+        {
+          "assistance_listing_number": "81.MLS",
+          "program_title": "Cook, Barr and Williams"
+        }
+      ],
+      "opportunity_id": "3e93734b-a5b5-4314-8843-480cb74ecf95",
+      "opportunity_number": "NU-91-KIN-348",
+      "opportunity_status": "forecasted",
+      "opportunity_title": "Laura Dickerson Foundation Grant for syndicate real-time content",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "grants.gov",
+        "additional_info_url_description": "Division of Taylor-Reynolds",
+        "agency_contact_description": "Webmaster\npgrant@example.net",
+        "agency_email_address": "alicia11@example.org",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "other_native_american_tribal_organizations",
+          "special_district_governments",
+          "public_and_state_institutions_of_higher_education"
+        ],
+        "archive_date": "2026-11-02",
+        "award_ceiling": 1280000,
+        "award_floor": 55652,
+        "close_date": null,
+        "close_date_description": null,
+        "created_at": "2023-03-16T02:23:34.810248-07:00",
+        "estimated_total_program_funding": 1280000,
+        "expected_number_of_awards": 23,
+        "fiscal_year": 2027,
+        "forecasted_award_date": "2027-04-23",
+        "forecasted_close_date": "2026-12-13",
+        "forecasted_close_date_description": "Finish care while animal health alone.",
+        "forecasted_post_date": "2026-10-21",
+        "forecasted_project_start_date": "2027-06-29",
+        "funding_categories": [
+          "infrastructure_investment_and_jobs_act",
+          "food_and_nutrition"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "other",
+          "cooperative_agreement",
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": true,
+        "post_date": "2026-09-21",
+        "summary_description": "<p>Within drop majority year adult nor. Serious per north main. Detail less happy campaign rather hand game.</p><p><br></p><p>Manage else deal poor. Result smile walk nor.</p>",
+        "updated_at": "2024-03-05T06:31:01.571845-08:00",
+        "version_number": 13
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "USDOJ-OJP-OJJDP",
+      "agency_code": "USDOJ-OJP-OJJDP",
+      "agency_name": "Office of Juvenile Justice Delinquency Prevention ",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 4,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "56.625",
+          "program_title": "Logan, Wilson and Robertson"
+        },
+        {
+          "assistance_listing_number": "03.686",
+          "program_title": "Hughes-Tucker"
+        },
+        {
+          "assistance_listing_number": "88.307",
+          "program_title": "Pitts PLC"
+        }
+      ],
+      "opportunity_id": "dcfad0e4-67d2-475d-b095-5226b78278b7",
+      "opportunity_number": "DOC-DOCNOAAERA-99-865",
+      "opportunity_status": "forecasted",
+      "opportunity_title": "Maria Erickson Foundation Grant for engineer sticky info-mediaries",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "google.com",
+        "additional_info_url_description": "Click on the link to see the full announcement.",
+        "agency_contact_description": "sam.gov Contact Center\nHours of operation are 24 hours a day, 7 days a week.\ndavid42@example.org",
+        "agency_email_address": "kjames@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Peace bit that appear live performance government. Decade region name yard people plan behind. Small job pressure growth talk. Area reveal office half. Wide body discuss cultural fast. Option particular wife along expert.",
+        "applicant_types": [
+          "individuals",
+          "small_businesses",
+          "state_governments"
+        ],
+        "archive_date": "2026-10-30",
+        "award_ceiling": 4860000,
+        "award_floor": 2430000,
+        "close_date": null,
+        "close_date_description": null,
+        "created_at": "2022-04-07T04:11:29.364927-07:00",
+        "estimated_total_program_funding": 4860000,
+        "expected_number_of_awards": 2,
+        "fiscal_year": 2027,
+        "forecasted_award_date": "2027-04-17",
+        "forecasted_close_date": "2026-11-24",
+        "forecasted_close_date_description": "Economic read middle as.",
+        "forecasted_post_date": "2026-10-22",
+        "forecasted_project_start_date": "2027-06-14",
+        "funding_categories": [
+          "food_and_nutrition",
+          "recreation_and_tourism"
+        ],
+        "funding_category_description": "Police those guy animal he international.",
+        "funding_instruments": [
+          "grant",
+          "cooperative_agreement",
+          "other"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": true,
+        "post_date": "2026-09-30",
+        "summary_description": "<div>Our respond nice blue sister. Single fill cause law page. Pass position apply situation. Ago score agreement though her early call performance. Total even address of management collection. Crime finish generation blood middle. Age century condition partner store green size. Through process term movie. West inside summer live rather character. Population far simply understand set find. Large cultural take situation. Action ask else keep woman tax. Bag eye crime their teach. Close unit cold message opportunity professional likely. Strategy blood above record personal into like draw. Night military area foot. Open build church. Security save middle worker either his. One teach ground ball. Past dark long service newspaper computer person. System oil medical town eat cultural cultural take. Cultural responsibility character who compare always. Forget worry political become answer memory step. Form event sign for decide both. Too support interesting language. Soon dinner success research play student positive. Then painting article different physical however. Product turn computer. <a href='sam.gov'>Particularly instead occur adult with.</a> Thousand think air man. Smile room even case away. Be large money little. Little finish growth build beyond condition. Feeling these wrong. Fund she Republican car size here after. Late western night point. Class season fast home sign summer nice. I computer day expert. Use professional former check sometimes. Trip any effect spend garden. Task standard attack authority pressure ever. National whatever up finish end. Theory pick much me many letter notice. Role must main live act. Action again reduce hour. Yes piece actually west within. Professional whom again account cost final. Practice true major crime she no. Very view government almost office increase number radio. Cell represent policy stay suffer its soon. Example involve back line happen suffer.</div> <div>Training production far other president treat. Example machine loss culture scene guy. Tell discussion offer majority. Before together father class follow run. Place along today whatever from for. Financial money season especially yet. Example suddenly surface animal discussion worker. Number plant instead simply season care admit. Us citizen ready. Natural spring may wear serve pattern. Occur already star whatever hear security travel. Least thus myself goal direction work somebody important. Off building account paper which commercial whose. Environment challenge again western respond media speak. Soldier people space blue yard than including everybody. Onto can local cold represent. Hard administration lay our Democrat call. Report but more. Gun society military a above deep. Military back stage begin call and. Face stuff worry table thank present look. Feel article beyond through same husband feel first. Food find toward every. Pass more body middle wall. Kitchen line relate relate organization herself. Seek rise bed information trial. Control according rise find spend whatever. Quickly interest determine commercial certainly create. Modern several serious take statement image. <a href='simpler.grants.gov'>Individual cup allow where.</a> At agency bed smile land scientist. Necessary each over act to night trade. Article what arm operation blue agency. Strategy program available few collection strong most. Teacher war many herself. Detail call husband evening red feeling manage. Upon person resource one news local. Cold he tax federal. Hot choose cultural two. Per likely this family day Democrat. Quickly important candidate use military land pull name. Pick culture particular hot against. Election contain voice. Interest require democratic board remain. Explain mean wind win although prepare police. Race near instead response. Free school off front administration. Painting page again score arm. Strategy return ten student. Day style upon. Certain attorney save forward beautiful. Audience describe central event now top. Situation suggest grow practice provide. Girl make ok develop near. Allow move job evening. Realize concern six rest glass another discussion test. Song receive interview society program. Walk you require game cup. Stand dog remain outside thing six. Eight small three create beat quite.</div>",
+        "updated_at": "2023-07-29T09:56:31.814711-07:00",
+        "version_number": 13
+      },
+      "tagline": null,
+      "top_level_agency_code": "USDOJ",
+      "top_level_agency_name": "Department of Justice"
+    },
+    {
+      "agency": "HHS-ACF",
+      "agency_code": "HHS-ACF",
+      "agency_name": "Administration for Children and Families",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 5,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "18.TND",
+          "program_title": "Edwards and Sons"
+        }
+      ],
+      "opportunity_id": "a31da977-991a-44ea-b3cf-2e7bc14fda3d",
+      "opportunity_number": "HP-47-OBX-835",
+      "opportunity_status": "forecasted",
+      "opportunity_title": "Kennedy, Miranda and Waller 1987 award",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "grants.gov",
+        "additional_info_url_description": "Click on the link to see the full announcement.",
+        "agency_contact_description": "grants.gov Contact Center\nHours of operation are 24 hours a day, 7 days a week.\namanda82@example.com",
+        "agency_email_address": "anna04@example.org",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "When choice history yard but world. Role police style. Suggest any quite try interesting final. Officer art clear prepare.",
+        "applicant_types": [
+          "nonprofits_non_higher_education_without_501c3",
+          "federally_recognized_native_american_tribal_governments",
+          "state_governments"
+        ],
+        "archive_date": "2026-10-30",
+        "award_ceiling": 4035000,
+        "award_floor": 175434,
+        "close_date": null,
+        "close_date_description": null,
+        "created_at": "2022-06-22T09:03:07.194161-07:00",
+        "estimated_total_program_funding": 4035000,
+        "expected_number_of_awards": 23,
+        "fiscal_year": 2027,
+        "forecasted_award_date": "2027-04-29",
+        "forecasted_close_date": "2026-11-24",
+        "forecasted_close_date_description": "Glass church feeling try discussion although since.",
+        "forecasted_post_date": "2026-10-25",
+        "forecasted_project_start_date": "2027-09-01",
+        "funding_categories": [
+          "affordable_care_act",
+          "regional_development"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "other",
+          "procurement_contract",
+          "grant"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": true,
+        "post_date": "2026-09-15",
+        "summary_description": "<div>Woman six new know wife. See wonder exactly by staff. Something traditional any society television would newspaper ever. Left character bill TV team season bill. Lose trade a too simple smile. Buy theory need that good. Over poor job by. Fact those money air. Down military news for movement no. Religious worry others including. Into day much important. Politics tough evidence play interview view Mr. Rate president ground until. Mrs share support second. Specific line share let Mr. Discuss actually experience month yard. Hospital night despite song personal. Treatment so attention. Hour million sell character feeling society. Painting letter order significant woman draw never. Media thing note think major generation interesting. Cell ask give serve leader. Two never class foreign deep shake. Speech tough service range similar door. Argue growth do room. <a href='grants.gov'>Know control task among suffer measure improve.</a> Team wide important than form rather. Least place save key gas. Stop me as skill single TV. Trouble shoulder statement artist. Send always never this early feeling consider. Everybody politics president what finally. Create bar quite range person. North adult physical very dark road surface. Politics mind because huge community watch official employee. Memory leave direction may partner. Company impact project start challenge. Reason a newspaper happen decide school. Wind use month spend movement partner. See detail south get fast. Thank teacher in. Not drive participant. Become bar we life send gas story. Significant rock after choice. Western charge without huge can share. Without once number together. Color point put different test. If then understand sit pass brother management. Year note goal suggest discover. Rise dinner when can. Weight address front any old production help. Rate national this son gun sure young. Defense training another fall reality.</div> <div>Ahead bit important cut institution dream. Daughter agent short bring talk vote politics. Authority money until go into economic shake check. Like but sport or president listen budget. Reach know bar political think. Music several involve couple paper hand. System shoulder from too. Several inside attack. Community single federal consumer difference tonight issue. Either result industry during support professor natural. Director situation tree think arm. Think fish list three decision present. Share first tell stage all. Red and national begin. Nearly view particularly trouble. Never customer memory suggest report. Lose morning life environment increase. Quite son box wind almost. Organization room check no. Tax fear so establish different. Military performance once perform. Right court TV. Few check whom. Game everything end sport amount fact dark. Phone ask hundred will brother under own. Country smile thousand couple national situation decide. Pm southern national again. Ball receive number current center. Thing language sound return get environmental behind peace. Occur community yard officer environmental whose full nice. Discussion employee possible office employee into. Measure line before ten concern power. She stop next forget boy able where. <a href='google.com'>Start major economic arrive something blue way.</a> Fish last again they. Outside drop consider PM determine know maintain. Indeed girl capital. Hour those along common that speak above. Piece right behavior dream. Wear capital lay compare beat suddenly. Early source team support feeling us energy. Discuss determine save week second. Late song president small southern exactly. Boy education east fight before reach along. East TV guy. Or whom evidence quite indicate population city society. Become lawyer top six. Official hospital understand now. Class life want perform quickly head drug bit.</div>",
+        "updated_at": "2023-09-14T18:30:05.313946-07:00",
+        "version_number": 12
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "USDA-FNS1",
+      "agency_code": "USDA-FNS1",
+      "agency_name": "Food and Nutrition Service",
+      "category": "continuation",
+      "category_explanation": null,
+      "legacy_opportunity_id": 6,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "47.GBO",
+          "program_title": "Fowler and Sons"
+        },
+        {
+          "assistance_listing_number": "28.RQF",
+          "program_title": "Hall-Baker"
+        },
+        {
+          "assistance_listing_number": "42.177",
+          "program_title": "Sanchez, Clarke and Ward"
+        }
+      ],
+      "opportunity_id": "435727fe-7721-4e49-bcb3-a67c8884cde0",
+      "opportunity_number": "HHS-ACF-OHS-38-916",
+      "opportunity_status": "posted",
+      "opportunity_title": "Research into Occupational psychologist industry",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "sam.gov",
+        "additional_info_url_description": "Click on the link to see the full announcement.",
+        "agency_contact_description": "Michele Moore\nOperations geologist\n555-856-8822\ngbradshaw@example.com",
+        "agency_email_address": "jon25@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "federally_recognized_native_american_tribal_governments",
+          "public_and_indian_housing_authorities",
+          "city_or_township_governments"
+        ],
+        "archive_date": "2026-10-29",
+        "award_ceiling": 370000,
+        "award_floor": 19473,
+        "close_date": "2026-10-22",
+        "close_date_description": "Food book interesting event.",
+        "created_at": "2022-02-06T23:26:23.107781-08:00",
+        "estimated_total_program_funding": 370000,
+        "expected_number_of_awards": 19,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "recovery_act",
+          "housing"
+        ],
+        "funding_category_description": "Would mention authority hour ability.",
+        "funding_instruments": [
+          "cooperative_agreement",
+          "grant",
+          "other"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-09-21",
+        "summary_description": "DOI-BOR-LC is looking to further investigate this topic. Suffer under over surface. Customer area a fast consumer.",
+        "updated_at": "2024-12-12T01:13:52.021234-08:00",
+        "version_number": 13
+      },
+      "tagline": null,
+      "top_level_agency_code": "USDA",
+      "top_level_agency_name": "Department of Agriculture"
+    },
+    {
+      "agency": "HHS-ACF-OHS",
+      "agency_code": "HHS-ACF-OHS",
+      "agency_name": "Administration for Children and Families - OHS",
+      "category": "mandatory",
+      "category_explanation": null,
+      "legacy_opportunity_id": 7,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "91.533",
+          "program_title": "Rios Ltd"
+        }
+      ],
+      "opportunity_id": "7e88d0de-2b40-4029-9c41-1029b6e33ca5",
+      "opportunity_number": "HHS-SAMHS-SAMHSA-02-076",
+      "opportunity_status": "posted",
+      "opportunity_title": "Williams Ltd 2003 award",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "grants.gov",
+        "additional_info_url_description": "Click on the link to see the full announcement.",
+        "agency_contact_description": "Jennifer Molina\nResearch scientist (medical)\n555-302-2369\nherrerarobert@example.com",
+        "agency_email_address": "reneegordon@example.org",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Too whose possible alone. Attack team against economy. Somebody great under thus research behind. Face technology agreement involve teacher get. Prove head claim. Pretty wonder course Republican key perform morning candidate.",
+        "applicant_types": [
+          "other_native_american_tribal_organizations",
+          "independent_school_districts",
+          "nonprofits_non_higher_education_with_501c3"
+        ],
+        "archive_date": "2026-10-29",
+        "award_ceiling": 395000,
+        "award_floor": 65833,
+        "close_date": "2026-10-22",
+        "close_date_description": "About rest receive usually special.",
+        "created_at": "2023-03-17T10:46:53.845678-07:00",
+        "estimated_total_program_funding": 395000,
+        "expected_number_of_awards": 6,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation",
+          "energy"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant",
+          "other",
+          "procurement_contract"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-09-29",
+        "summary_description": "<p>Report watch effort ten. Part enter shake answer available might worry.</p><p><br></p><p>High but wonder material. Age girl serve. Whole need son even.</p>",
+        "updated_at": "2024-04-16T17:30:40.239941-07:00",
+        "version_number": 8
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "DOD-ONR-FAC",
+      "agency_code": "DOD-ONR-FAC",
+      "agency_name": "NAVAL FACILITIES ENGINEERING COMMAND",
+      "category": "continuation",
+      "category_explanation": null,
+      "legacy_opportunity_id": 8,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.UYO",
+          "program_title": "Nelson-Jackson"
+        },
+        {
+          "assistance_listing_number": "57.353",
+          "program_title": "Aguilar-Patel"
+        },
+        {
+          "assistance_listing_number": "30.GET",
+          "program_title": "Johnson PLC"
+        }
+      ],
+      "opportunity_id": "5f832cef-64b9-48e7-b0cc-3dfc15880cc8",
+      "opportunity_number": "TWB0617581",
+      "opportunity_status": "posted",
+      "opportunity_title": "Research into Corporate investment banker industry",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "google.com",
+        "additional_info_url_description": "Division of Montgomery-Johnson",
+        "agency_contact_description": "Webmaster\njosephtran@example.com",
+        "agency_email_address": "linda90@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Law top miss. Low low lot task we be bad. But minute save picture. Card listen often police heart industry light member.",
+        "applicant_types": [
+          "independent_school_districts",
+          "public_and_state_institutions_of_higher_education",
+          "federally_recognized_native_american_tribal_governments"
+        ],
+        "archive_date": "2026-10-27",
+        "award_ceiling": 7895000,
+        "award_floor": 493437,
+        "close_date": "2026-10-25",
+        "close_date_description": "Military kid speech resource activity to important.",
+        "created_at": "2023-03-29T17:50:30.995391-07:00",
+        "estimated_total_program_funding": 7895000,
+        "expected_number_of_awards": 16,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "energy",
+          "transportation"
+        ],
+        "funding_category_description": "When cause present.",
+        "funding_instruments": [
+          "cooperative_agreement",
+          "other",
+          "grant"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-10-03",
+        "summary_description": "<div>Boy perform perhaps bar. Attention significant family himself medical resource fight. Institution paper set tell plant agreement. Culture blood campaign about rather. And seem care level body energy maintain. Hundred message work place defense. Together run piece knowledge. Partner serve time never. Floor my street front. Long order edge nothing finally turn shake. Daughter arrive also special keep camera. Past law stock method buy man spring. Still after organization century despite let. Open popular page score fund give. Two nearly bag north. Not ask measure cup executive discover. Five last wrong population. Four song social mention already remember director. Opportunity such board serious trial best development. Tell professional hair total break recognize some. Lay fall contain head. Understand detail truth. As true board. Situation night Democrat begin evening audience. In resource future. Major address live general area. Ask season work big all real wonder. Down might top despite. Along recognize environmental cup live surface policy. Former threat perform voice sing body. <a href='sam.gov'>Charge report final.</a> Or bag wish through they woman. Find maybe feeling record several town final effect. Operation indeed personal box movie treat walk. Remember language size wife there book. Institution near note believe. Stay agreement likely least. Ok I environment thought. Among include each of job. Mr important on all food. Concern door door same firm five. Purpose send under upon. Congress current even. Development game physical factor accept. Accept window they house. Serious change ability family practice. Tough fire art father policy kitchen. Phone company eye audience enough impact management. Player use reach case control meet arm.</div> <div>Answer board call training state hope. Young north dream approach inside. Anyone share charge through land thousand. Activity brother describe employee time let. Firm across some do risk. Hot marriage example would deep. Plan him street big child property score. Million include deal investment Democrat writer region. Ago worry administration. Since act create food bag information white. Term man leave recently worry whatever. Politics open strategy around. Paper ever raise process color. How series consumer. Hit read serve head. Learn him marriage. Floor accept than analysis none international whether. Alone play others office. Relationship film I whole question purpose. Scientist spend foreign under suffer off street treat. Record across color necessary realize six though. Quickly red wrong spring wind easy ability. Child long teacher add. Poor best lose employee part lose. Attention direction beat anything. Song other result hour. Sea single drop would two. Still current he provide. Follow wish teach. Degree garden edge time once various season sense. Per what wide item. No always small build myself full feeling add. Real fire too across international. Account break raise option. Treatment available week spring trade past performance lose. <a href='grants.gov'>Trouble box daughter floor reflect where.</a> Plant practice discussion national theory painting really true. Production Mr system long. Power yourself me likely ask left. Good tough out statement. Theory story beyond kid thought best. Expert approach will soldier. Ball green present win leader use let. Husband son interview medical. Tax while agree wear describe success structure. Heart environment carry husband tend trip. Skill product detail girl. Particular national form final short maybe into ok. Law analysis section beautiful manager natural medical avoid. Door state bed gun bring admit degree. Dinner when front course could field admit town. Whom us cover her executive career pressure some. Reduce continue same any station read. Model space ten cause. Glass type operation office. This civil customer include tough hear marriage. Single play government yourself anything. Simply drug claim large up company. Campaign receive lot theory change prove need something. Special build kind message. High today others choice. Thousand indeed section hundred positive. Mention political according trial. Company space chair lead. Seem national life. How section yeah nice increase. Student call music think position. Century board reach fast.</div>",
+        "updated_at": "2023-09-06T14:20:34.657779-07:00",
+        "version_number": 13
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOD",
+      "top_level_agency_name": "Department of Defense"
+    },
+    {
+      "agency": "HHS-CDC-NCCDPHP",
+      "agency_code": "HHS-CDC-NCCDPHP",
+      "agency_name": "Centers for Disease Control - NCCDPHP",
+      "category": "other",
+      "category_explanation": "Decade area.",
+      "legacy_opportunity_id": 9,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "61.XZN",
+          "program_title": "Carson, Matthews and Lam"
+        }
+      ],
+      "opportunity_id": "8b729bbd-aca5-4490-9fab-ae0d08479ab9",
+      "opportunity_number": "DOI-USGS1-92-863",
+      "opportunity_status": "posted",
+      "opportunity_title": "Patrick Hernandez Foundation Grant for disintermediate out-of-the-box functionalities",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "simpler.grants.gov",
+        "additional_info_url_description": "Click on the link to see the full announcement.",
+        "agency_contact_description": "Webmaster\nbobby24@example.net",
+        "agency_email_address": "douglasfletcher@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Ever again find expect main energy owner establish. Attention admit act support card yard people event. Environmental how value take.",
+        "applicant_types": [
+          "independent_school_districts",
+          "individuals",
+          "small_businesses"
+        ],
+        "archive_date": "2026-11-02",
+        "award_ceiling": 1740000,
+        "award_floor": 87000,
+        "close_date": "2026-10-21",
+        "close_date_description": "Coach knowledge human source.",
+        "created_at": "2021-10-19T02:16:36.168236-07:00",
+        "estimated_total_program_funding": 1740000,
+        "expected_number_of_awards": 20,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "recovery_act",
+          "employment_labor_and_training"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "procurement_contract",
+          "grant",
+          "other"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-10-04",
+        "summary_description": "The purpose of this Notice of Funding Opportunity (NOFO) is to support research into Chartered management accountant and how we might Cloned value-added structure.",
+        "updated_at": "2025-03-29T19:50:25.541413-07:00",
+        "version_number": 11
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "DOD-ONR",
+      "agency_code": "DOD-ONR",
+      "agency_name": "Office of Naval Research",
+      "category": "earmark",
+      "category_explanation": null,
+      "legacy_opportunity_id": 10,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "44.668",
+          "program_title": "Koch and Sons"
+        }
+      ],
+      "opportunity_id": "ad253170-74e1-408a-88a9-36172b120f97",
+      "opportunity_number": "DOI-BOR-MP-62-157",
+      "opportunity_status": "posted",
+      "opportunity_title": "Embassy program for Radiographer, therapeutic in Australia",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "grants.gov",
+        "additional_info_url_description": "Click on the link to see the full announcement.",
+        "agency_contact_description": "Webmaster\nanthony30@example.org",
+        "agency_email_address": "dana33@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Idea start describe choose make again. Movement health report tonight program. Population often tough. Interview according physical modern through. If us sit administration future moment together. Collection manager accept avoid month police. Anyone good machine method few.",
+        "applicant_types": [
+          "city_or_township_governments",
+          "nonprofits_non_higher_education_without_501c3",
+          "for_profit_organizations_other_than_small_businesses"
+        ],
+        "archive_date": "2026-10-27",
+        "award_ceiling": 8750000,
+        "award_floor": 350000,
+        "close_date": "2026-10-22",
+        "close_date_description": "Meet their them marriage spring important.",
+        "created_at": "2023-10-01T10:33:14.766842-07:00",
+        "estimated_total_program_funding": 8750000,
+        "expected_number_of_awards": 25,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "humanities",
+          "infrastructure_investment_and_jobs_act"
+        ],
+        "funding_category_description": "Health case store actually.",
+        "funding_instruments": [
+          "other",
+          "cooperative_agreement",
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-10-03",
+        "summary_description": "The purpose of this Notice of Funding Opportunity (NOFO) is to support research into Investment analyst and how we might Enterprise-wide human-resource solution.",
+        "updated_at": "2024-06-18T12:51:20.365185-07:00",
+        "version_number": 8
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOD",
+      "top_level_agency_name": "Department of Defense"
+    },
+    {
+      "agency": "HHS-SAMHS",
+      "agency_code": "HHS-SAMHS",
+      "agency_name": "Substance Abuse and Mental Health Services Admin",
+      "category": "earmark",
+      "category_explanation": null,
+      "legacy_opportunity_id": 11,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "99.560",
+          "program_title": "Knapp Inc"
+        }
+      ],
+      "opportunity_id": "ef406ca3-a5c5-4fef-9409-651c44f5c97b",
+      "opportunity_number": "USDA-NIFA-58-635",
+      "opportunity_status": "posted",
+      "opportunity_title": "Research into Film/video editor industry",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "simpler.grants.gov",
+        "additional_info_url_description": "Program Announcement",
+        "agency_contact_description": "Walter Morales\nSet designer\n555-371-9203\nowensgwendolyn@example.net",
+        "agency_email_address": "jayers@example.net",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "small_businesses",
+          "state_governments",
+          "federally_recognized_native_american_tribal_governments"
+        ],
+        "archive_date": "2026-10-28",
+        "award_ceiling": 3455000,
+        "award_floor": 3455000,
+        "close_date": "2026-10-21",
+        "close_date_description": "Add series stop perform away sit stay.",
+        "created_at": "2022-11-17T19:08:16.164637-08:00",
+        "estimated_total_program_funding": 3455000,
+        "expected_number_of_awards": 1,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "science_technology_and_other_research_and_development",
+          "food_and_nutrition"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant",
+          "procurement_contract",
+          "cooperative_agreement"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-09-24",
+        "summary_description": "<div>Owner role head year success brother. Decade computer case service. Production always animal. Hundred food when. Good how building we site. Claim worry theory bed. Onto animal physical sort policy maybe poor. Another amount ok. Write might change yeah say. Voice raise trip place use. Machine candidate gun mother attention. Raise probably draw movement. Oil provide door chair cost. Decision sure do site employee smile. These in however senior talk black baby. Likely ask health yeah sport free. Talk call toward interesting you themselves. Onto ahead late seek serve sure expect own. Beautiful size service offer stage. Dark natural unit speak official marriage. During program inside picture. Again another campaign employee democratic. Hotel couple building offer baby source. General type on girl. Pretty run professional middle. <a href='google.com'>Us bad inside focus happen sure.</a> Ahead close expert dinner. Along to chance remain there feeling total. Foreign try two fine station. Question evening save start structure. Congress claim clearly conference spend special. Pay attention Democrat beautiful gun apply back this. Clearly evening eight too teach believe fine. Environmental writer knowledge loss member. Military should doctor. Large nothing process speak focus college. End voice those company impact. Pressure fall senior effect arm. Bank respond life inside. Stuff true water history set. Rest data rock start culture crime. Customer rate key go detail within. Father position score country. Through beyond forward over general arrive pressure. Break parent woman. Agency think simple include crime car. Nature common ahead interest finish agent nearly pay. Enough appear some. Figure what into stay stage. State attorney good around pick. Positive nor perform.</div> <div>Ago almost feeling local different. She customer leg real person benefit you. Quite quite method over security law. Share fast result dream piece address. Single I whose family back. Dinner girl pretty article. Friend room direction war three. Feel relationship likely similar mother. Lose able way clearly. Environmental television past head these line. Order he several student. To audience protect experience fire moment under. Record activity get sometimes oil into already call. Ability able have business country sit fall. Partner thought say little police statement. Answer college effort peace forward think. City employee so task house reason hotel. Option side together participant whom that. Man prepare available main order. Care vote fund relationship score probably international administration. Civil foreign Mr support what. Drop factor industry explain modern. Ball early learn difference. Country too pull glass notice subject court. Effect fight brother describe. Well next of scene. Response loss effect employee instead. Service defense scene. Fight task shake green outside dark clearly. Worry fall third never nothing brother final. Own town place where tree over. State yourself despite meet question measure. <a href='google.com'>Deal candidate authority lawyer.</a> Different debate seek cover myself. Return modern again theory woman field toward. Natural surface walk order name Democrat any rise. Military point option. Drive most movement seat. Board support room beat what. Never reason new girl. Me wide four interesting. None blood story east. Return here need act field. Agreement statement notice own lay into human surface. Production stage involve yourself success rule level. With raise may stay least sound. Necessary today various office product final pull. Pay time pressure particularly hand. Because space best investment rich. Senior power everything still region general reduce. Late by evidence item open. Woman cold if environment either even. Degree option alone keep look mind. International evidence heart walk sure drive poor.</div>",
+        "updated_at": "2023-04-02T06:25:23.897506-07:00",
+        "version_number": 8
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "DOI-BOR",
+      "agency_code": "DOI-BOR",
+      "agency_name": "Bureau of Reclamation",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 12,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "99.721",
+          "program_title": "Torres, Diaz and Howard"
+        },
+        {
+          "assistance_listing_number": "45.AXE",
+          "program_title": "Moore-Hunter"
+        },
+        {
+          "assistance_listing_number": "25.WLK",
+          "program_title": "Smith, Mahoney and Roman"
+        }
+      ],
+      "opportunity_id": "500fab5c-e25e-4495-ba0a-783f7f4bdcc1",
+      "opportunity_number": "SOURCE-505-69",
+      "opportunity_status": "posted",
+      "opportunity_title": "Bailey PLC 1977 award",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "grants.gov",
+        "additional_info_url_description": "Grants.gov",
+        "agency_contact_description": "sam.gov Contact Center\nHours of operation are 24 hours a day, 7 days a week.\ngeorgewilliamson@example.net",
+        "agency_email_address": "allen74@example.net",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Then just important agree its down apply. Position college article during responsibility how. Concern learn as require wait it science. Environment few fact contain. Treatment program while star structure experience. From both experience computer far hot show.",
+        "applicant_types": [
+          "for_profit_organizations_other_than_small_businesses",
+          "federally_recognized_native_american_tribal_governments",
+          "public_and_indian_housing_authorities"
+        ],
+        "archive_date": "2026-10-29",
+        "award_ceiling": 8460000,
+        "award_floor": 4230000,
+        "close_date": "2026-10-21",
+        "close_date_description": "Before yeah director itself.",
+        "created_at": "2022-12-31T13:56:57.605388-08:00",
+        "estimated_total_program_funding": 8460000,
+        "expected_number_of_awards": 2,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "humanities",
+          "health"
+        ],
+        "funding_category_description": "Ready compare along turn son.",
+        "funding_instruments": [
+          "grant",
+          "other",
+          "cooperative_agreement"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-09-26",
+        "summary_description": "<p>President sell single. Painting behavior field month law. Culture herself body reflect modern beautiful goal throw.</p><p><br></p><p>Real talk many must. Thus you news behind.</p>",
+        "updated_at": "2024-06-16T13:05:23.949245-07:00",
+        "version_number": 9
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOI",
+      "top_level_agency_name": "Department of the Interior"
+    },
+    {
+      "agency": "USDOJ-OJP-BJS",
+      "agency_code": "USDOJ-OJP-BJS",
+      "agency_name": "Bureau of Justice Statistics",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 13,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "90.188",
+          "program_title": "Franklin Group"
+        }
+      ],
+      "opportunity_id": "d8e9d044-3473-479a-a182-92c43a0a808c",
+      "opportunity_number": "TOS4622666",
+      "opportunity_status": "closed",
+      "opportunity_title": "Research into Orthoptist industry",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "sam.gov",
+        "additional_info_url_description": "Link to grant on grants.gov",
+        "agency_contact_description": "google.com Contact Center\nHours of operation are 24 hours a day, 7 days a week.\nwhunt@example.com",
+        "agency_email_address": "louisedwards@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "private_institutions_of_higher_education",
+          "for_profit_organizations_other_than_small_businesses",
+          "federally_recognized_native_american_tribal_governments"
+        ],
+        "archive_date": "2026-10-29",
+        "award_ceiling": 5370000,
+        "award_floor": 537000,
+        "close_date": "2026-09-16",
+        "close_date_description": "Believe because style section with.",
+        "created_at": "2022-02-12T15:06:01.162479-08:00",
+        "estimated_total_program_funding": 5370000,
+        "expected_number_of_awards": 10,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "consumer_protection",
+          "health"
+        ],
+        "funding_category_description": "Decision bit book adult ball father.",
+        "funding_instruments": [
+          "other",
+          "grant",
+          "procurement_contract"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-08-31",
+        "summary_description": "The purpose of this Notice of Funding Opportunity (NOFO) is to support research into Broadcast journalist and how we might Polarized directional process improvement.",
+        "updated_at": "2023-08-20T03:20:29.382033-07:00",
+        "version_number": 12
+      },
+      "tagline": null,
+      "top_level_agency_code": "USDOJ",
+      "top_level_agency_name": "Department of Justice"
+    },
+    {
+      "agency": "DOI-NPS",
+      "agency_code": "DOI-NPS",
+      "agency_name": "National Park Service",
+      "category": "earmark",
+      "category_explanation": null,
+      "legacy_opportunity_id": 14,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "82.EMB",
+          "program_title": "Nolan LLC"
+        },
+        {
+          "assistance_listing_number": "40.574",
+          "program_title": "Garcia, Hunter and Williamson"
+        }
+      ],
+      "opportunity_id": "40b7df2c-d490-4b94-b6ff-4dc3a01162e0",
+      "opportunity_number": "IAR-214-FY1973-989",
+      "opportunity_status": "closed",
+      "opportunity_title": "Embassy program for Lighting technician, broadcasting/film/video in Jamaica",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "grants.gov",
+        "additional_info_url_description": "Grants.gov",
+        "agency_contact_description": "Webmaster\nrcarter@example.com",
+        "agency_email_address": "gabrielledorsey@example.net",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Itself others down agreement environment either air respond. Huge generation finish perform top quality material police. Fish easy citizen outside officer mission partner whole. Whether party mind successful small beautiful large.",
+        "applicant_types": [
+          "independent_school_districts",
+          "public_and_state_institutions_of_higher_education",
+          "small_businesses"
+        ],
+        "archive_date": "2026-10-28",
+        "award_ceiling": 4310000,
+        "award_floor": 187391,
+        "close_date": "2026-09-25",
+        "close_date_description": "Pull mention hold into.",
+        "created_at": "2021-12-05T13:46:23.431526-08:00",
+        "estimated_total_program_funding": 4310000,
+        "expected_number_of_awards": 23,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "housing",
+          "income_security_and_social_services"
+        ],
+        "funding_category_description": "City wall firm much Congress dark.",
+        "funding_instruments": [
+          "grant",
+          "procurement_contract",
+          "other"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-08-26",
+        "summary_description": "<div>Remember fly suffer require plant. Own talk return authority one. Compare effect watch play. Share east car heart. Spring message PM TV. Glass early just artist situation practice. Sometimes someone between total although example. Country stop police summer require pattern win effect. Member official boy near. By after lose. Whom glass the open western. Nature form present road eight poor. Believe probably care a. Military though card likely concern effect party. Either case perform race single road bed reason. Production security them easy sing production. <a href='sam.gov'>Brother improve budget know month everyone.</a> Decide to charge behavior. Claim sing record contain message necessary. Control natural affect heart charge. Threat argue time story west loss another. Where what suggest positive. Report provide trouble stage. Mind born live wide live only deal. Plan practice color around hospital true body. Trouble pretty couple actually product. More natural boy by region. Trade product knowledge people such. Brother crime debate kid. Probably tough sense media. Big interest yet experience on. Away value eat clearly call same although. Professor charge action rock. Dark include these item.</div> <div>Concern player reflect police available accept strong matter. Cut citizen man baby carry stand. Gun growth cultural offer model reveal east. Lose task affect gas similar nice development nearly. Be industry get thus. Quite short may behind issue even. Receive force environment seat. Network population never nearly guy resource culture. Letter send outside herself say. Face position make difficult. Speech laugh according professional beautiful sure. Sometimes wall quite language under race firm represent. Remain American discuss us. Raise represent employee push series natural trade society. Second cut add yeah heart because. Where us exist American property movie research. Leave hold industry policy herself camera peace beyond. Fight author like. Fill consider nation firm the. Rest hope local fire land. Suddenly top big produce. Road positive rock kitchen evening politics. Side light election view deal. Around another executive should third. <a href='grants.gov'>Not hospital air hour.</a> Up customer see maybe. Door vote explain task teach anything. Total may become bit reality rich. Shoulder allow everything four alone top. Service black per partner Republican. Product left senior work point none matter. Draw individual receive. If notice prevent successful. Operation movie fear discover network part dinner bar. President process spring. Movie information day. Number network that likely draw official actually. Be development course form value team laugh. Second ten series always explain. Bed goal high white from. Beautiful campaign report responsibility year president break computer. Threat its rock peace we. Say beyond husband organization tough under. For get never leg until pick. Seek technology land me ever live per. Any similar culture force pass. Tonight Republican like reality sound responsibility sing. Service back respond east range.</div>",
+        "updated_at": "2022-04-03T19:54:20.776109-07:00",
+        "version_number": 8
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOI",
+      "top_level_agency_name": "Department of the Interior"
+    },
+    {
+      "agency": "DOC",
+      "agency_code": "DOC",
+      "agency_name": "Department of Commerce",
+      "category": "other",
+      "category_explanation": "Test kid rock strong.",
+      "legacy_opportunity_id": 15,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "68.ELG",
+          "program_title": "Martin-Flores"
+        },
+        {
+          "assistance_listing_number": "73.BPW",
+          "program_title": "Rodriguez LLC"
+        }
+      ],
+      "opportunity_id": "f63d3c2e-44fc-4a53-a8f2-f83ba5e107e0",
+      "opportunity_number": "POLITICS-492-64",
+      "opportunity_status": "closed",
+      "opportunity_title": "Jacobs LLC 1978 award",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "simpler.grants.gov",
+        "additional_info_url_description": "Division of Thompson Group",
+        "agency_contact_description": "Jean Morton\nTelevision camera operator\n555-409-7099\niwoods@example.net",
+        "agency_email_address": "davidmayer@example.org",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "other",
+          "small_businesses",
+          "independent_school_districts"
+        ],
+        "archive_date": "2026-10-31",
+        "award_ceiling": 1900000,
+        "award_floor": 190000,
+        "close_date": "2026-09-22",
+        "close_date_description": "Order partner whose face should.",
+        "created_at": "2021-10-28T23:45:13.783788-07:00",
+        "estimated_total_program_funding": 1900000,
+        "expected_number_of_awards": 10,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "consumer_protection",
+          "humanities"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "cooperative_agreement",
+          "other",
+          "grant"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-08-25",
+        "summary_description": "USDOJ-OJP-BJA is looking to further investigate this topic. Past seem large sort until ahead way. According opportunity official late growth often she. Spend around home save section card.",
+        "updated_at": "2024-02-14T15:43:58.081610-08:00",
+        "version_number": 10
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOC",
+      "top_level_agency_name": "Department of Commerce"
+    },
+    {
+      "agency": "HHS-HRSA",
+      "agency_code": "HHS-HRSA",
+      "agency_name": "Health Resources and Services Administration",
+      "category": "continuation",
+      "category_explanation": null,
+      "legacy_opportunity_id": 16,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "21.BYS",
+          "program_title": "Summers-Costa"
+        },
+        {
+          "assistance_listing_number": "93.791",
+          "program_title": "Carson LLC"
+        },
+        {
+          "assistance_listing_number": "68.719",
+          "program_title": "Day and Sons"
+        }
+      ],
+      "opportunity_id": "d65171f4-ca64-410c-b4b2-bfcb7e2f57e8",
+      "opportunity_number": "HHS-SAMHS-29-482",
+      "opportunity_status": "closed",
+      "opportunity_title": "Research into Jewellery designer industry",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "sam.gov",
+        "additional_info_url_description": "Click on the link to see the full announcement.",
+        "agency_contact_description": "google.com Contact Center\nHours of operation are 24 hours a day, 7 days a week.\nmartinpatricia@example.com",
+        "agency_email_address": "whitepatrick@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "public_and_indian_housing_authorities",
+          "state_governments",
+          "private_institutions_of_higher_education"
+        ],
+        "archive_date": "2026-10-29",
+        "award_ceiling": 8100000,
+        "award_floor": 2700000,
+        "close_date": "2026-09-19",
+        "close_date_description": "Upon alone attack movement remain.",
+        "created_at": "2021-12-31T16:20:50.668880-08:00",
+        "estimated_total_program_funding": 8100000,
+        "expected_number_of_awards": 3,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "disaster_prevention_and_relief",
+          "employment_labor_and_training"
+        ],
+        "funding_category_description": "Then miss Mrs side.",
+        "funding_instruments": [
+          "other",
+          "grant",
+          "procurement_contract"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-08-30",
+        "summary_description": "HHS-CMS is looking to further investigate this topic. Professional stand very economic life partner field. People care left public close raise.",
+        "updated_at": "2022-02-14T07:24:37.489788-08:00",
+        "version_number": 10
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "HHS-ACL",
+      "agency_code": "HHS-ACL",
+      "agency_name": "Administration for Community Living",
+      "category": "earmark",
+      "category_explanation": null,
+      "legacy_opportunity_id": 17,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "17.231",
+          "program_title": "Marshall-French"
+        },
+        {
+          "assistance_listing_number": "63.804",
+          "program_title": "Gardner-Patel"
+        },
+        {
+          "assistance_listing_number": "41.HSR",
+          "program_title": "Zimmerman Ltd"
+        }
+      ],
+      "opportunity_id": "d750b732-5b38-4abd-9230-bdcfbf57100c",
+      "opportunity_number": "ENVIRONMENTAL-251-73",
+      "opportunity_status": "closed",
+      "opportunity_title": "Research into Furniture designer industry",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "simpler.grants.gov",
+        "additional_info_url_description": "Link to grant on grants.gov",
+        "agency_contact_description": "Webmaster\namandafrost@example.com",
+        "agency_email_address": "williamstina@example.com",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "individuals",
+          "independent_school_districts",
+          "federally_recognized_native_american_tribal_governments"
+        ],
+        "archive_date": "2026-10-29",
+        "award_ceiling": 2960000,
+        "award_floor": 211428,
+        "close_date": "2026-09-18",
+        "close_date_description": "Simply choice detail believe body over condition.",
+        "created_at": "2023-06-29T10:08:18.605085-07:00",
+        "estimated_total_program_funding": 2960000,
+        "expected_number_of_awards": 14,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "humanities",
+          "affordable_care_act"
+        ],
+        "funding_category_description": "Sea sea church one long almost report.",
+        "funding_instruments": [
+          "cooperative_agreement",
+          "procurement_contract",
+          "other"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-08-31",
+        "summary_description": "DOI is looking to further investigate this topic. Out anything could quality sometimes. Identify home simply treatment realize score.",
+        "updated_at": "2025-08-05T04:59:09.680390-07:00",
+        "version_number": 13
+      },
+      "tagline": null,
+      "top_level_agency_code": "HHS",
+      "top_level_agency_name": "Department of Health and Human Services"
+    },
+    {
+      "agency": "EPA",
+      "agency_code": "EPA",
+      "agency_name": "Environmental Protection Agency",
+      "category": "other",
+      "category_explanation": "Include investment say.",
+      "legacy_opportunity_id": 18,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "37.VLZ",
+          "program_title": "Murphy, Frye and Shepherd"
+        }
+      ],
+      "opportunity_id": "e5bc3611-77b4-4070-8124-5656677f100c",
+      "opportunity_number": "DOI-BOR-MP-88-444",
+      "opportunity_status": "archived",
+      "opportunity_title": "Research into Systems analyst industry",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "sam.gov",
+        "additional_info_url_description": "Division of Rodriguez Ltd",
+        "agency_contact_description": "Webmaster\nmanningdaniel@example.net",
+        "agency_email_address": "juanallen@example.org",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "nonprofits_non_higher_education_with_501c3",
+          "federally_recognized_native_american_tribal_governments",
+          "city_or_township_governments"
+        ],
+        "archive_date": "2026-09-23",
+        "award_ceiling": 535000,
+        "award_floor": 48636,
+        "close_date": "2026-09-17",
+        "close_date_description": "Attorney ok like south deep.",
+        "created_at": "2023-03-03T21:54:15.169582-08:00",
+        "estimated_total_program_funding": 535000,
+        "expected_number_of_awards": 11,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "humanities",
+          "recreation_and_tourism"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant",
+          "other",
+          "cooperative_agreement"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-08-31",
+        "summary_description": "The purpose of this Notice of Funding Opportunity (NOFO) is to support research into Jewellery designer and how we might User-friendly national software.",
+        "updated_at": "2025-02-12T02:49:49.938320-08:00",
+        "version_number": 10
+      },
+      "tagline": null,
+      "top_level_agency_code": "EPA",
+      "top_level_agency_name": "Environmental Protection Agency"
+    },
+    {
+      "agency": "DOD-ONR-FAC",
+      "agency_code": "DOD-ONR-FAC",
+      "agency_name": "NAVAL FACILITIES ENGINEERING COMMAND",
+      "category": "continuation",
+      "category_explanation": null,
+      "legacy_opportunity_id": 19,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "49.271",
+          "program_title": "Evans-White"
+        },
+        {
+          "assistance_listing_number": "29.653",
+          "program_title": "Robinson Inc"
+        },
+        {
+          "assistance_listing_number": "53.RYC",
+          "program_title": "Jones-Sutton"
+        }
+      ],
+      "opportunity_id": "7ce4076c-865a-4877-96e5-53a1a76fcc91",
+      "opportunity_number": "PROVIDE-236-40",
+      "opportunity_status": "archived",
+      "opportunity_title": "Embassy program for Consulting civil engineer in Togo",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "grants.gov",
+        "additional_info_url_description": "Full Announcement",
+        "agency_contact_description": "Webmaster\nhuffmancynthia@example.com",
+        "agency_email_address": "john37@example.net",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": null,
+        "applicant_types": [
+          "for_profit_organizations_other_than_small_businesses",
+          "state_governments",
+          "nonprofits_non_higher_education_with_501c3"
+        ],
+        "archive_date": "2026-09-23",
+        "award_ceiling": 9120000,
+        "award_floor": 456000,
+        "close_date": "2026-09-20",
+        "close_date_description": "Western garden billion act already word able left.",
+        "created_at": "2023-09-02T13:31:14.737141-07:00",
+        "estimated_total_program_funding": 9120000,
+        "expected_number_of_awards": 20,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "information_and_statistics",
+          "arts"
+        ],
+        "funding_category_description": "Common story that resource chance.",
+        "funding_instruments": [
+          "cooperative_agreement",
+          "other",
+          "procurement_contract"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-08-31",
+        "summary_description": "The purpose of this Notice of Funding Opportunity (NOFO) is to support research into Investment analyst and how we might Face-to-face disintermediate neural-net.",
+        "updated_at": "2023-10-19T22:46:43.553921-07:00",
+        "version_number": 8
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOD",
+      "top_level_agency_name": "Department of Defense"
+    },
+    {
+      "agency": "DOD-AFOSR",
+      "agency_code": "DOD-AFOSR",
+      "agency_name": "Air Force Office of Scientific Research",
+      "category": "mandatory",
+      "category_explanation": null,
+      "legacy_opportunity_id": 20,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "65.313",
+          "program_title": "Sullivan-King"
+        }
+      ],
+      "opportunity_id": "74ee1498-e131-4843-92a3-8e8a33311e60",
+      "opportunity_number": "USDOJ-BOP-NIC-33-470",
+      "opportunity_status": "archived",
+      "opportunity_title": "John Moran Foundation Grant for matrix killer schemas",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "simpler.grants.gov",
+        "additional_info_url_description": "Grants.gov",
+        "agency_contact_description": "Michael Snyder\nOccupational therapist\n555-770-0566\njennifersalazar@example.net",
+        "agency_email_address": "hendersonmatthew@example.org",
+        "agency_email_address_description": "Contact this agency via email",
+        "applicant_eligibility_description": "Left employee card ball. Return read help look option all. Start speak response game stuff fear development. Task follow couple anything candidate. Down team along anything. Stand player everybody focus necessary low.",
+        "applicant_types": [
+          "small_businesses",
+          "other",
+          "unrestricted"
+        ],
+        "archive_date": "2026-09-25",
+        "award_ceiling": 6445000,
+        "award_floor": 402812,
+        "close_date": "2026-09-17",
+        "close_date_description": "Art southern away tough entire.",
+        "created_at": "2022-04-12T12:23:59.714568-07:00",
+        "estimated_total_program_funding": 6445000,
+        "expected_number_of_awards": 16,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "environment",
+          "income_security_and_social_services"
+        ],
+        "funding_category_description": "Loss sign country create manager star station.",
+        "funding_instruments": [
+          "grant",
+          "other",
+          "cooperative_agreement"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-08-26",
+        "summary_description": "DOI-BOR-LC is looking to further investigate this topic. Watch interview government operation top stock option. Anything decision born resource.",
+        "updated_at": "2023-11-28T00:32:24.825423-08:00",
+        "version_number": 13
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOD",
+      "top_level_agency_name": "Department of Defense"
+    }
+  ],
+  "facet_counts": {
+    "agency": {
+      "AR-TEST": 2,
+      "ARCHIVED": 2,
+      "CLOSED": 2,
+      "DOC": 3,
+      "DOC-DOCNOAAERA": 1,
+      "DOC-EDA": 2,
+      "DOC-NIST": 1,
+      "DOD": 1,
+      "DOD-AFOSR": 1,
+      "DOD-AFRL": 1,
+      "DOD-AMC": 3,
+      "DOD-AMRAA": 3,
+      "DOD-COE": 3,
+      "DOD-COE-ERDC": 1,
+      "DOD-COE-FW": 1,
+      "DOD-DARPA-DSO": 1,
+      "DOD-ONR": 2,
+      "DOD-ONR-FAC": 4,
+      "DOE": 1,
+      "DOE-ARPAE": 1,
+      "DOE-GFO": 1,
+      "DOE-NETL": 1,
+      "DOI": 1,
+      "DOI-BIA": 1,
+      "DOI-BLM": 2,
+      "DOI-BOEM": 1,
+      "DOI-BOR": 2,
+      "DOI-BOR-LC": 2,
+      "DOI-BOR-MP": 1,
+      "DOI-FWS": 1,
+      "DOI-NPS": 2,
+      "DOI-USGS1": 1,
+      "EPA": 2,
+      "HHS": 1,
+      "HHS-ACF": 1,
+      "HHS-ACF-FYSB": 1,
+      "HHS-ACF-OHS": 1,
+      "HHS-ACF-OPRE": 1,
+      "HHS-ACL": 1,
+      "HHS-AHRQ": 1,
+      "HHS-AOA": 4,
+      "HHS-CDC": 1,
+      "HHS-CDC-CGH": 1,
+      "HHS-CDC-HHSCDCERA": 1,
+      "HHS-CDC-NCCDPHP": 2,
+      "HHS-CDC-NCHHSTP": 2,
+      "HHS-CMS": 1,
+      "HHS-FDA": 1,
+      "HHS-HRSA": 1,
+      "HHS-IHS": 1,
+      "HHS-NIH11": 1,
+      "HHS-OPHS": 4,
+      "HHS-SAMHS": 2,
+      "HHS-SAMHS-SAMHSA": 2,
+      "NSF": 1,
+      "SGG": 20,
+      "USAID": 3,
+      "USAID-ETH": 5,
+      "USAID-SAF": 5,
+      "USDA": 2,
+      "USDA-AMS": 2,
+      "USDA-CSREE": 1,
+      "USDA-FAS": 1,
+      "USDA-FNS1": 2,
+      "USDA-FS": 1,
+      "USDA-NRCS": 1,
+      "USDA-RBCS": 1,
+      "USDA-RUS": 2,
+      "USDOJ": 1,
+      "USDOJ-BOP-NIC": 1,
+      "USDOJ-OJP-BJA": 3,
+      "USDOJ-OJP-BJS": 1,
+      "USDOJ-OJP-NIJ": 1,
+      "USDOJ-OJP-OJJDP": 2,
+      "USDOJ-OJP-OVC": 1,
+      "USDOJ-OJP-OVW": 1
+    },
+    "applicant_type": {
+      "city_or_township_governments": 22,
+      "county_governments": 24,
+      "federally_recognized_native_american_tribal_governments": 30,
+      "for_profit_organizations_other_than_small_businesses": 29,
+      "independent_school_districts": 30,
+      "individuals": 19,
+      "nonprofits_non_higher_education_with_501c3": 26,
+      "nonprofits_non_higher_education_without_501c3": 25,
+      "other": 21,
+      "other_native_american_tribal_organizations": 26,
+      "private_institutions_of_higher_education": 34,
+      "public_and_indian_housing_authorities": 23,
+      "public_and_state_institutions_of_higher_education": 23,
+      "small_businesses": 28,
+      "special_district_governments": 19,
+      "state_governments": 25,
+      "unrestricted": 25
+    },
+    "close_date": {
+      "120": 113,
+      "30": 113,
+      "60": 113,
+      "7": 0,
+      "90": 113
+    },
+    "funding_category": {
+      "affordable_care_act": 10,
+      "agriculture": 10,
+      "arts": 14,
+      "community_development": 10,
+      "consumer_protection": 11,
+      "disaster_prevention_and_relief": 9,
+      "education": 9,
+      "employment_labor_and_training": 12,
+      "energy": 10,
+      "energy_infrastructure_and_critical_mineral_and_materials": 8,
+      "environment": 11,
+      "food_and_nutrition": 10,
+      "health": 14,
+      "housing": 11,
+      "humanities": 12,
+      "income_security_and_social_services": 10,
+      "infrastructure_investment_and_jobs_act": 11,
+      "law_justice_and_legal_services": 11,
+      "natural_resources": 11,
+      "opportunity_zone_benefits": 12,
+      "recovery_act": 13,
+      "recreation_and_tourism": 10,
+      "regional_development": 8,
+      "science_technology_and_other_research_and_development": 8,
+      "transportation": 13
+    },
+    "funding_instrument": {
+      "cooperative_agreement": 107,
+      "grant": 107,
+      "other": 113,
+      "procurement_contract": 102
+    },
+    "is_cost_sharing": {
+      "false": 69,
+      "true": 74
+    },
+    "opportunity_status": {
+      "archived": 14,
+      "closed": 9,
+      "forecasted": 7,
+      "posted": 118
+    },
+    "post_date": {
+      "14": 87,
+      "3": 18,
+      "30": 125,
+      "60": 148,
+      "7": 41
+    }
+  },
+  "message": "Success",
+  "pagination_info": {
+    "page_offset": 1,
+    "page_size": 20,
+    "sort_order": [
+      {
+        "order_by": "relevancy",
+        "sort_direction": "descending"
+      }
+    ],
+    "total_pages": 8,
+    "total_records": 148
+  },
+  "status_code": 200,
+  "_captured_http_status": 200
+}
