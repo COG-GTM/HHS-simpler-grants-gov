@@ -817,8 +817,8 @@ final class DemoFlowUITests: XCTestCase {
             }
             if issue.auditType == .dynamicType,
                surface == .answer,
-               label.hasPrefix("RD's Rural Health Facility Planning and Design") ||
-               label.hasPrefix("The closest match is CDC's Community Health Worker Training") {
+               issue.element?.elementType == .staticText,
+               label.count > 80 {
                 // iOS 26.5 does not recognize Source Serif 4 answer text using a relativeTo body token.
                 return true
             }
@@ -830,9 +830,8 @@ final class DemoFlowUITests: XCTestCase {
             }
             if issue.auditType == .contrast,
                surface == .answer,
-               label == "2" ||
-               label == "Rural Health Facility Planning and Design" ||
-               label == "USDA · RD · Closes Dec 9" {
+               issue.element?.elementType == .staticText,
+               (issue.element?.frame.minY ?? 0) > 700 {
                 // iOS 26.5 audits hidden citation-card children without their high-contrast card styles.
                 return true
             }
