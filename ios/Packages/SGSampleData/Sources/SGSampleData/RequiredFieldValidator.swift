@@ -91,6 +91,14 @@ enum RequiredFieldValidator {
 
     private static func matches(condition: JSONValue, value: JSONValue) -> Bool {
         guard case let .object(conditionObject) = condition else { return false }
+        if let constant = conditionObject["const"], value != constant { return false }
+        let allowed = values(conditionObject["enum"])
+        if !allowed.isEmpty && !allowed.contains(value) { return false }
+        if let contains = conditionObject["contains"] {
+            guard case let .array(items) = value,
+                  items.contains(where: { matches(condition: contains, value: $0) })
+            else { return false }
+        }
         let required = strings(conditionObject["required"])
         let objectValues: [String: JSONValue]
         if case let .object(values) = value {

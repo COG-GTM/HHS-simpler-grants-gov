@@ -352,6 +352,27 @@ final class SampleDataSourceTests: XCTestCase {
         XCTAssertTrue(entries.allSatisfy { $0["name"] != nil })
     }
 
+    func testSF424OtherApplicantWarningMatchesOnlyOtherApplicantCode() async throws {
+        let source = try makeSource(anchorDate)
+        let definition = try await source.form(id: "1623b310-85be-496a-b84b-34bdee22a68a")
+
+        let regionalWarnings = RequiredFieldValidator.validate(
+            schema: definition.formJsonSchema,
+            response: .object([
+                "applicant_type_code": .array([.string("E: Regional Organization")])
+            ])
+        )
+        XCTAssertFalse(regionalWarnings.contains { $0.field == "$.applicant_type_other_specify" })
+
+        let otherWarnings = RequiredFieldValidator.validate(
+            schema: definition.formJsonSchema,
+            response: .object([
+                "applicant_type_code": .array([.string("X: Other (specify)")])
+            ])
+        )
+        XCTAssertTrue(otherWarnings.contains { $0.field == "$.applicant_type_other_specify" })
+    }
+
     func testApplicationLifecycleAndPrefill() async throws {
         let source = try makeSource(anchorDate)
         let organizations = try await source.organizations()
@@ -410,6 +431,87 @@ final class SampleDataSourceTests: XCTestCase {
             )
             XCTFail("Expected closed competition to be rejected")
         } catch GrantsError.server(status: 422, _) {}
+    }
+
+    func testSaveSF424PopulatesTotalEstimatedFunding() async throws {
+        let source = try makeSource(anchorDate)
+        let organizations = try await source.organizations()
+        let organization = try XCTUnwrap(organizations.first)
+        let applicationID = try await source.startApplication(
+            competitionId: "hrsa-27-014-open",
+            name: "SF-424 Funding Calculation",
+            organizationId: organization.organizationId
+        )
+        let result = try await source.saveForm(
+            applicationId: applicationID,
+            formId: "1623b310-85be-496a-b84b-34bdee22a68a",
+            response: .object([
+                "federal_estimated_funding": .string("540000"),
+                "applicant_estimated_funding": .string("0"),
+                "state_estimated_funding": .string(""),
+                "other_estimated_funding": .string("1,000.50")
+            ])
+        )
+
+        XCTAssertEqual(result.form.applicationResponse["total_estimated_funding"], .string("541000.50"))
+        XCTAssertFalse(result.warnings.contains { $0.field == "$.total_estimated_funding" })
+    }
+
+    func testRequiredHRSAFormsCanBeSubmittedWithUIFundingInputs() async throws {
+        let source = try makeSource(anchorDate)
+        let organizations = try await source.organizations()
+        let organization = try XCTUnwrap(organizations.first)
+        let applicationID = try await source.startApplication(
+            competitionId: "hrsa-27-014-open",
+            name: "HRSA Sample Lifecycle",
+            organizationId: organization.organizationId
+        )
+        let application = try await source.application(id: applicationID)
+        let requiredForms = application.applicationForms.filter(\.isRequired)
+        XCTAssertEqual(requiredForms.count, 6)
+
+        for form in requiredForms {
+            var response = RequiredFieldValidator.minimalInstance(schema: form.form.formJsonSchema)
+            if form.formId == "1623b310-85be-496a-b84b-34bdee22a68a" {
+                guard case var .object(values) = response else {
+                    return XCTFail("Expected SF-424 response to be an object")
+                }
+                values.removeValue(forKey: "total_estimated_funding")
+                values.removeValue(forKey: "applicant_type_other_specify")
+                values["applicant_type_code"] = .array([.string("E: Regional Organization")])
+                values["federal_estimated_funding"] = .string("540000")
+                values["applicant_estimated_funding"] = .string("0")
+                values["state_estimated_funding"] = .string("0")
+                values["local_estimated_funding"] = .string("0")
+                values["other_estimated_funding"] = .string("0")
+                values["program_income_estimated_funding"] = .string("0")
+                response = .object(values)
+            }
+
+            let result = try await source.saveForm(
+                applicationId: applicationID,
+                formId: form.formId,
+                response: response
+            )
+            XCTAssertTrue(
+                result.warnings.isEmpty,
+                "Unexpected warnings for \(form.form.formName ?? form.formId): \(result.warnings.map(\.field))"
+            )
+            XCTAssertEqual(result.form.applicationFormStatus, "complete")
+            if form.formId == "1623b310-85be-496a-b84b-34bdee22a68a" {
+                XCTAssertEqual(
+                    result.form.applicationResponse["total_estimated_funding"],
+                    .string("540000.00")
+                )
+            }
+        }
+
+        let savedApplication = try await source.application(id: applicationID)
+        XCTAssertTrue(savedApplication.applicationForms.allSatisfy {
+            !$0.isRequired || $0.applicationFormStatus == "complete"
+        })
+        let submission = try await source.submit(applicationId: applicationID)
+        XCTAssertTrue(submission.trackingNumber?.isEmpty == false)
     }
 
     func testRepeatSubmitDoesNotAdvanceTrackingNumber() async throws {
