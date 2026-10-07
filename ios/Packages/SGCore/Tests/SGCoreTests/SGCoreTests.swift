@@ -236,6 +236,69 @@ final class SyncQueueTests: XCTestCase {
         XCTAssertTrue(pending.isEmpty)
     }
 
+    func testRequiredOwnerKeepsOwnerlessSavesQueuedAndDoesNotFlush() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let drafts = FileDraftStore(directoryURL: directory)
+        let dataSource = FakeDataSource()
+        let owner = FakeCurrentOwner(nil)
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true),
+            currentOwnerId: { await owner.value() },
+            requiresOwner: true,
+            retryDelays: [.milliseconds(10)]
+        )
+        let response: JSONValue = .object(["answer": .string("pending")])
+
+        let outcome = await queue.save(applicationId: "app", formId: "form", response: response)
+        await queue.flush()
+        try await Task.sleep(for: .milliseconds(30))
+
+        let saveCount = await dataSource.saveCount
+        let pending = try await drafts.pendingDrafts()
+        XCTAssertEqual(outcome, .queued)
+        XCTAssertEqual(saveCount, 0)
+        XCTAssertEqual(pending.count, 1)
+        XCTAssertEqual(pending.first?.response, response)
+        XCTAssertNil(pending.first?.ownerId)
+    }
+
+    func testRequiredOwnerSkipsLegacyDraftsButUploadsOwnedDrafts() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let drafts = FileDraftStore(directoryURL: directory)
+        let dataSource = FakeDataSource()
+        let owner = FakeCurrentOwner("user-a")
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true),
+            currentOwnerId: { await owner.value() },
+            requiresOwner: true
+        )
+        let legacyResponse: JSONValue = .object(["answer": .string("legacy")])
+        let ownedResponse: JSONValue = .object(["answer": .string("owned")])
+        try await drafts.saveDraft(legacyResponse, applicationId: "app-legacy", formId: "form")
+        try await drafts.saveDraft(
+            ownedResponse,
+            applicationId: "app-owned",
+            formId: "form",
+            ownerId: "user-a"
+        )
+
+        await queue.flush()
+
+        let saveCount = await dataSource.saveCount
+        let pending = try await drafts.pendingDrafts()
+        XCTAssertEqual(saveCount, 1)
+        XCTAssertEqual(pending.count, 1)
+        XCTAssertEqual(pending.first?.response, legacyResponse)
+        XCTAssertNil(pending.first?.ownerId)
+        XCTAssertTrue(pending.first?.needsSync == true)
+    }
+
     func testSuccessfulSaveRemainsSuccessfulWhenAcknowledgementFails() async throws {
         let drafts = ThrowingAcknowledgementDraftStore()
         let dataSource = FakeDataSource()
@@ -355,6 +418,54 @@ final class SyncQueueTests: XCTestCase {
         XCTAssertEqual(pending.count, 1)
         XCTAssertTrue(pending.first?.needsSync == true)
         XCTAssertNil(pending.first?.lastError)
+    }
+
+    func testNewSaveGetsFreshRetryBudgetAfterPreviousCycleExhausts() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let drafts = FileDraftStore(directoryURL: directory)
+        let dataSource = FakeDataSource()
+        await dataSource.setSaveError(.server(status: 503, message: "unavailable"))
+        let queue = SyncQueue(
+            dataSource: dataSource,
+            draftStore: drafts,
+            monitor: FakeNetworkMonitor(isOnline: true),
+            retryDelays: [.milliseconds(20), .milliseconds(20)]
+        )
+
+        let firstOutcome = await queue.save(
+            applicationId: "first-app",
+            formId: "form",
+            response: .object(["answer": .string("first")])
+        )
+        XCTAssertEqual(firstOutcome, .queued)
+        for _ in 0..<100 {
+            if await dataSource.saveCount == 3 { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        try await Task.sleep(for: .milliseconds(50))
+
+        let exhaustedSaveCount = await dataSource.saveCount
+        XCTAssertEqual(exhaustedSaveCount, 3)
+        let secondOutcome = await queue.save(
+            applicationId: "second-app",
+            formId: "form",
+            response: .object(["answer": .string("second")])
+        )
+        XCTAssertEqual(secondOutcome, .queued)
+        await dataSource.setSaveError(nil)
+
+        for _ in 0..<100 {
+            if await queue.pendingCount == 0 { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        let finalSaveCount = await dataSource.saveCount
+        let pending = try await drafts.pendingDrafts()
+        let savedResponse = try await drafts.loadDraft(applicationId: "second-app", formId: "form")
+        XCTAssertEqual(finalSaveCount, 6)
+        XCTAssertTrue(pending.isEmpty)
+        XCTAssertEqual(savedResponse, .object(["answer": .string("second")]))
     }
 }
 

@@ -27,6 +27,7 @@ struct SimplerGrantsApp: App {
         let grantsDataSource: any GrantsDataSource
         let authenticator: any Authenticating
         let currentOwnerId: @Sendable () async -> String?
+        let requiresOwner: Bool
         let networkMonitor = NWPathNetworkMonitor()
 
         switch appEnvironment.dataMode {
@@ -35,6 +36,7 @@ struct SimplerGrantsApp: App {
             grantsDataSource = sampleDataSource
             authenticator = SampleAuthenticator()
             currentOwnerId = { nil }
+            requiresOwner = false
         case let .live(baseURL):
             let token = appEnvironment.uiTestToken
             let tokenStore: any TokenStore
@@ -58,13 +60,15 @@ struct SimplerGrantsApp: App {
             currentOwnerId = {
                 JWTClaims(token: tokenStore.load() ?? "")?.userId
             }
+            requiresOwner = true
         }
         let draftStore = FileDraftStore()
         let syncQueue = SyncQueue(
             dataSource: grantsDataSource,
             draftStore: draftStore,
             monitor: networkMonitor,
-            currentOwnerId: currentOwnerId
+            currentOwnerId: currentOwnerId,
+            requiresOwner: requiresOwner
         )
 
         self.appEnvironment = appEnvironment

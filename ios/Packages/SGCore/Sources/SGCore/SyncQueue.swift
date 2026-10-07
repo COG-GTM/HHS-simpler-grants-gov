@@ -86,6 +86,7 @@ public actor SyncQueue {
     private let draftStore: any DraftStore
     private let monitor: any NetworkMonitoring
     private let currentOwnerId: @Sendable () async -> String?
+    private let requiresOwner: Bool
     private let retryDelays: [Duration]
     private var monitorTask: Task<Void, Never>?
     private var retryTask: Task<Void, Never>?
@@ -99,12 +100,14 @@ public actor SyncQueue {
         draftStore: any DraftStore,
         monitor: any NetworkMonitoring,
         currentOwnerId: @escaping @Sendable () async -> String? = { nil },
+        requiresOwner: Bool = false,
         retryDelays: [Duration] = [.seconds(5), .seconds(15), .seconds(45)]
     ) {
         self.dataSource = dataSource
         self.draftStore = draftStore
         self.monitor = monitor
         self.currentOwnerId = currentOwnerId
+        self.requiresOwner = requiresOwner
         self.retryDelays = retryDelays
     }
 
@@ -113,17 +116,19 @@ public actor SyncQueue {
         formId: String,
         response: JSONValue
     ) async -> SaveOutcome {
+        let ownerId = await currentOwnerId()
         do {
             try await draftStore.saveDraft(
                 response,
                 applicationId: applicationId,
                 formId: formId,
-                ownerId: await currentOwnerId()
+                ownerId: ownerId
             )
         } catch {
             return .failed(error as? GrantsError ?? .server(status: 500, message: error.localizedDescription))
         }
         await updatePendingCount()
+        guard !requiresOwner || ownerId != nil else { return .queued }
 
         let result: FormSaveResult
         do {
@@ -135,6 +140,9 @@ public actor SyncQueue {
         } catch let error as GrantsError {
             if isRetryable(error) {
                 if await shouldScheduleRetry(for: error) {
+                    if retryTask == nil {
+                        retryAttempt = 0
+                    }
                     scheduleRetry()
                 }
                 return .queued
@@ -179,6 +187,10 @@ public actor SyncQueue {
             return
         }
         let ownerId = await currentOwnerId()
+        guard !requiresOwner || ownerId != nil else {
+            await updatePendingCount()
+            return
+        }
         var shouldRetry = false
 
         for draft in drafts where draft.lastError == nil && draft.ownerId == ownerId {
