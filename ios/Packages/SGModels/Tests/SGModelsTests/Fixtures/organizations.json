@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "organization_id": "47d95649-c70d-44d9-ae78-68bf848e32f8",
+      "sam_gov_entity": {
+        "ebiz_poc_email": "matthewpitts@example.org",
+        "ebiz_poc_first_name": "Jimmy",
+        "ebiz_poc_last_name": "Nichols",
+        "expiration_date": "2027-01-27",
+        "legal_business_name": "Sally's Soup Emporium",
+        "uei": "FAKEUEI11111"
+      }
+    }
+  ],
+  "message": "Success",
+  "status_code": 200
+}

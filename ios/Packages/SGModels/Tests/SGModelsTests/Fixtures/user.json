@@ -1,0 +1,10 @@
+{
+  "data": {
+    "email": "fake_mail@mail.com",
+    "external_user_type": "login_gov",
+    "profile": null,
+    "user_id": "f15c7491-7ebc-4f4f-8de6-3ac0594d9c63"
+  },
+  "message": "Success",
+  "status_code": 200
+}

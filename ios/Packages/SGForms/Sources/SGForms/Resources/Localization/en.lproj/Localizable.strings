@@ -1,0 +1,63 @@
+/* SGForms: native renderer for Simpler.Grants.gov application forms. */
+
+"forms.finish_on_simpler_grants" = "Finish this part on Simpler.Grants.gov";
+"forms.finish_on_web.title" = "Finish this section on Simpler.Grants.gov";
+"forms.finish_on_web.detail" = "%@ is easier to complete on a larger screen. Your other answers are saved.";
+"forms.finish_on_web.table_detail" = "%1$@ is a table with %2$d columns. Finish it on Simpler.Grants.gov.";
+
+"forms.option.yes" = "Yes";
+"forms.option.no" = "No";
+"forms.select.placeholder" = "Select";
+"forms.select.clear" = "Clear selection";
+"forms.multiselect.summary" = "%d selected";
+"forms.verified" = "Verified";
+"forms.read_only.empty" = "Filled in by Simpler.Grants.gov";
+"forms.read_only.hint" = "Read only";
+"forms.required.hint" = "Required";
+"forms.optional" = "Optional";
+
+"forms.date.add" = "Add date";
+"forms.date.clear" = "Clear date";
+
+"forms.list.entry" = "%1$@ %2$d";
+"forms.list.add" = "Add another";
+"forms.list.remove" = "Remove";
+"forms.list.remove_label" = "Remove %1$@ %2$d";
+"forms.list.count" = "%1$d of up to %2$d";
+
+"forms.attachment.choose" = "Choose file";
+"forms.attachment.add" = "Add files";
+"forms.attachment.replace" = "Replace";
+"forms.attachment.remove" = "Remove";
+"forms.attachment.remove_label" = "Remove %@";
+"forms.attachment.none" = "No file attached";
+"forms.attachment.attached" = "File attached";
+"forms.attachment.count" = "%d files attached";
+
+"forms.errors.announcement_one" = "1 field needs attention. %@";
+"forms.errors.announcement_many" = "%1$d fields need attention. %2$@";
+
+"forms.error.required" = "%@ is required";
+"forms.error.required_choice" = "Choose an option for %@";
+"forms.error.required_attachment" = "Attach a file for %@";
+"forms.error.email" = "Enter a valid email address, like name@organization.org";
+"forms.error.date" = "Enter a valid date, like 2026-01-31";
+"forms.error.number" = "Enter a number";
+"forms.error.integer" = "Enter a whole number";
+"forms.error.type" = "Check this answer";
+"forms.error.option" = "Choose one of the listed options";
+"forms.error.pattern" = "Check the format of %@";
+"forms.error.currency" = "Enter a dollar amount, like 1500.00";
+"forms.error.min_length" = "Use at least %d characters";
+"forms.error.max_length" = "Use %d characters or fewer";
+"forms.error.exact_length" = "Use exactly %d characters";
+"forms.error.minimum" = "Enter %@ or more";
+"forms.error.maximum" = "Enter %@ or less";
+"forms.error.min_items" = "Add at least %d";
+"forms.error.max_items" = "You can add up to %d";
+
+"forms.step.sf424.application_type" = "Type of application";
+"forms.step.sf424.applicant_information" = "Applicant information";
+"forms.step.sf424.funding_opportunity" = "Funding opportunity";
+"forms.step.sf424.project" = "Project and funding";
+"forms.step.sf424.review_and_sign" = "Review and sign";

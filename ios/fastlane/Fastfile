@@ -1,0 +1,200 @@
+require "fileutils"
+
+default_platform(:ios)
+
+ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+skip_docs
+opt_out_usage
+
+IOS_DIR = File.expand_path("..", __dir__)
+FASTLANE_DIR = File.join(IOS_DIR, "fastlane")
+OUTPUT_DIR = File.join(FASTLANE_DIR, "output")
+PROJECT_PATH = File.join(IOS_DIR, "SimplerGrants.xcodeproj")
+SCHEME = "SimplerGrants"
+SIMULATOR_DESTINATION =
+  "platform=iOS Simulator,name=#{ENV.fetch("SG_SIM_DEVICE", "iPhone 17")},OS=#{ENV.fetch("SG_SIM_OS", "26.5")}"
+
+platform :ios do
+  private_lane :generate_project do
+    sh("xcodegen", "generate", "--spec", File.join(IOS_DIR, "project.yml"))
+  end
+
+  private_lane :execute_test_suite do |options|
+    generate_project
+    result_name = options.fetch(:result_name)
+    result_path = File.join(OUTPUT_DIR, "test", result_name)
+    FileUtils.rm_rf(result_path)
+    FileUtils.mkdir_p(File.dirname(result_path))
+    scan(
+      project: PROJECT_PATH,
+      scheme: SCHEME,
+      destination: SIMULATOR_DESTINATION,
+      only_testing: options.fetch(:only_testing),
+      result_bundle: true,
+      result_bundle_path: result_path,
+      output_directory: File.join(OUTPUT_DIR, "test"),
+      xcodebuild_formatter: ""
+    )
+  end
+
+  desc "Run unit and snapshot tests on the configured iOS simulator"
+  lane :test do
+    execute_test_suite(
+      only_testing: ["SimplerGrantsTests", "SimplerGrantsSnapshotTests"],
+      result_name: "SimplerGrants-unit.xcresult"
+    )
+  end
+
+  desc "Run UI tests on the configured iOS simulator"
+  lane :ui_test do
+    execute_test_suite(
+      only_testing: ["SimplerGrantsUITests"],
+      result_name: "SimplerGrants-ui.xcresult"
+    )
+  end
+
+  desc "Build and package the unsigned simulator app"
+  lane :build_sim do
+    generate_project
+    derived_data = File.join(OUTPUT_DIR, "DerivedData")
+    sh(
+      "xcodebuild",
+      "build",
+      "-project", PROJECT_PATH,
+      "-scheme", SCHEME,
+      "-configuration", "Debug",
+      "-sdk", "iphonesimulator",
+      "-destination", "generic/platform=iOS Simulator",
+      "-derivedDataPath", derived_data
+    )
+    app_path = File.join(
+      derived_data,
+      "Build/Products/Debug-iphonesimulator/SimplerGrants.app"
+    )
+    info_plist = File.join(app_path, "Info.plist")
+    UI.user_error!("Simulator app was not built at #{app_path}") unless File.directory?(app_path)
+    UI.user_error!("Assets.car is missing from #{app_path}") unless File.file?(File.join(app_path, "Assets.car"))
+    icon_check = sh(
+      "/usr/libexec/PlistBuddy",
+      "-c", "Print :CFBundleIcons",
+      info_plist,
+      log: false
+    )
+    UI.user_error!("Built Info.plist does not contain CFBundleIcons") if icon_check.empty?
+
+    FileUtils.rm_f(File.join(OUTPUT_DIR, "SimplerGrants-simulator.app.zip"))
+    sh(
+      "ditto",
+      "-c", "-k", "--keepParent",
+      app_path,
+      File.join(OUTPUT_DIR, "SimplerGrants-simulator.app.zip")
+    )
+  end
+
+  desc "Archive and package an unsigned iOS app"
+  lane :archive_unsigned do
+    generate_project
+    archive_path = File.join(OUTPUT_DIR, "SimplerGrants.xcarchive")
+    FileUtils.rm_rf(archive_path)
+    sh(
+      "xcodebuild",
+      "archive",
+      "-project", PROJECT_PATH,
+      "-scheme", SCHEME,
+      "-configuration", "Release",
+      "-destination", "generic/platform=iOS",
+      "-archivePath", archive_path,
+      "CODE_SIGNING_ALLOWED=NO",
+      "CODE_SIGNING_REQUIRED=NO",
+      "CODE_SIGN_IDENTITY="
+    )
+    app_path = File.join(archive_path, "Products/Applications/SimplerGrants.app")
+    UI.user_error!("Archived app was not found at #{app_path}") unless File.directory?(app_path)
+    archive_zip = File.join(OUTPUT_DIR, "SimplerGrants-unsigned.xcarchive.zip")
+    FileUtils.rm_f(archive_zip)
+    sh("ditto", "-c", "-k", "--keepParent", archive_path, archive_zip)
+  end
+
+  desc "Build and upload a beta to TestFlight"
+  lane :beta do
+    required = %w[
+      APP_STORE_CONNECT_API_KEY_KEY_ID
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID
+      FASTLANE_TEAM_ID
+    ]
+    missing = required.reject { |name| ENV[name] && !ENV[name].empty? }
+    has_api_key = %w[
+      APP_STORE_CONNECT_API_KEY_KEY
+      APP_STORE_CONNECT_API_KEY_KEY_FILEPATH
+    ].any? { |name| ENV[name] && !ENV[name].empty? }
+    missing << "APP_STORE_CONNECT_API_KEY_KEY or APP_STORE_CONNECT_API_KEY_KEY_FILEPATH (one required)" unless has_api_key
+    unless missing.empty?
+      UI.user_error!(
+        "Cannot run the beta lane. Missing required environment variables:\n" \
+        "#{missing.map { |name| "  - #{name}" }.join("\n")}\n" \
+        "No Apple Developer team exists yet and this is a demo app. See ios/RELEASE.md."
+      )
+    end
+
+    api_key_options = {
+      key_id: ENV.fetch("APP_STORE_CONNECT_API_KEY_KEY_ID"),
+      issuer_id: ENV.fetch("APP_STORE_CONNECT_API_KEY_ISSUER_ID"),
+      is_key_content_base64: false
+    }
+    if ENV["APP_STORE_CONNECT_API_KEY_KEY"] && !ENV["APP_STORE_CONNECT_API_KEY_KEY"].empty?
+      api_key_options[:key_content] = ENV.fetch("APP_STORE_CONNECT_API_KEY_KEY")
+    else
+      api_key_options[:key_filepath] = ENV.fetch("APP_STORE_CONNECT_API_KEY_KEY_FILEPATH")
+    end
+    api_key = app_store_connect_api_key(**api_key_options)
+
+    info_plist_path = File.join(IOS_DIR, "App/Info.plist")
+    original_build_number = get_info_plist_value(
+      path: info_plist_path,
+      key: "CFBundleVersion"
+    )
+    generate_project
+    build_number = latest_testflight_build_number(
+      api_key: api_key,
+      app_identifier: "ai.cognition.demo.simplergrants",
+      version: get_info_plist_value(
+        path: info_plist_path,
+        key: "CFBundleShortVersionString"
+      ),
+      initial_build_number: 0
+    ) + 1
+    set_info_plist_value(
+      path: info_plist_path,
+      key: "CFBundleVersion",
+      value: build_number.to_s
+    )
+
+    begin
+      build_app(
+        project: PROJECT_PATH,
+        scheme: SCHEME,
+        export_method: "app-store",
+        output_directory: OUTPUT_DIR,
+        output_name: "SimplerGrants.ipa",
+        xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV.fetch("FASTLANE_TEAM_ID")}"
+      )
+      upload_to_testflight(
+        api_key: api_key,
+        skip_waiting_for_build_processing: true
+      )
+    ensure
+      set_info_plist_value(
+        path: info_plist_path,
+        key: "CFBundleVersion",
+        value: original_build_number
+      )
+    end
+  end
+
+  desc "Generate app icon and launch-screen brand assets"
+  lane :brand_assets do
+    Dir.chdir(File.dirname(IOS_DIR)) do
+      sh("swift", File.join(FASTLANE_DIR, "brand/generate_brand_assets.swift"))
+    end
+  end
+end

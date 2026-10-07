@@ -158,3 +158,9 @@ frontend/tests/artillery/params.json
 
 # XML validation results
 api/src/services/xml_generation/xsds/validation_results.json
+
+# Generated Xcode project
+ios/SimplerGrants.xcodeproj/
+
+# Swift package build products
+ios/Packages/*/.build/

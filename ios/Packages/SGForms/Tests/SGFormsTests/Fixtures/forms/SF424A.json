@@ -1,0 +1,1779 @@
+{
+  "agency_code": "SGG",
+  "form_id": "08e6603f-d197-4a60-98cd-d49acb1fc1fd",
+  "form_json_schema": {
+    "$defs": {
+      "budget_categories": {
+        "properties": {
+          "construction_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "contractual_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "equipment_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "fringe_benefits_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "other_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "personnel_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "program_income_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "supplies_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_direct_charge_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_indirect_charge_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "travel_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "budget_summary": {
+        "properties": {
+          "federal_estimated_unobligated_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "federal_new_or_revised_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "non_federal_estimated_unobligated_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "non_federal_new_or_revised_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "federal_fund_estimates": {
+        "properties": {
+          "first_year_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "fourth_year_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "grant_program": {
+            "maxLength": 120,
+            "minLength": 0,
+            "type": "string"
+          },
+          "second_year_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "third_year_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "forecasted_cash_needs": {
+        "properties": {
+          "first_quarter_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "fourth_quarter_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "second_quarter_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "third_quarter_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "non_federal_resources": {
+        "properties": {
+          "applicant_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "grant_program": {
+            "maxLength": 120,
+            "minLength": 0,
+            "type": "string"
+          },
+          "other_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "state_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          },
+          "total_amount": {
+            "allOf": [
+              {
+                "maxLength": 14,
+                "minLength": 1,
+                "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    "properties": {
+      "activity_line_items": {
+        "allOf": [
+          {
+            "prefixItems": [
+              {
+                "required": [
+                  "activity_title"
+                ]
+              }
+            ]
+          }
+        ],
+        "items": {
+          "allOf": [
+            {
+              "if": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "budget_summary": {
+                        "minProperties": 1,
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "budget_summary"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "personnel_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "fringe_benefits_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "travel_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "equipment_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "supplies_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "contractual_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "construction_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "other_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "total_indirect_charge_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "budget_categories": {
+                        "required": [
+                          "program_income_amount"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "budget_categories"
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "required": [
+                  "activity_title"
+                ]
+              }
+            }
+          ],
+          "properties": {
+            "activity_title": {
+              "maxLength": 120,
+              "minLength": 0,
+              "type": "string"
+            },
+            "assistance_listing_number": {
+              "maxLength": 15,
+              "minLength": 0,
+              "type": "string"
+            },
+            "budget_categories": {
+              "allOf": [
+                {
+                  "properties": {
+                    "construction_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "contractual_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "equipment_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "fringe_benefits_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "other_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "personnel_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "program_income_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "supplies_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "total_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "total_direct_charge_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "total_indirect_charge_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "travel_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                }
+              ]
+            },
+            "budget_summary": {
+              "allOf": [
+                {
+                  "properties": {
+                    "federal_estimated_unobligated_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "federal_new_or_revised_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "non_federal_estimated_unobligated_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "non_federal_new_or_revised_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "total_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              ]
+            },
+            "federal_fund_estimates": {
+              "allOf": [
+                {
+                  "properties": {
+                    "first_year_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "fourth_year_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "grant_program": {
+                      "maxLength": 120,
+                      "minLength": 0,
+                      "type": "string"
+                    },
+                    "second_year_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "third_year_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                }
+              ]
+            },
+            "non_federal_resources": {
+              "allOf": [
+                {
+                  "properties": {
+                    "applicant_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "grant_program": {
+                      "maxLength": 120,
+                      "minLength": 0,
+                      "type": "string"
+                    },
+                    "other_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "state_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "total_amount": {
+                      "allOf": [
+                        {
+                          "maxLength": 14,
+                          "minLength": 1,
+                          "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "maxItems": 4,
+        "minItems": 1,
+        "type": "array"
+      },
+      "confirmation": {
+        "description": "Is this form complete?",
+        "enum": [
+          true
+        ],
+        "title": "Confirmation",
+        "type": "boolean"
+      },
+      "direct_charges_explanation": {
+        "description": "Use this space to explain amounts for individual direct object class cost categories that may appear to be out of the ordinary or to explain the details as required by the Federal grantor agency.",
+        "maxLength": 50,
+        "minLength": 0,
+        "title": "Direct Charges",
+        "type": "string"
+      },
+      "forecasted_cash_needs": {
+        "properties": {
+          "federal_forecasted_cash_needs": {
+            "allOf": [
+              {
+                "properties": {
+                  "first_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "fourth_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "second_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "third_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ]
+          },
+          "non_federal_forecasted_cash_needs": {
+            "allOf": [
+              {
+                "properties": {
+                  "first_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "fourth_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "second_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "third_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ]
+          },
+          "total_forecasted_cash_needs": {
+            "allOf": [
+              {
+                "properties": {
+                  "first_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "fourth_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "second_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "third_quarter_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "total_amount": {
+                    "allOf": [
+                      {
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "indirect_charges_explanation": {
+        "description": "Enter the type of indirect rate (provisional, predetermined, final or fixed) that will be in effect during the funding period, the estimated amount of the base to which the rate is applied, and the total indirect expense.",
+        "maxLength": 50,
+        "minLength": 0,
+        "title": "Indirect Charges",
+        "type": "string"
+      },
+      "remarks": {
+        "description": "Provide any other explanations or comments deemed necessary.",
+        "maxLength": 250,
+        "minLength": 0,
+        "title": "Remarks",
+        "type": "string"
+      },
+      "total_budget_categories": {
+        "allOf": [
+          {
+            "properties": {
+              "construction_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "contractual_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "equipment_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "fringe_benefits_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "other_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "personnel_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "program_income_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "supplies_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "total_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "total_direct_charge_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "total_indirect_charge_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "travel_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "required": [],
+            "type": "object"
+          }
+        ]
+      },
+      "total_budget_summary": {
+        "allOf": [
+          {
+            "properties": {
+              "federal_estimated_unobligated_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "federal_new_or_revised_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "non_federal_estimated_unobligated_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "non_federal_new_or_revised_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "total_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "total_federal_fund_estimates": {
+        "allOf": [
+          {
+            "properties": {
+              "first_year_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "fourth_year_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "grant_program": {
+                "maxLength": 120,
+                "minLength": 0,
+                "type": "string"
+              },
+              "second_year_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "third_year_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "required": [],
+            "type": "object"
+          }
+        ]
+      },
+      "total_non_federal_resources": {
+        "allOf": [
+          {
+            "properties": {
+              "applicant_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "grant_program": {
+                "maxLength": 120,
+                "minLength": 0,
+                "type": "string"
+              },
+              "other_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "state_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "total_amount": {
+                "allOf": [
+                  {
+                    "maxLength": 14,
+                    "minLength": 1,
+                    "pattern": "^(-)?\\d*([.]\\d{2})?$",
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "required": [],
+            "type": "object"
+          }
+        ]
+      }
+    },
+    "required": [
+      "activity_line_items",
+      "confirmation"
+    ],
+    "type": "object"
+  },
+  "form_name": "Budget Information for Non-Construction Programs (SF-424A)",
+  "form_rule_schema": {
+    "activity_line_items": {
+      "budget_categories": {
+        "total_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "@THIS.total_direct_charge_amount",
+              "@THIS.total_indirect_charge_amount"
+            ],
+            "order": 2,
+            "rule": "sum_monetary"
+          }
+        },
+        "total_direct_charge_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "@THIS.personnel_amount",
+              "@THIS.fringe_benefits_amount",
+              "@THIS.travel_amount",
+              "@THIS.equipment_amount",
+              "@THIS.supplies_amount",
+              "@THIS.contractual_amount",
+              "@THIS.construction_amount",
+              "@THIS.other_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        }
+      },
+      "gg_type": "array",
+      "non_federal_resources": {
+        "total_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "@THIS.applicant_amount",
+              "@THIS.state_amount",
+              "@THIS.other_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        }
+      }
+    },
+    "forecasted_cash_needs": {
+      "federal_forecasted_cash_needs": {
+        "total_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "@THIS.first_quarter_amount",
+              "@THIS.second_quarter_amount",
+              "@THIS.third_quarter_amount",
+              "@THIS.fourth_quarter_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        }
+      },
+      "non_federal_forecasted_cash_needs": {
+        "total_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "@THIS.first_quarter_amount",
+              "@THIS.second_quarter_amount",
+              "@THIS.third_quarter_amount",
+              "@THIS.fourth_quarter_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        }
+      },
+      "total_forecasted_cash_needs": {
+        "first_quarter_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "forecasted_cash_needs.federal_forecasted_cash_needs.first_quarter_amount",
+              "forecasted_cash_needs.non_federal_forecasted_cash_needs.first_quarter_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        },
+        "fourth_quarter_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "forecasted_cash_needs.federal_forecasted_cash_needs.fourth_quarter_amount",
+              "forecasted_cash_needs.non_federal_forecasted_cash_needs.fourth_quarter_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        },
+        "second_quarter_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "forecasted_cash_needs.federal_forecasted_cash_needs.second_quarter_amount",
+              "forecasted_cash_needs.non_federal_forecasted_cash_needs.second_quarter_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        },
+        "third_quarter_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "forecasted_cash_needs.federal_forecasted_cash_needs.third_quarter_amount",
+              "forecasted_cash_needs.non_federal_forecasted_cash_needs.third_quarter_amount"
+            ],
+            "rule": "sum_monetary"
+          }
+        },
+        "total_amount": {
+          "gg_pre_population": {
+            "fields": [
+              "forecasted_cash_needs.federal_forecasted_cash_needs.total_amount",
+              "forecasted_cash_needs.non_federal_forecasted_cash_needs.total_amount"
+            ],
+            "order": 2,
+            "rule": "sum_monetary"
+          }
+        }
+      }
+    },
+    "total_budget_categories": {
+      "construction_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.construction_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "contractual_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.contractual_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "equipment_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.equipment_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "fringe_benefits_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.fringe_benefits_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "other_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.other_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "personnel_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.personnel_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "program_income_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.program_income_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "supplies_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.supplies_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "total_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.total_amount"
+          ],
+          "order": 3,
+          "rule": "sum_monetary"
+        }
+      },
+      "total_direct_charge_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.total_direct_charge_amount"
+          ],
+          "order": 2,
+          "rule": "sum_monetary"
+        }
+      },
+      "total_indirect_charge_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.total_indirect_charge_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "travel_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_categories.travel_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      }
+    },
+    "total_budget_summary": {
+      "federal_estimated_unobligated_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_summary.federal_estimated_unobligated_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "federal_new_or_revised_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_summary.federal_new_or_revised_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "non_federal_estimated_unobligated_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_summary.non_federal_estimated_unobligated_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "non_federal_new_or_revised_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_summary.non_federal_new_or_revised_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "total_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].budget_summary.total_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      }
+    },
+    "total_federal_fund_estimates": {
+      "first_year_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].federal_fund_estimates.first_year_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "fourth_year_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].federal_fund_estimates.fourth_year_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "second_year_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].federal_fund_estimates.second_year_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "third_year_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].federal_fund_estimates.third_year_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      }
+    },
+    "total_non_federal_resources": {
+      "applicant_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].non_federal_resources.applicant_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "other_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].non_federal_resources.other_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "state_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].non_federal_resources.state_amount"
+          ],
+          "rule": "sum_monetary"
+        }
+      },
+      "total_amount": {
+        "gg_pre_population": {
+          "fields": [
+            "activity_line_items[*].non_federal_resources.total_amount"
+          ],
+          "order": 2,
+          "rule": "sum_monetary"
+        }
+      }
+    }
+  },
+  "form_type": "SF424A",
+  "form_ui_schema": [
+    {
+      "children": [
+        {
+          "definition": [
+            "/properties/activity_line_items",
+            "/properties/total_budget_summary"
+          ],
+          "name": "Budget424aSectionA",
+          "type": "multiField",
+          "widget": "Budget424aSectionA"
+        }
+      ],
+      "label": "Section A - Budget summary",
+      "name": "SectionA",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": [
+            "/properties/activity_line_items",
+            "/properties/total_budget_categories"
+          ],
+          "name": "Budget424aSectionB",
+          "type": "multiField",
+          "widget": "Budget424aSectionB"
+        }
+      ],
+      "description": "Enter funds required for each object class category for the selected program.",
+      "label": "Section B - Budget categories",
+      "name": "SectionB",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": [
+            "/properties/activity_line_items",
+            "/properties/total_non_federal_resources"
+          ],
+          "name": "Budget424aSectionC",
+          "type": "multiField",
+          "widget": "Budget424aSectionC"
+        }
+      ],
+      "description": "Enter resources provided by the applicant, state, or other sources (e.g., donors) for the selected program.",
+      "label": "Section C - Non-federal resources",
+      "name": "SectionC",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": [
+            "/properties/forecasted_cash_needs"
+          ],
+          "name": "Budget424aSectionD",
+          "type": "multiField",
+          "widget": "Budget424aSectionD"
+        }
+      ],
+      "label": "Section D - Forecasted cash needs",
+      "name": "SectionD",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": [
+            "/properties/activity_line_items",
+            "/properties/total_federal_fund_estimates"
+          ],
+          "name": "Budget424aSectionE",
+          "type": "multiField",
+          "widget": "Budget424aSectionE"
+        }
+      ],
+      "label": "Section E - Budget estimates of federal funds needed for balance of the project ",
+      "name": "SectionE",
+      "type": "section"
+    },
+    {
+      "children": [
+        {
+          "definition": [
+            "/properties/direct_charges_explanation",
+            "/properties/indirect_charges_explanation",
+            "/properties/remarks",
+            "/properties/confirmation"
+          ],
+          "name": "Budget424aSectionF",
+          "type": "multiField",
+          "widget": "Budget424aSectionF"
+        }
+      ],
+      "label": "Section F - Other budget information",
+      "name": "SectionF",
+      "type": "section"
+    }
+  ],
+  "form_version": "1.0",
+  "omb_number": "4040-0006",
+  "short_form_name": "SF424A"
+}
