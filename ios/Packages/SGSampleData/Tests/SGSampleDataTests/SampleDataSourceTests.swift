@@ -514,6 +514,101 @@ final class SampleDataSourceTests: XCTestCase {
         XCTAssertTrue(submission.trackingNumber?.isEmpty == false)
     }
 
+    func testSF424ABudgetRulesPopulateEachActivityLineItemInOrder() async throws {
+        let source = try makeSource(anchorDate)
+        let organizations = try await source.organizations()
+        let organization = try XCTUnwrap(organizations.first)
+        let applicationID = try await source.startApplication(
+            competitionId: "hrsa-27-014-open",
+            name: "SF-424A Activity Line Items",
+            organizationId: organization.organizationId
+        )
+        let result = try await source.saveForm(
+            applicationId: applicationID,
+            formId: "08e6603f-d197-4a60-98cd-d49acb1fc1fd",
+            response: .object([
+                "activity_line_items": .array([
+                    .object([
+                        "budget_categories": .object([
+                            "personnel_amount": .string("420000.00"),
+                            "travel_amount": .string("1000")
+                        ])
+                    ]),
+                    .object([
+                        "budget_categories": .object([
+                            "personnel_amount": .string("5")
+                        ])
+                    ])
+                ])
+            ])
+        )
+
+        let response = result.form.applicationResponse
+        XCTAssertEqual(
+            response.value(at: ["activity_line_items", "0", "budget_categories", "total_direct_charge_amount"]),
+            .string("421000.00")
+        )
+        XCTAssertEqual(
+            response.value(at: ["activity_line_items", "0", "budget_categories", "total_amount"]),
+            .string("421000.00")
+        )
+        XCTAssertEqual(
+            response.value(at: ["activity_line_items", "1", "budget_categories", "total_direct_charge_amount"]),
+            .string("5.00")
+        )
+        XCTAssertEqual(
+            response.value(at: ["activity_line_items", "1", "budget_categories", "total_amount"]),
+            .string("5.00")
+        )
+        XCTAssertEqual(
+            response.value(at: ["total_budget_categories", "personnel_amount"]),
+            .string("420005.00")
+        )
+    }
+
+    func testSF424AForecastRulesPopulateCombinedAndFederalTotals() async throws {
+        let source = try makeSource(anchorDate)
+        let organizations = try await source.organizations()
+        let organization = try XCTUnwrap(organizations.first)
+        let applicationID = try await source.startApplication(
+            competitionId: "hrsa-27-014-open",
+            name: "SF-424A Forecast Totals",
+            organizationId: organization.organizationId
+        )
+        let result = try await source.saveForm(
+            applicationId: applicationID,
+            formId: "08e6603f-d197-4a60-98cd-d49acb1fc1fd",
+            response: .object([
+                "forecasted_cash_needs": .object([
+                    "federal_forecasted_cash_needs": .object([
+                        "first_quarter_amount": .string("100.00")
+                    ]),
+                    "non_federal_forecasted_cash_needs": .object([
+                        "first_quarter_amount": .string("50.00")
+                    ])
+                ])
+            ])
+        )
+
+        let response = result.form.applicationResponse
+        XCTAssertEqual(
+            response.value(at: [
+                "forecasted_cash_needs",
+                "total_forecasted_cash_needs",
+                "first_quarter_amount"
+            ]),
+            .string("150.00")
+        )
+        XCTAssertEqual(
+            response.value(at: [
+                "forecasted_cash_needs",
+                "federal_forecasted_cash_needs",
+                "total_amount"
+            ]),
+            .string("100.00")
+        )
+    }
+
     func testRepeatSubmitDoesNotAdvanceTrackingNumber() async throws {
         let source = try makeSource(anchorDate)
         let organizations = try await source.organizations()
