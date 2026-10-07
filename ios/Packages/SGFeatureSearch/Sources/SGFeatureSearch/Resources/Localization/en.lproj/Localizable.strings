@@ -112,7 +112,7 @@
 "search.results.sort_label" = "Sort: %@";
 "search.results.sort_picker" = "Sort opportunities";
 "search.sort.award_ceiling" = "Award amount";
-"search.sort.close_date" = "Closing date";
+"search.sort.close_date" = "Close date";
 "search.sort.newest" = "Newest";
 "search.sort.relevance" = "Relevance";
 "search.sort.title" = "Title";
@@ -133,7 +133,7 @@
 "search.applicant_type.small_businesses" = "Small businesses";
 "search.applicant_type.other" = "Other";
 "search.applicant_type.unrestricted" = "Unrestricted";
-"search.applicant_type.nonprofit" = "Nonprofit";
-"search.applicant_type.local_government" = "Local government";
-"search.applicant_type.public_health_district" = "Public health district";
-"search.applicant_type.tribal_government" = "Tribal government";
+"search.applicant_type.nonprofit" = "Nonprofits";
+"search.applicant_type.local_government" = "Local governments";
+"search.applicant_type.public_health_district" = "Public health districts";
+"search.applicant_type.tribal_government" = "Tribal governments";

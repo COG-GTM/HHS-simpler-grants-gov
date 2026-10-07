@@ -164,6 +164,12 @@ public struct OpportunityDetailView: View {
         let status = OpportunityDisplayStatus.resolve(opportunity, now: model.now)
         let summaryText = HTMLText.plainText(from: opportunity.summary.summaryDescription ?? "")
         let applicantTypes = opportunity.summary.applicantTypes ?? []
+        let applicantTypeLabels = applicantTypes.reduce(into: [String]()) { labels, value in
+            let title = applicantTypeTitle(value)
+            if !labels.contains(title) {
+                labels.append(title)
+            }
+        }
         return VStack(alignment: .leading, spacing: 0) {
             statusRow(status: status, opportunity: opportunity, now: model.now)
 
@@ -226,10 +232,10 @@ public struct OpportunityDetailView: View {
             sectionHeading("search.detail.eligibility".localized(bundle: .module))
                 .padding(.top, 28)
 
-            if !applicantTypes.isEmpty {
+            if !applicantTypeLabels.isEmpty {
                 SearchFlowLayout(spacing: 8) {
-                    ForEach(applicantTypes, id: \.self) { value in
-                        Text(applicantTypeTitle(value))
+                    ForEach(applicantTypeLabels, id: \.self) { title in
+                        Text(title)
                             .font(SearchTheme.F.sans(14, .medium))
                             .foregroundStyle(SearchTheme.C.navy)
                             .padding(.horizontal, 12)
@@ -557,7 +563,7 @@ public struct OpportunityDetailView: View {
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 12)
-        .background(SearchTheme.C.canvas.opacity(0.96))
+        .background(SearchTheme.C.canvas.ignoresSafeArea(edges: .bottom))
         .overlay(alignment: .top) {
             Rectangle()
                 .fill(SearchTheme.C.line)
