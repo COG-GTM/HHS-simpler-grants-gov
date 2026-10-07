@@ -11,7 +11,7 @@ public struct ResultsView: View {
     @State private var queryField = ""
     @State private var isFiltersPresented = false
     @State private var draftFilters = SearchFilters()
-    @State private var didUpdateRecentCount = false
+    @State private var lastRecentCountQuery: String?
 
     private let request: SearchRequest?
 
@@ -51,11 +51,18 @@ public struct ResultsView: View {
             await model.load()
         }
         .onChange(of: viewModel?.phase) { _, phase in
-            guard (phase == .loaded || phase == .empty), !didUpdateRecentCount, let viewModel else { return }
+            guard (phase == .loaded || phase == .empty), let viewModel else { return }
             let query = viewModel.query.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !query.isEmpty else { return }
+            guard
+                !query.isEmpty,
+                SearchFilterCatalog.activeCount(viewModel.filters) == 0,
+                !viewModel.closingSoonOnly,
+                lastRecentCountQuery != query
+            else {
+                return
+            }
             RecentSearchStore.shared.updateCount(viewModel.totalRecords, for: query)
-            didUpdateRecentCount = true
+            lastRecentCountQuery = query
         }
         .sheet(isPresented: $isFiltersPresented) {
             if let viewModel {
@@ -87,19 +94,49 @@ public struct ResultsView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 30)
                     case .empty:
+                        let actionTitle = viewModel.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            ? "search.results.clear_filters"
+                            : "search.results.clear_search_and_filters"
                         EmptyStateView(
                             title: "search.results.empty_title".localized(bundle: .module),
                             message: "search.results.empty_message".localized(bundle: .module),
-                            actionTitle: "search.results.clear_filters".localized(bundle: .module),
-                            action: { Task { await viewModel.clearFilters() } }
+                            actionTitle: actionTitle.localized(bundle: .module),
+                            action: {
+                                queryField = ""
+                                Task { await viewModel.clearSearchAndFilters() }
+                            }
                         )
                         .accessibilityIdentifier("search.results.clear_filters")
+                        if viewModel.closingSoonOnly {
+                            endOfListSentinel(viewModel)
+                        }
                     case let .failed(error) where viewModel.results.isEmpty:
                         InlineErrorBanner(
                             message: errorMessage(error),
                             retry: { Task { await viewModel.load() } }
                         )
                         .accessibilityIdentifier("search.results.retry")
+                    case .loaded where viewModel.closingSoonOnly && viewModel.displayedResults.isEmpty:
+                        if viewModel.closingSoonCountIsComplete {
+                            EmptyStateView(
+                                title: "search.results.empty_title".localized(bundle: .module),
+                                message: "search.results.empty_message".localized(bundle: .module),
+                                actionTitle: "search.results.clear_filters".localized(bundle: .module),
+                                action: { Task { await viewModel.clearFilters() } }
+                            )
+                            .accessibilityIdentifier("search.results.clear_filters")
+                        } else if let error = viewModel.loadMoreError {
+                            InlineErrorBanner(
+                                message: errorMessage(error),
+                                retry: { Task { await viewModel.loadNextPageIfAvailable() } }
+                            )
+                            .accessibilityIdentifier("search.results.retry")
+                        } else {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 30)
+                        }
+                        endOfListSentinel(viewModel)
                     default:
                         if case let .failed(error) = viewModel.phase {
                             InlineErrorBanner(
@@ -114,6 +151,7 @@ public struct ResultsView: View {
                                     Task { await viewModel.loadMoreIfNeeded(currentItem: opportunity) }
                                 }
                         }
+                        endOfListSentinel(viewModel)
                         if viewModel.isLoadingMore {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
@@ -169,8 +207,8 @@ public struct ResultsView: View {
                     .onSubmit {
                         Task {
                             RecentSearchStore.shared.record(queryField)
+                            lastRecentCountQuery = nil
                             await viewModel.submit(query: queryField)
-                            didUpdateRecentCount = false
                         }
                     }
                     .accessibilityIdentifier("search.results.field")
@@ -227,12 +265,23 @@ public struct ResultsView: View {
     }
 
     private func metaRow(_ viewModel: ResultsViewModel) -> some View {
-        HStack {
-            Text(String.localizedStringWithFormat(
-                "search.plural.opportunities".localized(bundle: .module),
-                viewModel.closingSoonOnly ? viewModel.displayedResults.count : viewModel.totalRecords
-            ))
-            .foregroundStyle(SearchTheme.C.muted)
+        let hasEmptyError: Bool
+        if case .failed = viewModel.phase, viewModel.results.isEmpty {
+            hasEmptyError = true
+        } else {
+            hasEmptyError = false
+        }
+        let countKey = viewModel.closingSoonOnly && !viewModel.closingSoonCountIsComplete
+            ? "search.plural.opportunities_at_least"
+            : "search.plural.opportunities"
+        return HStack {
+            if !hasEmptyError {
+                Text(String.localizedStringWithFormat(
+                    countKey.localized(bundle: .module),
+                    viewModel.closingSoonOnly ? viewModel.displayedResults.count : viewModel.totalRecords
+                ))
+                .foregroundStyle(SearchTheme.C.muted)
+            }
             Spacer()
             Menu {
                 Picker("search.results.sort_picker".localized(bundle: .module), selection: Binding(
@@ -252,6 +301,13 @@ public struct ResultsView: View {
         }
         .font(SearchTheme.F.caption)
         .padding(.horizontal, 4)
+    }
+
+    private func endOfListSentinel(_ viewModel: ResultsViewModel) -> some View {
+        Color.clear
+            .frame(height: 1)
+            .onAppear { Task { await viewModel.loadNextPageIfAvailable() } }
+            .accessibilityHidden(true)
     }
 
     private func opportunityCard(_ opportunity: Opportunity, now: Date) -> some View {

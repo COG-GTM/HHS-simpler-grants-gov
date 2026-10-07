@@ -14,23 +14,31 @@ public final class OpportunityDetailViewModel {
 
     public private(set) var detail: OpportunityDetail?
     public private(set) var isSaved = false
+    public private(set) var isSavingBookmark = false
     public private(set) var saveError: GrantsError?
     public private(set) var actionError: GrantsError?
     public private(set) var phase: Phase = .idle
     public private(set) var isStartingApplication = false
     public let opportunityId: String
-    public let now: Date
+    public private(set) var now: Date
 
     private let dataSource: any GrantsDataSource
+    private let clock: @Sendable () -> Date
     private var generation = 0
 
-    public init(opportunityId: String, dataSource: any GrantsDataSource, now: Date = Date()) {
+    public init(opportunityId: String, dataSource: any GrantsDataSource, now: Date? = nil) {
         self.opportunityId = opportunityId
         self.dataSource = dataSource
-        self.now = now
+        if let now {
+            clock = { now }
+        } else {
+            clock = { Date() }
+        }
+        self.now = clock()
     }
 
     public func load() async {
+        now = clock()
         generation += 1
         let requestGeneration = generation
         phase = .loading
@@ -52,9 +60,12 @@ public final class OpportunityDetailViewModel {
     }
 
     public func toggleSaved() async {
+        guard !isSavingBookmark else { return }
         let previous = isSaved
+        isSavingBookmark = true
         isSaved.toggle()
         saveError = nil
+        defer { isSavingBookmark = false }
         do {
             try await dataSource.setSaved(isSaved, opportunityId: opportunityId)
         } catch let error as GrantsError {

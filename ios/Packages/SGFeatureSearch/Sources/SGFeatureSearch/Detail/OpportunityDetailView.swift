@@ -66,6 +66,16 @@ public struct OpportunityDetailView: View {
             Group {
                 if let detail = viewModel.detail {
                     ScrollView {
+                        if case let .failed(error) = viewModel.phase {
+                            InlineErrorBanner(
+                                message: errorMessage(error),
+                                retry: { Task { await viewModel.load() } }
+                            )
+                            .accessibilityIdentifier("search.detail.error")
+                            .padding(.horizontal, 20)
+                            .padding(.top, 8)
+                            .padding(.bottom, 8)
+                        }
                         detailSections(detail, model: viewModel)
                             .padding(.horizontal, 20)
                             .padding(.top, 8)
@@ -113,6 +123,7 @@ public struct OpportunityDetailView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .disabled(viewModel.isSavingBookmark)
                 .sensoryFeedback(.success, trigger: viewModel.isSaved)
                 .accessibilityLabel(
                     (viewModel.isSaved ? "search.detail.saved" : "search.detail.save")

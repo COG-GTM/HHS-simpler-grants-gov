@@ -23,31 +23,51 @@ public final class ResultsViewModel {
     public private(set) var phase: Phase = .idle
     public private(set) var isLoadingMore = false
     public private(set) var loadMoreError: GrantsError?
-    public let now: Date
+    public private(set) var now: Date
 
     private let dataSource: any GrantsDataSource
     private let pageSize: Int
+    private let clock: @Sendable () -> Date
     private var page = 1
     private var totalPages = 1
+    private var lastFetchedPageLastItem: Opportunity?
     private var generation = 0
 
     public init(
         request: SearchRequest,
         dataSource: any GrantsDataSource,
         pageSize: Int = 20,
-        now: Date = Date()
+        now: Date? = nil
     ) {
         query = request.query ?? ""
         filters = request.filters
         sort = SearchSort(sortOrder: request.pagination.sortOrder) ?? .closeDate
         self.dataSource = dataSource
         self.pageSize = max(1, pageSize)
-        self.now = now
+        if let now {
+            clock = { now }
+        } else {
+            clock = { Date() }
+        }
+        self.now = clock()
     }
 
     public var displayedResults: [Opportunity] {
         guard closingSoonOnly else { return results }
         return results.filter { OpportunityDisplayStatus.resolve($0, now: now).isClosingSoon }
+    }
+
+    public var closingSoonCountIsComplete: Bool {
+        if page >= totalPages {
+            return true
+        }
+        guard
+            let lastFetchedPageLastItem,
+            let daysLeft = OpportunityDisplayStatus.daysLeft(for: lastFetchedPageLastItem, now: now)
+        else {
+            return false
+        }
+        return daysLeft > 14
     }
 
     public var activeFilterCount: Int {
@@ -73,12 +93,24 @@ public final class ResultsViewModel {
     }
 
     public func load() async {
+        await reload(resetResults: false)
+    }
+
+    private func reload(resetResults: Bool) async {
+        now = clock()
         generation += 1
         let requestGeneration = generation
         phase = .loading
         page = 1
         loadMoreError = nil
         isLoadingMore = false
+        if resetResults {
+            results = []
+            totalRecords = 0
+            facetCounts = [:]
+            totalPages = 1
+            lastFetchedPageLastItem = nil
+        }
         do {
             let response = try await dataSource.searchOpportunities(makeRequest(page: 1))
             guard requestGeneration == generation else { return }
@@ -86,7 +118,13 @@ public final class ResultsViewModel {
             totalRecords = response.paginationInfo.totalRecords ?? response.data.count
             totalPages = response.paginationInfo.totalPages ?? max(1, Int(ceil(Double(totalRecords) / Double(pageSize))))
             facetCounts = response.facetCounts
+            lastFetchedPageLastItem = response.data.last
             phase = results.isEmpty ? .empty : .loaded
+            if closingSoonOnly {
+                isLoadingMore = true
+                await autoFetchClosingSoonPages(maxPages: 5, requestGeneration: requestGeneration)
+                isLoadingMore = false
+            }
         } catch let error as GrantsError {
             guard requestGeneration == generation else { return }
             phase = .failed(error)
@@ -100,37 +138,73 @@ public final class ResultsViewModel {
         guard
             let index = results.firstIndex(where: { $0.id == currentItem.id }),
             index >= max(0, results.count - 3),
-            page < totalPages,
-            !isLoadingMore
+            page < totalPages
         else {
             return
         }
+        await loadNextPageIfAvailable()
+    }
+
+    public func loadNextPageIfAvailable() async {
+        guard page < totalPages, !isLoadingMore else { return }
         isLoadingMore = true
         loadMoreError = nil
         let requestGeneration = generation
+        defer { isLoadingMore = false }
+        guard await fetchNextPage(requestGeneration: requestGeneration) else { return }
+        if closingSoonOnly {
+            await autoFetchClosingSoonPages(maxPages: 5, requestGeneration: requestGeneration)
+        }
+    }
+
+    private func fetchNextPage(requestGeneration: Int) async -> Bool {
+        guard requestGeneration == generation, page < totalPages else { return false }
         let nextPage = page + 1
         do {
             let response = try await dataSource.searchOpportunities(makeRequest(page: nextPage))
-            guard requestGeneration == generation else {
-                isLoadingMore = false
-                return
-            }
+            guard requestGeneration == generation else { return false }
             var seen = Set(results.map(\.id))
             results.append(contentsOf: response.data.filter { seen.insert($0.id).inserted })
             page = nextPage
             totalRecords = response.paginationInfo.totalRecords ?? totalRecords
             totalPages = response.paginationInfo.totalPages ?? totalPages
             facetCounts = response.facetCounts
-            isLoadingMore = false
+            lastFetchedPageLastItem = response.data.last
+            phase = results.isEmpty ? .empty : .loaded
+            return true
         } catch let error as GrantsError {
-            guard requestGeneration == generation else { return }
+            guard requestGeneration == generation else { return false }
             loadMoreError = error
-            isLoadingMore = false
         } catch {
-            guard requestGeneration == generation else { return }
+            guard requestGeneration == generation else { return false }
             loadMoreError = .server(status: 500, message: error.localizedDescription)
-            isLoadingMore = false
         }
+        return false
+    }
+
+    private func autoFetchClosingSoonPages(maxPages: Int, requestGeneration: Int) async {
+        var fetchedPages = 0
+        while
+            fetchedPages < maxPages,
+            requestGeneration == generation,
+            shouldAutoFetchClosingSoonPage()
+        {
+            guard await fetchNextPage(requestGeneration: requestGeneration) else { return }
+            fetchedPages += 1
+        }
+    }
+
+    private func shouldAutoFetchClosingSoonPage() -> Bool {
+        guard closingSoonOnly, page < totalPages, displayedResults.count < pageSize else {
+            return false
+        }
+        guard
+            let lastFetchedPageLastItem,
+            let daysLeft = OpportunityDisplayStatus.daysLeft(for: lastFetchedPageLastItem, now: now)
+        else {
+            return true
+        }
+        return daysLeft <= 14
     }
 
     public func refresh() async {
@@ -157,28 +231,35 @@ public final class ResultsViewModel {
         case .forecasted:
             toggleValue("forecasted", in: &filters.opportunityStatus)
         }
-        await load()
+        await reload(resetResults: true)
     }
 
     public func clearFilters() async {
         filters = SearchFilters()
         closingSoonOnly = false
-        await load()
+        await reload(resetResults: true)
+    }
+
+    public func clearSearchAndFilters() async {
+        query = ""
+        filters = SearchFilters()
+        closingSoonOnly = false
+        await reload(resetResults: true)
     }
 
     public func apply(filters: SearchFilters) async {
         self.filters = filters
-        await load()
+        await reload(resetResults: true)
     }
 
     public func setSort(_ sort: SearchSort) async {
         self.sort = sort
-        await load()
+        await reload(resetResults: true)
     }
 
     public func submit(query: String) async {
         self.query = query
-        await load()
+        await reload(resetResults: true)
     }
 
     private func toggleValue(_ value: String, in values: inout [String]) {

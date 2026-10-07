@@ -10,6 +10,7 @@ public struct FiltersSheet: View {
     @State private var draftFilters: SearchFilters
     @State private var facetCounts: [String: [String: Int]] = [:]
     @State private var resultCount: Int?
+    @State private var countGeneration = 0
     @State private var countTask: Task<Void, Never>?
 
     private let query: String?
@@ -114,7 +115,8 @@ public struct FiltersSheet: View {
     }
 
     private func groupView(_ group: FilterGroup) -> some View {
-        let agencies = facetCounts[group.facetKey].map { Array($0.keys) } ?? []
+        let agencyCodes = Set(facetCounts[group.facetKey].map { Array($0.keys) } ?? [])
+            .union(group == .agency ? draftFilters.agency : [])
         return VStack(alignment: .leading, spacing: 8) {
             Text(group.titleKey.localized(bundle: .module).uppercased())
                 .font(SearchTheme.F.sans(13, .semibold))
@@ -124,7 +126,7 @@ public struct FiltersSheet: View {
                 .accessibilityAddTraits(.isHeader)
 
             SearchFlowLayout(spacing: 8) {
-                ForEach(SearchFilterCatalog.options(in: group, agencyCodes: agencies)) { option in
+                ForEach(SearchFilterCatalog.options(in: group, agencyCodes: Array(agencyCodes))) { option in
                     filterChip(option)
                 }
             }
@@ -206,6 +208,8 @@ public struct FiltersSheet: View {
 
     @MainActor
     private func updateResultCount() async {
+        countGeneration += 1
+        let generation = countGeneration
         let cleanedQuery = query?.trimmingCharacters(in: .whitespacesAndNewlines)
         let request = SearchRequest(
             query: cleanedQuery?.isEmpty == false ? cleanedQuery : nil,
@@ -215,9 +219,11 @@ public struct FiltersSheet: View {
         )
         do {
             let response = try await dataSource.searchOpportunities(request)
+            guard generation == countGeneration, !Task.isCancelled else { return }
             resultCount = response.paginationInfo.totalRecords ?? response.data.count
             facetCounts = response.facetCounts
         } catch {
+            guard generation == countGeneration, !Task.isCancelled else { return }
             resultCount = nil
         }
     }

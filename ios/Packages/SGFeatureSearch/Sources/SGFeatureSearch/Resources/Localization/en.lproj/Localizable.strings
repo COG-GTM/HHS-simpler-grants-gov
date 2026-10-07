@@ -97,6 +97,7 @@
 "search.plural.days_left_to_apply" = "%#@count@";
 "search.plural.open_opportunities" = "%#@count@";
 "search.plural.opportunities" = "%#@count@";
+"search.plural.opportunities_at_least" = "%#@count@";
 "search.plural.show_results" = "%#@count@";
 "search.quick.closing_soon" = "Closing soon";
 "search.quick.forecasted" = "Forecasted";
@@ -104,6 +105,7 @@
 "search.results.award" = "Award";
 "search.results.card_accessibility" = "%1$@, %2$@, %3$@, closes %4$@, award %5$@";
 "search.results.clear_filters" = "Clear filters";
+"search.results.clear_search_and_filters" = "Clear search & filters";
 "search.results.closes" = "Closes";
 "search.results.empty_message" = "Try changing your keywords or filters.";
 "search.results.empty_title" = "No opportunities match these filters";

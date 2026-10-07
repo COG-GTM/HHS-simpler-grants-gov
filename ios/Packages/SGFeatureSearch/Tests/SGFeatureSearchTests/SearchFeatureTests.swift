@@ -144,6 +144,51 @@ final class SearchFeatureTests: XCTestCase {
         XCTAssertEqual(request.pagination.sortOrder, SearchSort.closeDate.sortOrder)
     }
 
+    func testClosingSoonLoadFetchesPastPagesWithoutCardTrigger() async {
+        let noCloseDateOne = opportunity(id: "no-close-date-one")
+        let noCloseDateTwo = opportunity(id: "no-close-date-two")
+        let closingSoon = opportunity(id: "closing-soon", closeDate: "2026-10-09")
+        let source = RecordingDataSource(responses: [
+            response([noCloseDateOne, noCloseDateTwo], page: 1, pages: 2, total: 3),
+            response([closingSoon], page: 2, pages: 2, total: 3)
+        ])
+        let model = ResultsViewModel(
+            request: SearchRequest(),
+            dataSource: source,
+            pageSize: 20,
+            now: now
+        )
+        model.closingSoonOnly = true
+
+        await model.load()
+
+        XCTAssertEqual(model.displayedResults.map(\.id), ["closing-soon"])
+        let requests = await source.recordedRequests()
+        XCTAssertEqual(requests.map(\.pagination.pageOffset), [1, 2])
+    }
+
+    func testClosingSoonCountCompletesAfterPastWindowPageTail() async {
+        let closingSoon = opportunity(id: "closing-soon", closeDate: "2026-10-09")
+        let outsideWindow = opportunity(id: "outside-window", closeDate: "2026-10-26")
+        let source = RecordingDataSource(responses: [
+            response([closingSoon, outsideWindow], page: 1, pages: 3, total: 6)
+        ])
+        let model = ResultsViewModel(
+            request: SearchRequest(),
+            dataSource: source,
+            pageSize: 5,
+            now: now
+        )
+        model.closingSoonOnly = true
+
+        await model.load()
+
+        XCTAssertEqual(model.displayedResults.map(\.id), ["closing-soon"])
+        XCTAssertTrue(model.closingSoonCountIsComplete)
+        let requests = await source.recordedRequests()
+        XCTAssertEqual(requests.count, 1)
+    }
+
     func testResultsPaginationDeduplicatesAndStopsAtLastPage() async {
         let first = opportunity(id: "one")
         let second = opportunity(id: "two")
@@ -194,6 +239,49 @@ final class SearchFeatureTests: XCTestCase {
         await pageTwoError.loadMoreIfNeeded(currentItem: first)
         XCTAssertEqual(pageTwoError.results.map(\.id), ["one"])
         XCTAssertEqual(pageTwoError.loadMoreError, .offline)
+    }
+
+    func testSubmitFailureClearsPreviousResults() async {
+        let previous = opportunity(id: "previous")
+        let source = RecordingDataSource(
+            responses: [response([previous], page: 1, pages: 1, total: 1)],
+            searchErrorAfterResponses: .offline
+        )
+        let model = ResultsViewModel(request: SearchRequest(), dataSource: source, now: now)
+
+        await model.load()
+        XCTAssertEqual(model.results.map(\.id), ["previous"])
+
+        await model.submit(query: "new query")
+
+        XCTAssertTrue(model.results.isEmpty)
+        XCTAssertEqual(model.totalRecords, 0)
+        XCTAssertEqual(model.phase, .failed(.offline))
+    }
+
+    func testClearSearchAndFiltersReloadsWithoutQuery() async {
+        let match = opportunity(id: "match-after-clear")
+        let source = RecordingDataSource(responses: [
+            response([], page: 1, pages: 1, total: 0),
+            response([match], page: 1, pages: 1, total: 1)
+        ])
+        let model = ResultsViewModel(
+            request: SearchRequest(query: "zzzz", filters: SearchFilters(fundingCategory: ["health"])),
+            dataSource: source,
+            now: now
+        )
+
+        await model.load()
+        XCTAssertEqual(model.phase, .empty)
+
+        await model.clearSearchAndFilters()
+
+        XCTAssertEqual(model.query, "")
+        XCTAssertEqual(model.results.map(\.id), ["match-after-clear"])
+        XCTAssertEqual(model.phase, .loaded)
+        let requests = await source.recordedRequests()
+        XCTAssertEqual(requests.count, 2)
+        XCTAssertNil(requests[1].query)
     }
 
     func testApplyingFiltersRestartsAtFirstPage() async {
@@ -282,6 +370,31 @@ final class SearchFeatureTests: XCTestCase {
         await model.toggleSaved()
         XCTAssertFalse(model.isSaved)
         XCTAssertEqual(model.saveError, .offline)
+    }
+
+    func testSecondBookmarkToggleIsIgnoredWhileSaveIsInFlight() async {
+        let source = RecordingDataSource(
+            detail: OpportunityDetail(opportunity: opportunity(id: "bookmark")),
+            holdSave: true
+        )
+        let model = OpportunityDetailViewModel(opportunityId: "bookmark", dataSource: source, now: now)
+        await model.load()
+
+        let firstToggle = Task { await model.toggleSaved() }
+        await source.waitForSave()
+        XCTAssertTrue(model.isSavingBookmark)
+        XCTAssertTrue(model.isSaved)
+
+        await model.toggleSaved()
+
+        XCTAssertTrue(model.isSaved)
+        await source.releaseSave()
+        await firstToggle.value
+
+        XCTAssertFalse(model.isSavingBookmark)
+        XCTAssertTrue(model.isSaved)
+        let saveCallCount = await source.saveCallCount()
+        XCTAssertEqual(saveCallCount, 1)
     }
 
     func testStartApplicationUsesFirstOrganizationAndOpportunityTitle() async {
@@ -388,10 +501,15 @@ private actor RecordingDataSource: GrantsDataSource {
     private let detail: OpportunityDetail?
     private let savedLookupError: GrantsError?
     private let saveError: GrantsError?
+    private let holdSave: Bool
     private let organizationsToReturn: [Organization]
     private let applicationId: String
     private var lastStart: (competitionId: String, name: String, organizationId: String?)?
     private var requestWaiters: [String: CheckedContinuation<Void, Never>] = [:]
+    private var hasSaveStarted = false
+    private var saveStartWaiter: CheckedContinuation<Void, Never>?
+    private var saveCompletion: CheckedContinuation<Void, Never>?
+    private var saveCalls = 0
 
     init(
         responses: [SearchResponse] = [],
@@ -400,6 +518,7 @@ private actor RecordingDataSource: GrantsDataSource {
         detail: OpportunityDetail? = nil,
         savedLookupError: GrantsError? = nil,
         saveError: GrantsError? = nil,
+        holdSave: Bool = false,
         organizations: [Organization] = [],
         applicationId: String = "application"
     ) {
@@ -409,6 +528,7 @@ private actor RecordingDataSource: GrantsDataSource {
         self.detail = detail
         self.savedLookupError = savedLookupError
         self.saveError = saveError
+        self.holdSave = holdSave
         organizationsToReturn = organizations
         self.applicationId = applicationId
     }
@@ -484,6 +604,25 @@ private actor RecordingDataSource: GrantsDataSource {
     }
 
     func setSaved(_ saved: Bool, opportunityId: String) async throws {
+        saveCalls += 1
+        if holdSave {
+            hasSaveStarted = true
+            saveStartWaiter?.resume()
+            saveStartWaiter = nil
+            await withCheckedContinuation { saveCompletion = $0 }
+        }
         if let saveError { throw saveError }
     }
+
+    func waitForSave() async {
+        if hasSaveStarted { return }
+        await withCheckedContinuation { saveStartWaiter = $0 }
+    }
+
+    func releaseSave() {
+        saveCompletion?.resume()
+        saveCompletion = nil
+    }
+
+    func saveCallCount() -> Int { saveCalls }
 }

@@ -66,6 +66,22 @@
             <string>%d opportunities</string>
         </dict>
     </dict>
+    <key>search.plural.opportunities_at_least</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>%d+ opportunity</string>
+            <key>other</key>
+            <string>%d+ opportunities</string>
+        </dict>
+    </dict>
     <key>search.plural.show_results</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
