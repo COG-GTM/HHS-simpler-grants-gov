@@ -15,7 +15,19 @@ let package = Package(
         .target(
             name: "SGFeatureProfile",
             dependencies: ["SGModels", "SGDesign", "SGCore"],
-            resources: [.process("Resources/Localization")]
+            resources: [
+                .process("Resources/Localization"),
+                .process("Resources/Roadmap")
+            ]
+        ),
+        .testTarget(
+            name: "SGFeatureProfileTests",
+            dependencies: [
+                "SGFeatureProfile",
+                "SGModels",
+                "SGCore",
+                "SGDesign"
+            ]
         )
     ],
     swiftLanguageVersions: [.v5]

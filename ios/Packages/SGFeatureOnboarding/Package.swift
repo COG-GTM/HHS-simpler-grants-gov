@@ -16,6 +16,15 @@ let package = Package(
             name: "SGFeatureOnboarding",
             dependencies: ["SGModels", "SGDesign", "SGCore"],
             resources: [.process("Resources/Localization")]
+        ),
+        .testTarget(
+            name: "SGFeatureOnboardingTests",
+            dependencies: [
+                "SGFeatureOnboarding",
+                "SGModels",
+                "SGCore",
+                "SGDesign"
+            ]
         )
     ],
     swiftLanguageVersions: [.v5]
