@@ -274,9 +274,12 @@ public final class FormScreenViewModel {
         saveStatus = .saving
         do {
             await waitForPendingAttachments()
-            try await draftStore.saveDraft(values, applicationId: applicationId, formId: formId)
+            let saved = values
+            try await draftStore.saveDraft(saved, applicationId: applicationId, formId: formId)
             await waitForPendingAttachments()
-            await pruneUnreferencedAttachments()
+            await pruneUnreferencedAttachments(
+                keeping: attachmentIdentifiers(in: saved).union(attachmentIdentifiers(in: values))
+            )
             saveStatus = .saved
             return true
         } catch {
@@ -530,18 +533,21 @@ public final class FormScreenViewModel {
     private func saveDraftLocally() async {
         await waitForPendingAttachments()
         do {
-            try await draftStore.saveDraft(values, applicationId: applicationId, formId: formId)
+            let saved = values
+            try await draftStore.saveDraft(saved, applicationId: applicationId, formId: formId)
             await waitForPendingAttachments()
-            await pruneUnreferencedAttachments()
+            await pruneUnreferencedAttachments(
+                keeping: attachmentIdentifiers(in: saved).union(attachmentIdentifiers(in: values))
+            )
             saveStatus = .saved
         } catch {
             await setSaveFailure(error)
         }
     }
 
-    private func pruneUnreferencedAttachments() async {
+    private func pruneUnreferencedAttachments(keeping identifiers: Set<String>) async {
         await attachmentStore.prune(
-            keeping: attachmentIdentifiers(in: values),
+            keeping: identifiers,
             applicationId: applicationId,
             formId: formId
         )

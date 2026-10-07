@@ -875,6 +875,74 @@ final class ApplyFeatureTests: XCTestCase {
     }
 
     @MainActor
+    func testAttachmentPruningPreservesDraftSnapshotDuringSuspendedSave() async throws {
+        let definition = attachmentFormDefinition(array: false)
+        let attachmentStore = InMemoryApplyAttachmentStore()
+        let draftStore = SuspendingDraftStore()
+        let viewModel = FormScreenViewModel(
+            applicationId: "apply-demo",
+            formId: "sf424",
+            dataSource: ApplyReferenceDataSource(
+                scenario: .inProgress,
+                sf424Definition: definition
+            ),
+            draftStore: draftStore,
+            progressStore: InMemoryFormProgressStore(),
+            attachmentStore: attachmentStore,
+            autosaveDelay: .seconds(30)
+        )
+        await viewModel.load()
+        let field = try XCTUnwrap(viewModel.model?.sections.first?.fields.first)
+
+        await viewModel.attachFiles(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/saved-support.pdf")]
+        ))
+        guard case let .string(savedID)? = viewModel.values.value(at: field.dataPath) else {
+            return XCTFail("Expected the saved attachment id at the field path")
+        }
+
+        let saveTask = Task { @MainActor in await viewModel.flushDraft() }
+        await draftStore.waitUntilFirstSaveStarts()
+
+        await viewModel.attachFiles(FormAttachmentRequest(
+            field: field,
+            path: field.dataPath,
+            urls: [URL(fileURLWithPath: "/fictional/live-support.pdf")]
+        ))
+        guard case let .string(liveID)? = viewModel.values.value(at: field.dataPath) else {
+            return XCTFail("Expected the live attachment id at the field path")
+        }
+        XCTAssertNotEqual(savedID, liveID)
+
+        await draftStore.releaseFirstSave()
+        let didFlush = await saveTask.value
+        XCTAssertTrue(didFlush)
+
+        let firstSave = await draftStore.savedValues.first
+        XCTAssertEqual(firstSave?.value(at: field.dataPath), .string(savedID))
+        var storedNames = await attachmentStore.names(
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertEqual(storedNames[savedID], "saved-support.pdf")
+        XCTAssertEqual(storedNames[liveID], "live-support.pdf")
+
+        let didFlushAgain = await viewModel.flushDraft()
+        XCTAssertTrue(didFlushAgain)
+
+        let savedValues = await draftStore.savedValues
+        XCTAssertEqual(savedValues.last?.value(at: field.dataPath), .string(liveID))
+        storedNames = await attachmentStore.names(
+            applicationId: "apply-demo",
+            formId: "sf424"
+        )
+        XCTAssertNil(storedNames[savedID])
+        XCTAssertEqual(storedNames[liveID], "live-support.pdf")
+    }
+
+    @MainActor
     func testLoadRestoresAttachmentNamesFromStore() async throws {
         let attachmentStore = InMemoryApplyAttachmentStore()
         let stored = try await attachmentStore.store(
@@ -1731,6 +1799,39 @@ private actor SpyDraftStore: DraftStore {
     }
 
     func saveDraft(_ value: JSONValue, applicationId: String, formId: String) async throws {
+        savedValues.append(value)
+    }
+
+    func removeDraft(applicationId: String, formId: String) async throws {}
+}
+
+private actor SuspendingDraftStore: DraftStore {
+    private(set) var savedValues: [JSONValue] = []
+    private var firstSaveStarted = false
+    private var firstSaveStartContinuation: CheckedContinuation<Void, Never>?
+    private var firstSaveReleaseContinuation: CheckedContinuation<Void, Never>?
+
+    func waitUntilFirstSaveStarts() async {
+        guard !firstSaveStarted else { return }
+        await withCheckedContinuation { firstSaveStartContinuation = $0 }
+    }
+
+    func releaseFirstSave() {
+        firstSaveReleaseContinuation?.resume()
+        firstSaveReleaseContinuation = nil
+    }
+
+    func loadDraft(applicationId: String, formId: String) async throws -> JSONValue? {
+        nil
+    }
+
+    func saveDraft(_ value: JSONValue, applicationId: String, formId: String) async throws {
+        if !firstSaveStarted {
+            firstSaveStarted = true
+            firstSaveStartContinuation?.resume()
+            firstSaveStartContinuation = nil
+            await withCheckedContinuation { firstSaveReleaseContinuation = $0 }
+        }
         savedValues.append(value)
     }
 
