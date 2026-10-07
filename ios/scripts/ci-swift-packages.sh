@@ -3,10 +3,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IOS_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-DEFAULT_PACKAGES=(SGModels SGAsk SGForms SGSampleData)
 PACKAGES=("$@")
 if (("${#PACKAGES[@]}" == 0)); then
-  PACKAGES=("${DEFAULT_PACKAGES[@]}")
+  for package_dir in "$IOS_DIR"/Packages/*; do
+    [[ -d "$package_dir" ]] || continue
+    PACKAGES+=("${package_dir##*/}")
+  done
 fi
 
 passed=()
