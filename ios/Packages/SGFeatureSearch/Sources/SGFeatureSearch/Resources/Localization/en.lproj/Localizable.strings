@@ -22,6 +22,7 @@
 "search.detail.cost_sharing" = "Cost sharing";
 "search.detail.documents" = "Documents";
 "search.detail.eligibility" = "Eligibility";
+"search.detail.email_accessibility" = "Email the agency at %@";
 "search.detail.expected_awards" = "Expected awards";
 "search.detail.forecasted_close" = "Forecasted close %@";
 "search.detail.forecasted_explanation" = "Applications open when this forecast is posted.";
@@ -29,6 +30,7 @@
 "search.detail.no_documents" = "No documents are attached to this listing.";
 "search.detail.not_open_yet" = "Not open yet";
 "search.detail.not_required" = "Not required";
+"search.detail.open_document_accessibility" = "Open document: %@";
 "search.detail.required" = "Required";
 "search.detail.save" = "Save";
 "search.detail.saved" = "Saved";

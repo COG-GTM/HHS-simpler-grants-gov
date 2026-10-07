@@ -3,6 +3,7 @@
 "design.error.retry" = "Retry";
 "design.header.profile_accessibility" = "Open profile";
 "design.header.wordmark" = "SIMPLER.GRANTS.GOV";
+"design.header.wordmark_accessibility" = "Simpler Grants.gov";
 "design.status.closed" = "Closed";
 "design.status.closing_soon" = "Closing soon";
 "design.status.forecasted" = "Forecasted";

@@ -85,6 +85,8 @@ struct ApplyPrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(ApplyTheme.F.sans(17, .semibold))
             .foregroundStyle(.white)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, minHeight: 52)
             .background(
                 isEnabled

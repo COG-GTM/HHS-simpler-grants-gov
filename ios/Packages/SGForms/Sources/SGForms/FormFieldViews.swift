@@ -90,19 +90,23 @@ struct FormFieldView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityHidden(true)
             }
-            control()
-                .accessibilityElement(children: field.kind == .radio || field.kind == .attachment || field.kind == .attachmentArray ? .contain : .combine)
-                .accessibilityLabel(Text(field.title))
-                .accessibilityValue(Text(accessibilityValue))
-                .accessibilityHint(Text(error ?? (field.isReadOnly ? "forms.read_only.hint".localized(bundle: .module) : "")))
-                .accessibilityIdentifier("forms.field.\(key)")
-                .accessibilityFocused(accessibilityFocusedPath, equals: key)
+            if (field.kind == .text && field.textFormat != .date) || field.kind == .textArea {
+                control()
+                    .accessibilityFocused(accessibilityFocusedPath, equals: key)
+            } else {
+                control()
+                    .accessibilityElement(children: field.kind == .radio || field.kind == .attachment || field.kind == .attachmentArray ? .contain : .combine)
+                    .accessibilityLabel(Text(field.title))
+                    .accessibilityValue(Text(accessibilityValue))
+                    .accessibilityHint(Text(field.isReadOnly ? "forms.read_only.hint".localized(bundle: .module) : ""))
+                    .accessibilityIdentifier("forms.field.\(key)")
+                    .accessibilityFocused(accessibilityFocusedPath, equals: key)
+            }
             if let error {
                 Text(error)
                     .font(FormTheme.F.caption)
                     .foregroundStyle(FormTheme.C.red)
                     .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityHidden(true)
                     .accessibilityIdentifier("forms.error.\(key)")
             }
         }
@@ -268,12 +272,18 @@ struct TextControl: View {
                 TextField("", text: editText, axis: .vertical)
                     .lineLimit(4...10)
                     .padding(.vertical, FormTheme.S.m)
+                    .accessibilityLabel(Text(field.title))
+                    .accessibilityIdentifier("forms.field.\(focusKey)")
             } else if dynamicTypeSize.isAccessibilitySize {
                 TextField("", text: editText, axis: .vertical)
                     .lineLimit(1...6)
                     .padding(.vertical, FormTheme.S.s)
+                    .accessibilityLabel(Text(field.title))
+                    .accessibilityIdentifier("forms.field.\(focusKey)")
             } else {
                 TextField("", text: editText)
+                    .accessibilityLabel(Text(field.title))
+                    .accessibilityIdentifier("forms.field.\(focusKey)")
             }
         }
         .font(FormTheme.F.bodyText)
@@ -396,7 +406,7 @@ struct SelectControl: View {
             HStack(spacing: FormTheme.S.s) {
                 Text(selectedTitle ?? "forms.select.placeholder".localized(bundle: .module))
                     .font(FormTheme.F.bodyText)
-                    .foregroundStyle(selectedTitle == nil ? FormTheme.C.subtle : FormTheme.C.ink)
+                    .foregroundStyle(selectedTitle == nil ? FormTheme.C.muted : FormTheme.C.ink)
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                     .multilineTextAlignment(.leading)
                 Spacer(minLength: FormTheme.S.s)
@@ -450,7 +460,7 @@ struct MultiSelectControl: View {
             HStack(spacing: FormTheme.S.s) {
                 Text(summary ?? "forms.select.placeholder".localized(bundle: .module))
                     .font(FormTheme.F.bodyText)
-                    .foregroundStyle(summary == nil ? FormTheme.C.subtle : FormTheme.C.ink)
+                    .foregroundStyle(summary == nil ? FormTheme.C.muted : FormTheme.C.ink)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 Spacer(minLength: FormTheme.S.s)

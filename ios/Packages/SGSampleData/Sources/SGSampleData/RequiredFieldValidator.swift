@@ -202,6 +202,14 @@ enum RequiredFieldValidator {
         if let constant = object["const"] { return constant }
         let allowed = values(object["enum"])
         if let first = allowed.first { return first }
+        if case let .string(format)? = object["format"] {
+            switch format {
+            case "date": return .string("2027-01-01")
+            case "email": return .string("sample@example.org")
+            case "uuid": return .string("00000000-0000-4000-8000-000000000001")
+            default: break
+            }
+        }
         let nested = mergedProperties(object)
         let required = mergedRequired(object)
         var result: [String: JSONValue] = [:]
@@ -226,6 +234,7 @@ enum RequiredFieldValidator {
                 })
             case "boolean": return .bool(false)
             case "integer", "number": return .number(0)
+            case "string": return .string(sampleString(object))
             default: return .string("Sample")
             }
         }
@@ -234,6 +243,29 @@ enum RequiredFieldValidator {
             return sampleValue(schema: first)
         }
         return .string("Sample")
+    }
+
+    private static func sampleString(_ schema: [String: JSONValue]) -> String {
+        let minimumLength: Int
+        if case let .number(value)? = schema["minLength"] {
+            minimumLength = max(0, Int(value))
+        } else {
+            minimumLength = 0
+        }
+
+        let maximumLength: Int?
+        if case let .number(value)? = schema["maxLength"] {
+            maximumLength = max(0, Int(value))
+        } else {
+            maximumLength = nil
+        }
+
+        let sample = "Sample"
+        let value = sample.count >= minimumLength
+            ? sample
+            : String(repeating: "S", count: minimumLength)
+        guard let maximumLength, value.count > maximumLength else { return value }
+        return String(value.prefix(maximumLength))
     }
 
     private static func setValue(_ value: JSONValue, at path: [String], in instance: inout JSONValue) {

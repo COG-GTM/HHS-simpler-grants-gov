@@ -5,6 +5,7 @@ import SGModels
 import SGNetworking
 import SGSampleData
 import SwiftUI
+import UIKit
 
 @main
 @MainActor
@@ -22,6 +23,7 @@ struct SimplerGrantsApp: App {
 
     init() {
         SGFonts.registerAll()
+        UITabBar.appearance().accessibilityElementsHidden = true
 
         let appEnvironment = AppEnvironment()
         let grantsDataSource: any GrantsDataSource

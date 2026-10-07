@@ -41,29 +41,6 @@ public struct FormScreenView: View {
                     }
                 )
                 .padding(.horizontal, 12)
-                .overlay(alignment: .trailing) {
-                    if viewModel.stepCount > 0 {
-                        Text(
-                            String(
-                                format: "apply.form.step_count".localized(bundle: .module),
-                                min(viewModel.currentStep + 1, viewModel.stepCount),
-                                viewModel.stepCount
-                            )
-                        )
-                        .font(ApplyTheme.F.sans(13))
-                        .foregroundStyle(ApplyTheme.C.subtle)
-                        .frame(width: 54, height: 44, alignment: .trailing)
-                        .padding(.trailing, 12)
-                        .accessibilityLabel(
-                            String(
-                                format: "apply.form.step_accessibility".localized(bundle: .module),
-                                min(viewModel.currentStep + 1, viewModel.stepCount),
-                                viewModel.stepCount
-                            )
-                        )
-                        .accessibilityIdentifier("apply.form.step")
-                    }
-                }
 
                 if viewModel.stepCount > 0 {
                     stepProgress(viewModel)
@@ -270,23 +247,46 @@ public struct FormScreenView: View {
     }
 
     private func stepProgress(_ viewModel: FormScreenViewModel) -> some View {
-        HStack(spacing: 4) {
-            ForEach(0..<viewModel.stepCount, id: \.self) { index in
-                Capsule()
-                    .fill(index <= viewModel.currentStep ? ApplyTheme.C.navy : ApplyTheme.C.line)
-                    .frame(height: 4)
+        ZStack(alignment: .topTrailing) {
+            HStack(spacing: 4) {
+                ForEach(0..<viewModel.stepCount, id: \.self) { index in
+                    Capsule()
+                        .fill(index <= viewModel.currentStep ? ApplyTheme.C.navy : ApplyTheme.C.line)
+                        .frame(height: 4)
+                }
             }
+            .frame(maxWidth: .infinity)
+            .frame(height: 4)
+            .accessibilityHidden(true)
+
+            Text(
+                String(
+                    format: "apply.form.step_count".localized(bundle: .module),
+                    min(viewModel.currentStep + 1, viewModel.stepCount),
+                    viewModel.stepCount
+                )
+            )
+            .font(ApplyTheme.F.sans(13))
+            .foregroundStyle(ApplyTheme.C.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(width: 54, alignment: .trailing)
+            .frame(minHeight: 44, alignment: .trailing)
+            .padding(.trailing, 12)
+            .offset(y: -44)
+            .accessibilityHidden(true)
         }
         .padding(.horizontal, ApplyTheme.S.margin)
-        .accessibilityElement()
+        .frame(height: 4, alignment: .top)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("apply.form.progress".localized(bundle: .module))
         .accessibilityValue(
             String(
                 format: "apply.form.step_accessibility".localized(bundle: .module),
-                viewModel.currentStep + 1,
+                min(viewModel.currentStep + 1, viewModel.stepCount),
                 viewModel.stepCount
             )
         )
+        .accessibilityIdentifier("apply.form.step")
     }
 
     private func errorSummary(_ errors: [FieldError]) -> some View {

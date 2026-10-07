@@ -39,6 +39,7 @@ public protocol DraftStore: Sendable {
         ownerId: String?
     ) async throws
     func removeDraft(applicationId: String, formId: String) async throws
+    func removeAll() async throws
     func pendingDrafts() async throws -> [DraftRecord]
     func markSynced(applicationId: String, formId: String) async throws
     func markSynced(
@@ -66,6 +67,7 @@ public extension DraftStore {
     }
 
     func pendingDrafts() async throws -> [DraftRecord] { [] }
+    func removeAll() async throws {}
     func markSynced(applicationId: String, formId: String) async throws {}
     func markSynced(
         applicationId: String,
@@ -125,6 +127,12 @@ public actor FileDraftStore: DraftStore {
         )
         cache[key] = record
         return legacy
+    }
+
+    public func removeAll() async throws {
+        cache.removeAll()
+        guard FileManager.default.fileExists(atPath: directoryURL.path) else { return }
+        try FileManager.default.removeItem(at: directoryURL)
     }
 
     public func saveDraft(_ value: JSONValue, applicationId: String, formId: String) async throws {

@@ -4,6 +4,9 @@ import SwiftUI
 
 struct SGTabBar: View {
     @Environment(AppRouter.self) private var router
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .title3) private var tabIconSize = 23
+    @ScaledMetric(relativeTo: .body) private var tabLabelSize = 10
 
     var body: some View {
         HStack(spacing: 0) {
@@ -12,7 +15,7 @@ struct SGTabBar: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 49)
+        .frame(minHeight: dynamicTypeSize.isAccessibilitySize ? 72 : 49)
         .background(backgroundColor.ignoresSafeArea(edges: .bottom))
         .overlay(alignment: .top) {
             Rectangle()
@@ -33,18 +36,20 @@ struct SGTabBar: View {
             VStack(spacing: 2) {
                 Image(systemName: symbol)
                     .symbolVariant(.none)
-                    .font(.system(size: 23, weight: .regular))
-                    .frame(height: 25)
+                    .font(.system(size: tabIconSize, weight: .regular))
+                    .frame(minHeight: 25)
+                    .accessibilityHidden(true)
                 Text(title)
-                    .font(.custom("PublicSans-Medium", size: 10, relativeTo: .caption2))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
+                    .font(.custom("PublicSans-Medium", size: tabLabelSize))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityHidden(true)
             }
             .foregroundStyle(isSelected ? selectedColor : unselectedColor)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 44)
-            .frame(height: 49)
+            .frame(minHeight: dynamicTypeSize.isAccessibilitySize ? 72 : 49)
             .contentShape(Rectangle())
+            .accessibilityElement(children: .ignore)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
@@ -66,7 +71,7 @@ struct SGTabBar: View {
     }
 
     private var backgroundColor: Color {
-        Color(red: 250 / 255, green: 250 / 255, blue: 248 / 255).opacity(0.94)
+        Color(red: 250 / 255, green: 250 / 255, blue: 248 / 255)
     }
 
     private var borderColor: Color {
@@ -78,6 +83,6 @@ struct SGTabBar: View {
     }
 
     private var unselectedColor: Color {
-        Color(red: 138 / 255, green: 143 / 255, blue: 153 / 255)
+        Color(red: 90 / 255, green: 96 / 255, blue: 112 / 255)
     }
 }

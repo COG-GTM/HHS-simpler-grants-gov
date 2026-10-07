@@ -131,6 +131,9 @@ targets:
       - path: AppUITests
     dependencies:
       - target: SimplerGrants
+      - package: SGModels
+      - package: SGForms
+      - package: SGSampleData
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.cognition.demo.simplergrants.uitests

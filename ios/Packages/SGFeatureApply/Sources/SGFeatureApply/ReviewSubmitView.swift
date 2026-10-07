@@ -89,6 +89,7 @@ public struct ReviewSubmitView: View {
             Button("apply.review.submit".localized(bundle: .module)) {
                 Task { await performSubmission(viewModel) }
             }
+            .accessibilityIdentifier("apply.review.confirm.submit")
             Button("apply.review.cancel".localized(bundle: .module), role: .cancel) {}
         } message: {
             Text("apply.review.confirm_message".localized(bundle: .module))
@@ -195,7 +196,7 @@ public struct ReviewSubmitView: View {
             Text(shortState(row.state))
                 .font(ApplyTheme.F.sans(13))
                 .foregroundStyle(stateColor(row.state))
-                .lineLimit(1)
+                .fixedSize(horizontal: false, vertical: true)
             Button {
                 router.push(.form(applicationId: applicationId, formId: row.id))
             } label: {

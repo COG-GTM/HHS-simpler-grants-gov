@@ -5,6 +5,7 @@ import SGFeatureAsk
 import SGFeatureOnboarding
 import SGFeatureProfile
 import SGFeatureSearch
+import SGSampleData
 import SwiftUI
 import UIKit
 
@@ -13,12 +14,15 @@ struct RootView: View {
     @Environment(AppRouter.self) private var router
     @Environment(SessionStore.self) private var sessionStore
     @Environment(\.appEnvironment) private var appEnvironment
+    @Environment(\.grantsDataSource) private var grantsDataSource
+    @Environment(\.draftStore) private var draftStore
     @Environment(\.syncQueue) private var syncQueue
     @Environment(\.networkStatus) private var networkStatus
     @State private var isRestoring = true
     @State private var didApplyInitialDeepLink = false
 #if DEBUG
     @State private var didAttemptAutoSignIn = false
+    @State private var didResetPersistedState = false
 #endif
 
     private var shouldSkipOnboarding: Bool {
@@ -33,6 +37,17 @@ struct RootView: View {
     }
 
 #if DEBUG
+    private var shouldResetPersistedState: Bool {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard
+            let index = arguments.firstIndex(of: "-SGResetState"),
+            arguments.indices.contains(index + 1)
+        else {
+            return false
+        }
+        return ["yes", "true", "1"].contains(arguments[index + 1].lowercased())
+    }
+
     private var shouldAutoSignIn: Bool {
         let arguments = ProcessInfo.processInfo.arguments
         guard
@@ -42,6 +57,10 @@ struct RootView: View {
             return false
         }
         return ["yes", "true", "1"].contains(arguments[index + 1].lowercased())
+    }
+
+    private var shouldPrefillApplicationForUITest: Bool {
+        ProcessInfo.processInfo.arguments.contains("-SGUITestPrefillApplication")
     }
 #endif
 
@@ -68,6 +87,32 @@ struct RootView: View {
             }
         }
         .task {
+#if DEBUG
+            if shouldResetPersistedState, !didResetPersistedState {
+                didResetPersistedState = true
+                let defaults = UserDefaults.standard
+                [
+                    "sg.onboarding.completed",
+                    "sg.ask.eligibility",
+                    "sg.ask.recentQuestions",
+                    "sg.search.recents",
+                    "sg.roadmap.votes"
+                ].forEach(defaults.removeObject(forKey:))
+                defaults.dictionaryRepresentation().keys
+                    .filter { $0.hasPrefix("sg.apply.progress.") }
+                    .forEach(defaults.removeObject(forKey:))
+                try? await draftStore.removeAll()
+            }
+            if shouldPrefillApplicationForUITest,
+               case .sample = appEnvironment.dataMode,
+               let sampleDataSource = grantsDataSource as? SampleDataSource {
+                do {
+                    try await sampleDataSource.prefillApplicationForUITest()
+                } catch {
+                    assertionFailure("Failed to prefill sample application for UI test: \(error)")
+                }
+            }
+#endif
             await sessionStore.restore()
 #if DEBUG
             if shouldAutoSignIn, !didAttemptAutoSignIn {
@@ -139,24 +184,28 @@ private struct MainTabsView: View {
             tabStack(.ask)
                 .tabItem {
                     Label("tabs.ask".localized(bundle: .main), systemImage: "bubble.left")
+                        .accessibilityHidden(true)
                 }
                 .tag(AppTab.ask)
 
             tabStack(.search)
                 .tabItem {
                     Label("tabs.search".localized(bundle: .main), systemImage: "magnifyingglass")
+                        .accessibilityHidden(true)
                 }
                 .tag(AppTab.search)
 
             tabStack(.apply)
                 .tabItem {
                     Label("tabs.apply".localized(bundle: .main), systemImage: "doc.text")
+                        .accessibilityHidden(true)
                 }
                 .tag(AppTab.apply)
 
             tabStack(.profile)
                 .tabItem {
                     Label("tabs.profile".localized(bundle: .main), systemImage: "person.circle")
+                        .accessibilityHidden(true)
                 }
                 .tag(AppTab.profile)
         }

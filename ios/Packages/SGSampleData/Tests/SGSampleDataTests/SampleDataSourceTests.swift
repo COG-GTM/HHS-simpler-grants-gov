@@ -352,6 +352,50 @@ final class SampleDataSourceTests: XCTestCase {
         XCTAssertTrue(entries.allSatisfy { $0["name"] != nil })
     }
 
+    func testMinimalInstanceUsesValidSampleFormatsAndStringLengths() {
+        let schema: JSONValue = .object([
+            "type": .string("object"),
+            "required": .array([
+                .string("email"),
+                .string("date"),
+                .string("tax_id"),
+                .string("attachment_id")
+            ]),
+            "properties": .object([
+                "email": .object([
+                    "type": .string("string"),
+                    "format": .string("email")
+                ]),
+                "date": .object([
+                    "type": .string("string"),
+                    "format": .string("date")
+                ]),
+                "tax_id": .object([
+                    "allOf": .array([.object([
+                        "type": .string("string"),
+                        "minLength": .number(9),
+                        "maxLength": .number(30)
+                    ])])
+                ]),
+                "attachment_id": .object([
+                    "allOf": .array([.object([
+                        "type": .string("string"),
+                        "format": .string("uuid")
+                    ])])
+                ])
+            ])
+        ])
+
+        guard case let .object(values) = RequiredFieldValidator.minimalInstance(schema: schema) else {
+            XCTFail("Expected a generated object")
+            return
+        }
+        XCTAssertEqual(values["email"], .string("sample@example.org"))
+        XCTAssertEqual(values["date"], .string("2027-01-01"))
+        XCTAssertEqual(values["tax_id"], .string("SSSSSSSSS"))
+        XCTAssertEqual(values["attachment_id"], .string("00000000-0000-4000-8000-000000000001"))
+    }
+
     func testSF424OtherApplicantWarningMatchesOnlyOtherApplicantCode() async throws {
         let source = try makeSource(anchorDate)
         let definition = try await source.form(id: "1623b310-85be-496a-b84b-34bdee22a68a")
@@ -471,23 +515,7 @@ final class SampleDataSourceTests: XCTestCase {
         XCTAssertEqual(requiredForms.count, 6)
 
         for form in requiredForms {
-            var response = RequiredFieldValidator.minimalInstance(schema: form.form.formJsonSchema)
-            if form.formId == "1623b310-85be-496a-b84b-34bdee22a68a" {
-                guard case var .object(values) = response else {
-                    return XCTFail("Expected SF-424 response to be an object")
-                }
-                values.removeValue(forKey: "total_estimated_funding")
-                values.removeValue(forKey: "applicant_type_other_specify")
-                values["applicant_type_code"] = .array([.string("E: Regional Organization")])
-                values["federal_estimated_funding"] = .string("540000")
-                values["applicant_estimated_funding"] = .string("0")
-                values["state_estimated_funding"] = .string("0")
-                values["local_estimated_funding"] = .string("0")
-                values["other_estimated_funding"] = .string("0")
-                values["program_income_estimated_funding"] = .string("0")
-                response = .object(values)
-            }
-
+            let response = SampleFormResponseFactory.minimalRequiredResponse(for: form.form)
             let result = try await source.saveForm(
                 applicationId: applicationID,
                 formId: form.formId,

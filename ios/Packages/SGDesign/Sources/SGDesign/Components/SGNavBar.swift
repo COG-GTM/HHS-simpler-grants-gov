@@ -39,7 +39,8 @@ public struct SGNavBar: View {
                 }
                 .font(SG.F.sans(15, .medium))
                 .foregroundStyle(SG.C.navy)
-                .frame(minHeight: 44)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(backLabel)
@@ -49,7 +50,8 @@ public struct SGNavBar: View {
             Text(title)
                 .font(SG.F.sans(17, .semibold))
                 .foregroundStyle(SG.C.ink)
-                .lineLimit(1)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
 
             Spacer(minLength: SG.S.s)
@@ -61,6 +63,7 @@ public struct SGNavBar: View {
                 .font(SG.F.sans(15, .medium))
                 .foregroundStyle(SG.C.navy)
                 .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
             } else {
                 Color.clear

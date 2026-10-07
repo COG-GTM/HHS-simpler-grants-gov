@@ -7,6 +7,7 @@ public struct ResultsView: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.dismiss) private var dismiss
     @Environment(\.grantsDataSource) private var dataSource
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var viewModel: ResultsViewModel?
     @State private var queryField = ""
     @State private var isFiltersPresented = false
@@ -14,6 +15,9 @@ public struct ResultsView: View {
     @State private var lastRecentCountQuery: String?
 
     private let request: SearchRequest?
+    private var usesExpandedTypeLayout: Bool {
+        dynamicTypeSize == .xxLarge || dynamicTypeSize == .xxxLarge || dynamicTypeSize.isAccessibilitySize
+    }
 
     public init(request: SearchRequest) {
         self.request = request
@@ -190,7 +194,9 @@ public struct ResultsView: View {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(SearchTheme.C.navy)
-                    .frame(width: 44, height: 44)
+                    .frame(width: 48, height: 48)
+                    .contentShape(Rectangle())
+                    .accessibilityHidden(true)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("search.navigation.back".localized(bundle: .module))
@@ -200,18 +206,25 @@ public struct ResultsView: View {
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(SearchTheme.C.muted)
                     .accessibilityHidden(true)
-                TextField("search.field.placeholder".localized(bundle: .module), text: $queryField)
-                    .font(SearchTheme.F.bodyText)
-                    .foregroundStyle(SearchTheme.C.ink)
-                    .submitLabel(.search)
-                    .onSubmit {
-                        Task {
-                            RecentSearchStore.shared.record(queryField)
-                            lastRecentCountQuery = nil
-                            await viewModel.submit(query: queryField)
-                        }
+                TextField(
+                    "search.field.placeholder".localized(bundle: .module),
+                    text: $queryField,
+                    axis: .vertical
+                )
+                .font(SearchTheme.F.bodyText)
+                .foregroundStyle(SearchTheme.C.ink)
+                .lineLimit(2, reservesSpace: true)
+                .padding(.vertical, 12)
+                .frame(minHeight: 44)
+                .submitLabel(.search)
+                .onSubmit {
+                    Task {
+                        RecentSearchStore.shared.record(queryField)
+                        lastRecentCountQuery = nil
+                        await viewModel.submit(query: queryField)
                     }
-                    .accessibilityIdentifier("search.results.field")
+                }
+                .accessibilityIdentifier("search.results.field")
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 44)
@@ -281,6 +294,7 @@ public struct ResultsView: View {
                     viewModel.closingSoonOnly ? viewModel.displayedResults.count : viewModel.totalRecords
                 ))
                 .foregroundStyle(SearchTheme.C.muted)
+                .accessibilityIdentifier("search.results.count")
             }
             Spacer()
             Menu {
@@ -349,7 +363,7 @@ public struct ResultsView: View {
                         Text(opportunity.opportunityNumber ?? "search.format.unavailable".localized(bundle: .module))
                             .font(SearchTheme.F.mono)
                             .foregroundStyle(SearchTheme.C.subtle)
-                            .lineLimit(1)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
 
                     Text(opportunity.opportunityTitle ?? "search.format.unavailable".localized(bundle: .module))
@@ -357,6 +371,7 @@ public struct ResultsView: View {
                         .foregroundStyle(SearchTheme.C.ink)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(agency)
                         .font(SearchTheme.F.sans(14))
@@ -370,12 +385,27 @@ public struct ResultsView: View {
                         .padding(.top, 2)
                         .accessibilityHidden(true)
 
-                    HStack(alignment: .top, spacing: 16) {
-                        resultFact(label: "search.results.closes".localized(bundle: .module), value: close)
-                        resultFact(label: "search.results.award".localized(bundle: .module), value: award)
+                    if usesExpandedTypeLayout {
+                        VStack(alignment: .leading, spacing: 8) {
+                            resultFact(label: "search.results.closes".localized(bundle: .module), value: close)
+                            resultFact(label: "search.results.award".localized(bundle: .module), value: award)
+                        }
+                    } else {
+                        ViewThatFits(in: .horizontal) {
+                            HStack(alignment: .top, spacing: 16) {
+                                resultFact(label: "search.results.closes".localized(bundle: .module), value: close)
+                                resultFact(label: "search.results.award".localized(bundle: .module), value: award)
+                            }
+
+                            VStack(alignment: .leading, spacing: 8) {
+                                resultFact(label: "search.results.closes".localized(bundle: .module), value: close)
+                                resultFact(label: "search.results.award".localized(bundle: .module), value: award)
+                            }
+                        }
                     }
                 }
             }
+            .accessibilityHidden(true)
             .contentShape(RoundedRectangle(cornerRadius: SearchTheme.R.card, style: .continuous))
         }
         .buttonStyle(.plain)

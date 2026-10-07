@@ -49,13 +49,13 @@ public struct ProfileView: View {
                     sharedSections
                     Text("profile.footer".localized(bundle: .module))
                         .font(SG.F.caption)
-                        .foregroundStyle(SG.C.subtle)
+                        .foregroundStyle(SG.C.muted)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, SG.S.margin)
                 .padding(.top, SG.S.s)
-                .padding(.bottom, SG.S.xl)
+                .padding(.bottom, SG.S.xl + 56)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -102,6 +102,7 @@ public struct ProfileView: View {
                             .font(SG.F.serif(17))
                             .foregroundStyle(SG.C.ink)
                             .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("profile.organization")
                         organizationIdentifiers
                     }
                 }
@@ -124,7 +125,7 @@ public struct ProfileView: View {
                     .foregroundStyle(SG.C.muted)
                     Image(systemName: "chevron.right")
                         .font(SG.F.sans(12, .semibold))
-                        .foregroundStyle(SG.C.subtle)
+                        .foregroundStyle(SG.C.muted)
                         .accessibilityHidden(true)
                 }
                 .padding(.horizontal, SG.S.l)
@@ -182,6 +183,7 @@ public struct ProfileView: View {
             }
         }
         .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("profile.identity")
     }
 
     private var samStatus: some View {
@@ -217,7 +219,8 @@ public struct ProfileView: View {
         let uei = fact(
             title: "profile.organization.uei",
             value: model.organization?.samGovEntity?.uei ?? "profile.value_unavailable".localized(bundle: .module),
-            monospaced: true
+            monospaced: true,
+            valueAccessibilityIdentifier: "profile.uei"
         )
         if dynamicTypeSize.isAccessibilitySize {
             VStack(alignment: .leading, spacing: SG.S.m) {
@@ -232,17 +235,39 @@ public struct ProfileView: View {
         }
     }
 
-    private func fact(title: String, value: String, monospaced: Bool = false) -> some View {
+    private func fact(
+        title: String,
+        value: String,
+        monospaced: Bool = false,
+        valueAccessibilityIdentifier: String? = nil
+    ) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title.localized(bundle: .module))
                 .font(SG.F.sans(13))
                 .foregroundStyle(SG.C.subtle)
+            factValue(value, monospaced: monospaced, accessibilityIdentifier: valueAccessibilityIdentifier)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func factValue(
+        _ value: String,
+        monospaced: Bool,
+        accessibilityIdentifier: String?
+    ) -> some View {
+        if let accessibilityIdentifier {
+            Text(value)
+                .font(monospaced ? .system(size: 13, weight: .medium, design: .monospaced) : SG.F.sans(14, .semibold))
+                .foregroundStyle(SG.C.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier(accessibilityIdentifier)
+        } else {
             Text(value)
                 .font(monospaced ? .system(size: 13, weight: .medium, design: .monospaced) : SG.F.sans(14, .semibold))
                 .foregroundStyle(SG.C.ink)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var notifications: some View {
@@ -345,7 +370,7 @@ public struct ProfileView: View {
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(SG.F.sans(12, .semibold))
-                        .foregroundStyle(SG.C.subtle)
+                        .foregroundStyle(SG.C.muted)
                         .accessibilityHidden(true)
                 }
                 .padding(.horizontal, SG.S.l)

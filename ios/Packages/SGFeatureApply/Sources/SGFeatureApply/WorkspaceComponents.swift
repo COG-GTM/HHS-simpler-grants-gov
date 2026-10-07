@@ -111,7 +111,7 @@ struct WorkspaceContent: View {
             if let opportunityNumber = viewModel.opportunityNumber {
                 Text(opportunityNumber)
                     .font(.system(size: opportunityNumberFontSize, weight: .medium, design: .monospaced))
-                    .foregroundStyle(ApplyTheme.C.subtle)
+                    .foregroundStyle(ApplyTheme.C.muted)
             }
             Text(viewModel.opportunityTitle)
                 .font(ApplyTheme.F.serif(19))
@@ -129,30 +129,46 @@ struct WorkspaceContent: View {
             .fixedSize(horizontal: false, vertical: true)
             .padding(.top, 8)
 
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(ApplyTheme.C.lineSoft)
-                    Capsule()
-                        .fill(ApplyTheme.C.green)
-                        .frame(width: geometry.size.width * viewModel.progressFraction)
+            VStack(alignment: .leading, spacing: 0) {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(ApplyTheme.C.lineSoft)
+                        Capsule()
+                            .fill(ApplyTheme.C.green)
+                            .frame(width: geometry.size.width * viewModel.progressFraction)
+                    }
                 }
+                .frame(height: 6)
+                .accessibilityHidden(true)
+
+                progressAndDueRow
+                    .padding(.top, 8)
             }
-            .frame(height: 6)
             .padding(.top, 14)
-            .accessibilityElement()
+            .accessibilityElement(children: .combine)
             .accessibilityLabel("apply.workspace.progress".localized(bundle: .module))
             .accessibilityValue(
-                String(
-                    format: "apply.workspace.progress_percent".localized(bundle: .module),
-                    Int(viewModel.progressFraction * 100)
-                )
+                progressAccessibilityValue
             )
-
-            progressAndDueRow
-                .padding(.top, 8)
+            .accessibilityIdentifier("apply.workspace.progress")
         }
         .padding(16)
         .applyCard()
+    }
+
+    private var progressAccessibilityValue: String {
+        let percent = String(
+            format: "apply.workspace.progress_percent".localized(bundle: .module),
+            Int(viewModel.progressFraction * 100)
+        )
+        let forms = workspaceFormsCompleteText(
+            completedCount: viewModel.completedRequiredCount,
+            requiredCount: viewModel.requiredCount
+        )
+        if let dueDate = viewModel.dueDate, let days = viewModel.daysRemaining {
+            return "\(percent), \(forms), \(workspaceDueLabel(date: dueDate, days: days, timeZone: timeZone))"
+        }
+        return "\(percent), \(forms)"
     }
 
     @ViewBuilder
@@ -237,7 +253,6 @@ struct WorkspaceContent: View {
                     WorkspaceFormRow(row: row)
                 }
                 .buttonStyle(.plain)
-                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
                     String(
                         format: "apply.workspace.form_accessibility".localized(bundle: .module),
@@ -342,7 +357,7 @@ struct WorkspaceFormRow: View {
         switch row.state {
         case .complete: return ApplyTheme.C.green
         case .inProgress: return ApplyTheme.C.navy
-        case .notStarted: return ApplyTheme.C.subtle
+        case .notStarted: return ApplyTheme.C.muted
         }
     }
 }

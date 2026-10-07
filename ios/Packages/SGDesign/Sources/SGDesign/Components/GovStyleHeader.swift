@@ -15,6 +15,7 @@ public struct GovStyleHeader: View {
                 .font(SG.F.overline)
                 .tracking(0.08 * 12)
                 .foregroundStyle(SG.C.navy)
+                .accessibilityLabel("design.header.wordmark_accessibility".localized(bundle: .module))
                 .accessibilityAddTraits(.isHeader)
 
             Spacer()

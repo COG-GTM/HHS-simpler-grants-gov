@@ -12,11 +12,15 @@ public struct OpportunityDetailView: View {
     @Environment(SessionStore.self) private var sessionStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.grantsDataSource) private var dataSource
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var viewModel: OpportunityDetailViewModel?
     @State private var isSummaryExpanded = false
     @State private var safariItem: SafariItem?
 
     private let opportunityId: String?
+    private var usesExpandedTypeLayout: Bool {
+        dynamicTypeSize == .xxLarge || dynamicTypeSize == .xxxLarge || dynamicTypeSize.isAccessibilitySize
+    }
 
     public init(opportunityId: String) {
         self.opportunityId = opportunityId
@@ -79,7 +83,7 @@ public struct OpportunityDetailView: View {
                         detailSections(detail, model: viewModel)
                             .padding(.horizontal, 20)
                             .padding(.top, 8)
-                            .padding(.bottom, 24)
+                            .padding(.bottom, 100)
                     }
                     .refreshable { await viewModel.load() }
                     .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -111,6 +115,7 @@ public struct OpportunityDetailView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("search.detail.back".localized(bundle: .module))
+            .accessibilityIdentifier("search.detail.back")
             Spacer()
             HStack(spacing: 4) {
                 Button {
@@ -195,6 +200,7 @@ public struct OpportunityDetailView: View {
                     : opportunity.opportunityTitle!
                 )
                 .accessibilityAddTraits(.isHeader)
+                .accessibilityIdentifier("search.detail.title")
 
             Text(opportunity.agencyName ?? opportunity.topLevelAgencyName ?? "search.format.unavailable".localized(bundle: .module))
                 .font(SearchTheme.F.label)
@@ -278,10 +284,10 @@ public struct OpportunityDetailView: View {
                     .font(SearchTheme.F.answer)
                     .foregroundStyle(SearchTheme.C.body)
                     .lineSpacing(9)
-                    .lineLimit(isSummaryExpanded ? nil : 6)
+                    .lineLimit(isSummaryExpanded || usesExpandedTypeLayout ? nil : 6)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 10)
-                if summaryText.count > 280 {
+                if summaryText.count > 280 && !usesExpandedTypeLayout {
                     Button(
                         isSummaryExpanded
                         ? "search.detail.show_less".localized(bundle: .module)
@@ -422,20 +428,26 @@ public struct OpportunityDetailView: View {
         let filename = attachment.fileName ?? "search.format.unavailable".localized(bundle: .module)
         let fileType = (attachment.fileType ?? URL(fileURLWithPath: filename).pathExtension)
             .uppercased()
+        let readableFilename = URL(fileURLWithPath: filename)
+            .lastPathComponent
+            .replacingOccurrences(of: "_", with: " ")
         let content = HStack(spacing: 12) {
-            Text(fileType.isEmpty ? "search.detail.file".localized(bundle: .module) : fileType)
-                .font(SearchTheme.F.monoFont(9, .semibold, relativeTo: .caption2))
-                .foregroundStyle(SearchTheme.C.red)
-                .frame(width: 34, height: 40, alignment: .bottom)
-                .padding(.bottom, 4)
-                .background(SearchTheme.C.canvas, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(SearchTheme.C.line, lineWidth: 1))
-                .accessibilityHidden(true)
+            if !usesExpandedTypeLayout {
+                Text(fileType.isEmpty ? "search.detail.file".localized(bundle: .module) : fileType)
+                    .font(SearchTheme.F.monoFont(9, .semibold, relativeTo: .caption2))
+                    .foregroundStyle(SearchTheme.C.red)
+                    .frame(width: 34, height: 40, alignment: .bottom)
+                    .padding(.bottom, 4)
+                    .background(SearchTheme.C.canvas, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(SearchTheme.C.line, lineWidth: 1))
+                    .accessibilityHidden(true)
+            }
             VStack(alignment: .leading, spacing: 2) {
                 Text(filename)
                     .font(SearchTheme.F.sans(15, .semibold))
                     .foregroundStyle(SearchTheme.C.ink)
                     .multilineTextAlignment(.leading)
+                    .accessibilityLabel(readableFilename)
                 Text(attachment.mimeType ?? fileType)
                     .font(SearchTheme.F.caption)
                     .foregroundStyle(SearchTheme.C.subtle)
@@ -456,7 +468,10 @@ public struct OpportunityDetailView: View {
             .accessibilityLabel(
                 attachment.fileName == nil
                 ? "search.format.not_available".localized(bundle: .module)
-                : filename
+                : String(
+                    format: "search.detail.open_document_accessibility".localized(bundle: .module),
+                    readableFilename
+                )
             )
         } else {
             content
@@ -478,9 +493,18 @@ public struct OpportunityDetailView: View {
                             .lineSpacing(8)
                     }
                     if let email, !email.isEmpty, let url = URL(string: "mailto:\(email)") {
-                        Link(email, destination: url)
-                            .foregroundStyle(SearchTheme.C.navy)
-                            .frame(minHeight: 44, alignment: .leading)
+                        Link(destination: url) {
+                            Text(email)
+                                .foregroundStyle(SearchTheme.C.navy)
+                                .frame(minHeight: 44, alignment: .leading)
+                                .contentShape(Rectangle())
+                        }
+                        .accessibilityLabel(
+                            String(
+                                format: "search.detail.email_accessibility".localized(bundle: .module),
+                                email
+                            )
+                        )
                     }
                 }
             }

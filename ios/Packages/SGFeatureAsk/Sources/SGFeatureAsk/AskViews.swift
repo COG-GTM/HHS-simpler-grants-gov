@@ -36,7 +36,6 @@ public struct AskHomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     GovStyleHeader(initials: initials, onProfile: { router.tab = .profile })
-                        .accessibilityIdentifier("ask.home.profile")
 
                     Text(verbatim: "ask.home.title".localized(bundle: .module))
                         .font(SG.F.largeTitle)
@@ -468,12 +467,12 @@ public struct AnswerView: View {
     @State private var phase = Phase.loading
     @State private var didSkipInitialLoad = false
     @State private var removedFilters: Set<InferredFilter> = []
-    @State private var highlightedCitation: Int?
     @State private var followupText = ""
     @State private var reloadCounter = 0
     @FocusState private var followupFocused: Bool
     private let question: String
     private let skipsInitialLoad: Bool
+    private let followupComposerClearance: CGFloat = 100
 
     public init(question: String) {
         self.question = question
@@ -501,61 +500,45 @@ public struct AnswerView: View {
             DemoBanner()
             answerNavigationBar
 
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 18) {
-                        questionBubble
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    questionBubble
 
-                        switch phase {
-                        case .loading:
-                            LoadingAnswerView(reduceMotion: reduceMotion)
-                                .accessibilityIdentifier("ask.answer.loading")
-                        case let .loaded(answer):
-                            if answer.citations.isEmpty || answer.paragraphs.isEmpty {
-                                EmptyStateView(
-                                    title: "ask.answer.empty.title".localized(bundle: .module),
-                                    message: "ask.answer.empty.message".localized(bundle: .module),
-                                    actionTitle: "ask.answer.empty.action".localized(bundle: .module),
-                                    action: { router.tab = .search }
-                                )
-                                .accessibilityIdentifier("ask.answer.empty")
-                            } else {
-                                answerContent(answer, proxy: proxy)
-                            }
-                        case .failed:
-                            InlineErrorBanner(
-                                message: "ask.answer.error".localized(bundle: .module),
-                                retry: { reloadCounter += 1 }
+                    switch phase {
+                    case .loading:
+                        LoadingAnswerView(reduceMotion: reduceMotion)
+                            .accessibilityIdentifier("ask.answer.loading")
+                    case let .loaded(answer):
+                        if answer.citations.isEmpty || answer.paragraphs.isEmpty {
+                            EmptyStateView(
+                                title: "ask.answer.empty.title".localized(bundle: .module),
+                                message: "ask.answer.empty.message".localized(bundle: .module),
+                                actionTitle: "ask.answer.empty.action".localized(bundle: .module),
+                                action: { router.tab = .search }
                             )
-                            .accessibilityIdentifier("ask.answer.error")
+                            .accessibilityIdentifier("ask.answer.empty")
+                        } else {
+                            answerContent(answer)
                         }
+                    case .failed:
+                        InlineErrorBanner(
+                            message: "ask.answer.error".localized(bundle: .module),
+                            retry: { reloadCounter += 1 }
+                        )
+                        .accessibilityIdentifier("ask.answer.error")
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 12)
-                    .padding(.bottom, 20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .scrollIndicators(.hidden)
-                .environment(\.openURL, OpenURLAction { url in
-                    guard url.scheme == "sgcite" else { return .discarded }
-                    let value = url.host ?? String(url.path.dropFirst())
-                    guard let index = Int(value),
-                          case let .loaded(answer) = phase,
-                          answer.citations.contains(where: { $0.index == index }) else {
-                        return .discarded
-                    }
-                    withAnimation(.easeInOut) {
-                        proxy.scrollTo("citation-\(index)", anchor: .center)
-                    }
-                    highlightCitation(index)
-                    return .handled
-                })
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, followupComposerClearance)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .scrollIndicators(.hidden)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                followupComposer
             }
         }
         .background(SG.C.canvas)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            followupComposer
-        }
         .task(id: AnswerLoadKey(removedFilters: removedFilters, reloadCounter: reloadCounter)) {
             if skipsInitialLoad && !didSkipInitialLoad {
                 didSkipInitialLoad = true
@@ -589,7 +572,8 @@ public struct AnswerView: View {
                         }
                         .font(SG.F.sans(15, .medium))
                         .foregroundStyle(SG.C.navy)
-                        .frame(minHeight: 44)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(backLabel)
@@ -602,6 +586,7 @@ public struct AnswerView: View {
                     .font(SG.F.sans(15, .medium))
                     .foregroundStyle(SG.C.navy)
                     .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                 }
 
@@ -620,7 +605,7 @@ public struct AnswerView: View {
                 onTrailing: { router.popToRoot(router.tab) }
             )
             .padding(.horizontal, 12)
-            .frame(height: 44)
+            .frame(minHeight: 44)
         }
     }
 
@@ -656,7 +641,7 @@ public struct AnswerView: View {
     }
 
     @ViewBuilder
-    private func answerContent(_ answer: AskAnswer, proxy: ScrollViewProxy) -> some View {
+    private func answerContent(_ answer: AskAnswer) -> some View {
         let visibleFilters = answer.intent.inferredFilters.filter { !removedFilters.contains($0) }
         if !visibleFilters.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
@@ -708,12 +693,7 @@ public struct AnswerView: View {
             .foregroundStyle(SG.C.muted)
 
             ForEach(Array(answer.paragraphs.enumerated()), id: \.offset) { _, paragraph in
-                AnswerParagraphText(paragraph: paragraph, citations: answer.citations) { index in
-                    highlightCitation(index)
-                    withAnimation(.easeInOut) {
-                        proxy.scrollTo("citation-\(index)", anchor: .center)
-                    }
-                }
+                AnswerParagraphText(paragraph: paragraph, citations: answer.citations)
             }
         }
 
@@ -726,7 +706,7 @@ public struct AnswerView: View {
 
         Text(verbatim: "ask.answer.disclaimer".localized(bundle: .module))
             .font(SG.F.sans(12))
-            .foregroundStyle(SG.C.subtle)
+            .foregroundStyle(SG.C.muted)
 
         if answer.totalMatches > 0 {
             Button {
@@ -770,17 +750,20 @@ public struct AnswerView: View {
                     .foregroundStyle(SG.C.navy)
                     .frame(width: 22, height: 22)
                     .background(SG.C.navyTint, in: Circle())
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(verbatim: title)
                         .font(SG.F.sans(15, .semibold))
                         .foregroundStyle(SG.C.ink)
                         .multilineTextAlignment(.leading)
+                        .accessibilityHidden(true)
                     if !meta.isEmpty {
                         Text(verbatim: meta)
                             .font(SG.F.sans(13))
                             .foregroundStyle(SG.C.muted)
                             .multilineTextAlignment(.leading)
+                            .accessibilityHidden(true)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -788,12 +771,12 @@ public struct AnswerView: View {
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                highlightedCitation == index ? SG.C.navyTint : SG.C.surface,
+                SG.C.surface,
                 in: RoundedRectangle(cornerRadius: 16, style: .continuous)
             )
             .overlay {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(highlightedCitation == index ? SG.C.navy : SG.C.line, lineWidth: 1)
+                    .stroke(SG.C.line, lineWidth: 1)
             }
             .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
@@ -820,7 +803,9 @@ public struct AnswerView: View {
             )
             .font(SG.F.sans(16))
             .foregroundStyle(SG.C.ink)
-            .lineLimit(1...2)
+            .lineLimit(2, reservesSpace: true)
+            .padding(.vertical, 4)
+            .frame(minHeight: 44)
             .focused($followupFocused)
             .accessibilityIdentifier("ask.followup.field")
             .onSubmit { sendFollowup() }
@@ -875,16 +860,6 @@ public struct AnswerView: View {
         router.push(.answer(question: followup), in: router.tab)
     }
 
-    private func highlightCitation(_ index: Int) {
-        highlightedCitation = index
-        Task {
-            try? await Task.sleep(for: .seconds(1.5))
-            if highlightedCitation == index {
-                highlightedCitation = nil
-            }
-        }
-    }
-
     @MainActor
     private func loadAnswer() async {
         phase = .loading
@@ -929,7 +904,6 @@ private struct AnswerLoadKey: Equatable {
 private struct AnswerParagraphText: View {
     let paragraph: AnswerParagraph
     let citations: [Citation]
-    let onShowSource: (Int) -> Void
 
     private var citationLookup: [Int: Citation] {
         Dictionary(uniqueKeysWithValues: citations.map { ($0.index, $0) })
@@ -956,15 +930,9 @@ private struct AnswerParagraphText: View {
             superscript.font = SG.F.sans(11, .semibold)
             superscript.foregroundColor = SG.C.navy
             superscript.baselineOffset = 6
-            superscript.link = URL(string: "sgcite://\(index)")
             result.append(superscript)
         }
         return result
-    }
-
-    private var citedIndexes: [Int] {
-        let validIndexes = Set(citations.map(\.index))
-        return Array(Set(paragraph.segments.compactMap(\.citationIndex).filter { validIndexes.contains($0) })).sorted()
     }
 
     private var spokenLabel: String {
@@ -972,26 +940,12 @@ private struct AnswerParagraphText: View {
     }
 
     var body: some View {
-        var accessibleText = AnyView(
-            Text(attributedText)
-                .font(SG.F.answer)
-                .foregroundColor(SG.C.body)
-                .lineSpacing(5)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(spokenLabel)
-        )
-        for index in citedIndexes {
-            let actionName = String(
-                format: "ask.answer.show_source".localized(bundle: .module),
-                index
-            )
-            accessibleText = AnyView(
-                accessibleText.accessibilityAction(named: Text(verbatim: actionName)) {
-                    onShowSource(index)
-                }
-            )
-        }
-        return accessibleText
+        Text(attributedText)
+            .font(SG.F.answer)
+            .foregroundColor(SG.C.body)
+            .lineSpacing(5)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(spokenLabel)
     }
 }
 

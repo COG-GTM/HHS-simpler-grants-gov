@@ -6,7 +6,7 @@ enum SearchTheme {
         static let ink = Color(hex: 0x14171F)
         static let body = Color(hex: 0x2A2E38)
         static let muted = Color(hex: 0x5A6070)
-        static let subtle = Color(hex: 0x8A8F99)
+        static let subtle = Color(hex: 0x5A6070)
         static let canvas = Color(hex: 0xF6F6F3)
         static let surface = Color.white
         static let field = Color(hex: 0xEAEAE5)
@@ -100,7 +100,7 @@ struct SearchPrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(SearchTheme.F.button)
-            .foregroundStyle(.white)
+            .foregroundStyle(enabled ? .white : SearchTheme.C.ink)
             .frame(maxWidth: .infinity, minHeight: 52)
             .background(
                 enabled ? (configuration.isPressed ? SearchTheme.C.navyPress : SearchTheme.C.navy) : SearchTheme.C.disabled,

@@ -75,6 +75,33 @@ public struct SampleDataSource: GrantsDataSource {
         )
     }
 
+#if DEBUG
+    public func prefillApplicationForUITest(
+        id applicationId: String = "sample-application-0001"
+    ) async throws {
+        let application = try await store.application(id: applicationId)
+        for form in application.applicationForms where form.isRequired {
+            var response = SampleFormResponseFactory.minimalRequiredResponse(for: form.form)
+            if form.formId == SampleFormIDs.sf424, case var .object(values) = response {
+                values.removeValue(forKey: "email")
+                response = .object(values)
+            }
+            let result = try await store.saveForm(
+                applicationId: applicationId,
+                formId: form.formId,
+                response: response
+            )
+            if form.formId != SampleFormIDs.sf424,
+               result.form.applicationFormStatus != "complete" {
+                throw GrantsError.server(
+                    status: 422,
+                    message: "UI test prefill left required form \(form.formId) incomplete."
+                )
+            }
+        }
+    }
+#endif
+
     public func application(id: String) async throws -> Application {
         try await waitForLatency()
         return try await store.application(id: id)
