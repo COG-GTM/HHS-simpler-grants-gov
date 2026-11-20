@@ -1,5 +1,6 @@
 """Tests for the CommonGrantsOpportunityService."""
 
+import json
 from datetime import datetime
 from unittest.mock import Mock, patch
 from uuid import uuid4
@@ -17,8 +18,11 @@ from common_grants_sdk.schemas.pydantic import (
     StringArrayFilter,
 )
 
+import tests.src.db.models.factories as factories
+from src.api.opportunities_v1.opportunity_schemas import OpportunityV1Schema
 from src.constants.lookup_constants import OpportunityStatus
 from src.services.common_grants.opportunity_service import CommonGrantsOpportunityService
+from src.services.common_grants.transformation import transform_search_result_to_cg
 
 
 class TestCommonGrantsOpportunityService:
@@ -489,3 +493,20 @@ class TestCommonGrantsOpportunityService:
                 and "Failed to transform search result to CommonGrants format:" in record.message
             ]
             assert len(warning_logs) == 2
+
+
+def test_list_opportunities_raw_records_match_loaded_records(enable_factory_create, db_session):
+    """CG transforms raw search documents the same as v1-schema-loaded ones."""
+    schema = OpportunityV1Schema()
+    opportunities = factories.OpportunityFactory.create_batch(
+        size=5, is_posted_summary=True, has_attachments=True
+    ) + factories.OpportunityFactory.create_batch(size=3, is_forecasted_summary=True)
+    # Indexed documents are the JSON form of OpportunityV1Schema.dump (see load_opportunities_to_index)
+    raw_records = [json.loads(json.dumps(schema.dump(opp))) for opp in opportunities]
+    loaded_records = schema.load(raw_records, many=True)
+
+    for raw, loaded in zip(raw_records, loaded_records, strict=True):
+        from_raw = transform_search_result_to_cg(raw)
+        from_loaded = transform_search_result_to_cg(loaded)
+        assert from_raw is not None
+        assert from_raw.model_dump(mode="json") == from_loaded.model_dump(mode="json")

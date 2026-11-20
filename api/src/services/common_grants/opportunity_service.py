@@ -60,7 +60,7 @@ class CommonGrantsOpportunityService:
 
         # Get response data from v1 service
         opportunity_data_v1, _aggregations, pagination_data_v1 = search_opportunities(
-            search_client, v1_search_params
+            search_client, v1_search_params, load_records=False
         )
 
         # Transform response data to CG model
@@ -99,7 +99,7 @@ class CommonGrantsOpportunityService:
 
         # Get response data from v1 service
         opportunity_data_v1, _aggregations, pagination_data_v1 = search_opportunities(
-            search_client, v1_search_params
+            search_client, v1_search_params, load_records=False
         )
 
         # Transform response data to CG model
