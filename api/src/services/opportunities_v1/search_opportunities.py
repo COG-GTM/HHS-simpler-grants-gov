@@ -340,7 +340,10 @@ def _search_opportunities(
 
 
 def search_opportunities(
-    search_client: search.SearchClient, raw_search_params: dict
+    search_client: search.SearchClient,
+    raw_search_params: dict,
+    *,
+    load_records: bool = True,
 ) -> tuple[Sequence[dict], dict, PaginationInfo]:
 
     search_params = SearchOpportunityParams.model_validate(raw_search_params)
@@ -364,7 +367,9 @@ def search_opportunities(
     # which means anything that requires conversions like timestamps end up failing
     # as they don't need to be converted. So, we convert everything to those types (serialize)
     # so that deserialization won't fail.
-    records = SCHEMA.load(response.records, many=True)
+    # Callers that transform the records themselves (e.g. CommonGrants) can skip this
+    # with load_records=False and receive the raw search documents.
+    records = SCHEMA.load(response.records, many=True) if load_records else response.records
 
     return records, response.aggregations, pagination_info
 
