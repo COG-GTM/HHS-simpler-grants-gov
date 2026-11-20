@@ -499,7 +499,7 @@ def test_list_opportunities_raw_records_match_loaded_records(enable_factory_crea
     """CG transforms raw search documents the same as v1-schema-loaded ones."""
     schema = OpportunityV1Schema()
     opportunities = factories.OpportunityFactory.create_batch(
-        size=5, is_posted_summary=True, has_attachments=True
+        size=5, is_posted_summary=True
     ) + factories.OpportunityFactory.create_batch(size=3, is_forecasted_summary=True)
     # Indexed documents are the JSON form of OpportunityV1Schema.dump (see load_opportunities_to_index)
     raw_records = [json.loads(json.dumps(schema.dump(opp))) for opp in opportunities]
